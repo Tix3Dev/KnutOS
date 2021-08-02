@@ -12,3 +12,47 @@
 #	GNU General Public License for more details.
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# C_FILES		= $(shell find src/ -type f -name '*.c')
+# 
+# 
+# format:
+#	astyle --mode=c -nA1TfpxgHxbxjxpS $(C_FILES)
+
+
+
+ISO_IMAGE = disk.iso
+
+.PHONY: all run clean distclean
+
+all: $(ISO_IMAGE)
+
+run: $(ISO_IMAGE)
+	qemu-system-x86_64 -M q35 -m 2G -cdrom $(ISO_IMAGE)
+
+limine:
+#	git clone https://github.com/limine-bootloader/limine.git --branch=v2.0-branch-binary --depth=1
+	make -C third_party/limine
+
+src/kernel/kernel.elf:
+	$(MAKE) -C kernel
+
+$(ISO_IMAGE): limine src/kernel/kernel.elf
+	rm -rf iso_root
+	mkdir -p iso_root
+	cp src/kernel/kernel.elf \
+		limine.cfg third_party/limine/limine.sys third_party/limine/limine-cd.bin third_party/limine/limine-eltorito-efi.bin iso_root/
+	xorriso -as mkisofs -b limine-cd.bin \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		--efi-boot limine-eltorito-efi.bin \
+		-efi-boot-part --efi-boot-image --protective-msdos-label \
+		iso_root -o $(ISO_IMAGE)
+	third_party/limine/limine-install $(ISO_IMAGE)
+	rm -rf iso_root
+
+clean:
+	rm -f $(ISO_IMAGE)
+	$(MAKE) -C kernel clean
+
+distclean: clean
+	rm -rf limine src/kernel/stivale2.h
