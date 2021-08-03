@@ -1,4 +1,4 @@
 logo_stuff
-*.bin
 *.elf
+*.iso
 *.o
