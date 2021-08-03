@@ -15,29 +15,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
-#include <stddef.h>
+#ifndef STIVALE2_BOOT_H
+#define STIVALE2_BOOT_H
 
-#include "boot/stivale2.h"
-#include "boot/stivale2_boot.h"
+void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id);
 
-void kmain(struct stivale2_struct *stivale2_struct)
-{
-	struct stivale2_struct_tag_terminal *term_str_tag;
-	term_str_tag = stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
-
-	if (term_str_tag == NULL)
-	{
-		for (;;)
-			asm ("hlt");
-	}
-
-	void *term_write_ptr = (void *)term_str_tag->term_write;
-
-	void (*term_write)(const char *string, size_t length) = term_write_ptr;
-
-	term_write("Hello World", 11);
-
-	for (;;)
-		asm ("hlt");
-}
+#endif
