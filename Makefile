@@ -13,46 +13,75 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# C_FILES		= $(shell find src/ -type f -name '*.c')
-# 
-# 
-# format:
-#	astyle --mode=c -nA1TfpxgHxbxjxpS $(C_FILES)
+TARGET		:= src/kernel/kernel.elf
+ISO_IMAGE	:= disk.iso
 
+CC = cc
+LD = ld
 
+CC_FLAGS = -Wall -Wextra -O2 -pipe
+LD_FLAGS =
 
-ISO_IMAGE = disk.iso
+INTERNAL_LD_FLAGS :=		\
+	-Tsrc/kernel/linker.ld	\
+	-nostdlib				\
+	-zmax-page-size=0x1000	\
+	-static					\
+	-pie					\
+	--no-dynamic-linker		\
+	-ztext
 
-.PHONY: all run clean distclean
+INTERNAL_CC_FLAGS :=		\
+	-I.						\
+	-std=gnu11				\
+	-ffreestanding			\
+	-fno-stack-protector	\
+	-fno-pic -fpie			\
+	-mno-80387				\
+	-mno-mmx				\
+	-mno-3dnow				\
+	-mno-sse				\
+	-mno-sse2				\
+	-mno-red-zone
 
-all: $(ISO_IMAGE)
+C_FILES		:= $(shell find src/ -type f -name '*.c')
+
+OBJ			:= $(C_FILES:.c=.o)
+
+.PHONY: all clean format run
+
+all: $(TARGET)
 
 run: $(ISO_IMAGE)
 	qemu-system-x86_64 -M q35 -m 2G -cdrom $(ISO_IMAGE)
 
 limine:
-#	git clone https://github.com/limine-bootloader/limine.git --branch=v2.0-branch-binary --depth=1
 	make -C third_party/limine
 
-src/kernel/kernel.elf:
-	$(MAKE) -C kernel
+$(TARGET): $(OBJ)
+	$(LD) $(OBJ) $(LD_FLAGS) $(INTERNAL_LD_FLAGS) -o $@
 
-$(ISO_IMAGE): limine src/kernel/kernel.elf
+$(ISO_IMAGE): limine $(TARGET)
 	rm -rf iso_root
 	mkdir -p iso_root
-	cp src/kernel/kernel.elf \
-		limine.cfg third_party/limine/limine.sys third_party/limine/limine-cd.bin third_party/limine/limine-eltorito-efi.bin iso_root/
-	xorriso -as mkisofs -b limine-cd.bin \
-		-no-emul-boot -boot-load-size 4 -boot-info-table \
-		--efi-boot limine-eltorito-efi.bin \
-		-efi-boot-part --efi-boot-image --protective-msdos-label \
+	cp $(TARGET) 												\
+		limine.cfg third_party/limine/limine.sys				\
+		third_party/limine/limine-cd.bin 						\
+		third_party/limine/limine-eltorito-efi.bin iso_root/
+	xorriso -as mkisofs -b limine-cd.bin							\
+		-no-emul-boot -boot-load-size 4 -boot-info-table			\
+		--efi-boot limine-eltorito-efi.bin							\
+		-efi-boot-part --efi-boot-image --protective-msdos-label	\
 		iso_root -o $(ISO_IMAGE)
 	third_party/limine/limine-install $(ISO_IMAGE)
 	rm -rf iso_root
 
-clean:
-	rm -f $(ISO_IMAGE)
-	$(MAKE) -C kernel clean
+%.o: %.c
+	@printf "[CC]  $<\n";
+	$(CC) $(CC_FLAGS) $(INTERNAL_CC_FLAGS) -c $< -o $@
 
-distclean: clean
-	rm -rf limine src/kernel/stivale2.h
+clean:
+	rm -rf $(TARGET) $(OBJ) $(ISO_IMAGE)
+
+format:
+	astyle --mode=c -nA1TfpxgHxbxjxpS $(C_FILES)
