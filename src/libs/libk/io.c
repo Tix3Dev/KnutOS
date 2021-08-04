@@ -16,33 +16,18 @@
 */
 
 #include <stdint.h>
-#include <stddef.h>
 
-#include "boot/stivale2.h"
-#include "boot/stivale2_boot.h"
-#include "devices/serial/serial.h"
-
-void kmain(struct stivale2_struct *stivale2_struct)
+void io_outb(uint16_t port, uint8_t value)
 {
-	struct stivale2_struct_tag_terminal *term_str_tag;
-	term_str_tag = stivale2_get_tag(stivale2_struct, STIVALE2_STRUCT_TAG_TERMINAL_ID);
+	asm volatile("outb %0, %1" : : "a"(value), "Nd"(port));
+}
 
-	if (term_str_tag == NULL)
-	{
-		for (;;)
-			asm ("hlt");
-	}
+uint8_t io_inb(uint16_t port)
+{
+	uint8_t ret;
+	asm volatile( "inb %1, %0"
+				  : "=a"(ret)
+				  : "Nd"(port) );
 
-	void *term_write_ptr = (void *)term_str_tag->term_write;
-
-	void (*term_write)(const char *string, size_t length) = term_write_ptr;
-
-	term_write("Hello World", 11);
-
-	serial_send_string("Hello World");
-	for (;;)
-		serial_send(serial_recv());
-
-	for (;;)
-		asm ("hlt");
+	return ret;
 }

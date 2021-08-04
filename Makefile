@@ -53,7 +53,7 @@ OBJ			:= $(C_FILES:.c=.o)
 all: $(TARGET)
 
 run: $(ISO_IMAGE)
-	qemu-system-x86_64 -M q35 -m 2G -cdrom $(ISO_IMAGE)
+	qemu-system-x86_64 -M q35 -m 2G -serial stdio -cdrom $(ISO_IMAGE)
 
 limine:
 	make -C third_party/limine
