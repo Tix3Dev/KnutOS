@@ -41,10 +41,14 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	if (init_serial() == 0)
 	{
+		serial_set_color(TERM_RED);
 		serial_send_string("Hello World");
+		serial_set_color(TERM_COLOR_RESET);
+
 		for (;;)
 			serial_send(serial_recv());
 	}
+
 	// otherwise serial is faulty
 
 	for (;;)

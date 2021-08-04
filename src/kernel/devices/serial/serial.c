@@ -70,3 +70,11 @@ void serial_send_string(char* str)
 	for (int i = 0; str[i] != '\0'; i++)
 		serial_send(str[i]);
 }
+
+void serial_set_color(char* color_code)
+{
+	if (color_code[0] != '\e' || color_code[1] != '[')
+		return;
+
+	serial_send_string(color_code);
+}

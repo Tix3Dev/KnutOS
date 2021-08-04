@@ -20,8 +20,20 @@
 
 #define COM1 0x3f8
 
+#define TERM_BLACK			"\e[0;30m"
+#define TERM_RED			"\e[0;31m"
+#define TERM_GREEN			"\e[0;32m"
+#define TERM_YELLOW			"\e[0;33m"
+#define TERM_BLUE			"\e[0;34m"
+#define TERM_PURPLE			"\e[0;35m"
+#define TERM_CYAN			"\e[0;36m"
+#define TERM_WHITE			"\e[0;37m"
+#define TERM_COLOR_RESET	"\e[0m"
+
 int init_serial();
 char serial_recv();
 void serial_send(char c);
+void serial_send_string(char* str);
+void serial_set_color(char* color_code);
 
 #endif
