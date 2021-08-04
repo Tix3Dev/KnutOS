@@ -30,10 +30,10 @@
 #define TERM_WHITE			"\e[0;37m"
 #define TERM_COLOR_RESET	"\e[0m"
 
-int init_serial();
+void serial_init();
 char serial_recv();
 void serial_send(char c);
-void serial_send_string(char* str);
-void serial_set_color(char* color_code);
+void serial_send_string(char *str);
+void serial_set_color(char *color_code);
 
 #endif

@@ -18,9 +18,9 @@
 #include <stdint.h>
 
 #include "serial.h"
-#include "../../../libs/libk/io.h"
+#include "../../../libs/libk/io/io.h"
 
-int init_serial()
+void serial_init()
 {
 	io_outb(COM1 + 1, 0x00);
 	io_outb(COM1 + 3, 0x80);
@@ -29,16 +29,6 @@ int init_serial()
 	io_outb(COM1 + 3, 0x03);
 	io_outb(COM1 + 2, 0xC7);
 	io_outb(COM1 + 4, 0x0B);
-	io_outb(COM1 + 4, 0x1E);	// set it in loopback mode -> our testmode
-
-	io_outb(COM1 + 0, 0xAE);	// only for check -> serial is faulty if the byte send is not the same as the byte returned
-
-	if (io_inb(COM1 + 0) != 0xAE)
-		return 1;
-
-	io_outb(COM1 + 4, 0x0F);	// change from loopback mode to normal operation mode
-
-	return 0;
 }
 
 int is_serial_received()
@@ -65,13 +55,13 @@ void serial_send(char c)
 	io_outb(COM1, c);
 }
 
-void serial_send_string(char* str)
+void serial_send_string(char *str)
 {
 	for (int i = 0; str[i] != '\0'; i++)
 		serial_send(str[i]);
 }
 
-void serial_set_color(char* color_code)
+void serial_set_color(char *color_code)
 {
 	if (color_code[0] != '\e' || color_code[1] != '[')
 		return;
