@@ -39,9 +39,13 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	term_write("Hello World", 11);
 
-	serial_send_string("Hello World");
-	for (;;)
-		serial_send(serial_recv());
+	if (init_serial() == 0)
+	{
+		serial_send_string("Hello World");
+		for (;;)
+			serial_send(serial_recv());
+	}
+	// otherwise serial is faulty
 
 	for (;;)
 		asm ("hlt");
