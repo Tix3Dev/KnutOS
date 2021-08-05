@@ -15,44 +15,12 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
-#include <stddef.h>
+#ifndef FRAMEBUFFER_H
+#define FRAMEBUFFER_H
 
-#include "boot/stivale2.h"
-#include "boot/stivale2_boot.h"
-#include "devices/framebuffer/framebuffer.h"
-#include "devices/serial/serial.h"
-#include "../libs/libk/debug/debug.h"
+void framebuffer_init(struct stivale2_struct *stivale2_struct);
+void framebuffer_draw_pixel(int x, int y, uint32_t color);
+void framebuffer_set_background_color(uint32_t background_color);
+void framebuffer_reset_screen(void);
 
-void kmain(struct stivale2_struct *stivale2_struct)
-{
-	serial_init();
-	framebuffer_init(stivale2_struct);
-
-	debug("Hello %s!\n", "World");
-
-	serial_set_color(TERM_RED);
-	serial_send_string("Hello World!\n");
-	serial_set_color(TERM_COLOR_RESET);
-
-	framebuffer_set_background_color(0xFF754303);
-
-	for (int x = 0; x < 100; x++)
-	{
-		for (int y = 0; y < 100; y++)
-		{
-			framebuffer_draw_pixel(x, y, 0xFF29202C);
-		}
-	}
-
-	serial_recv();
-	framebuffer_reset_screen();
-
-
-	for (;;)
-		serial_send(serial_recv());
-
-
-	for (;;)
-		asm ("hlt");
-}
+#endif
