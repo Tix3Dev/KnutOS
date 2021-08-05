@@ -20,7 +20,7 @@
 #include "serial.h"
 #include "../../../libs/libk/io/io.h"
 
-void serial_init()
+void serial_init(void)
 {
 	io_outb(COM1 + 1, 0x00);
 	io_outb(COM1 + 3, 0x80);
@@ -31,19 +31,19 @@ void serial_init()
 	io_outb(COM1 + 4, 0x0B);
 }
 
-int is_serial_received()
+int is_serial_received(void)
 {
 	return io_inb(COM1 + 5) & 1;
 }
 
-char serial_recv()
+char serial_recv(void)
 {
 	while (is_serial_received() == 0);
 
 	return io_inb(COM1);
 }
 
-int is_transmit_empty()
+int is_transmit_empty(void)
 {
 	return io_inb(COM1 + 5) & 0x20;
 }
