@@ -15,8 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "boot/stivale2.h"
 #include "boot/stivale2_boot.h"
@@ -44,6 +44,10 @@ void kmain(struct stivale2_struct *stivale2_struct)
 			framebuffer_draw_pixel(x, y, 0xFF29202C);
 		}
 	}
+
+	framebuffer_draw_line(100, 100, 200, 200, 0xFF29202C);
+
+	framebuffer_draw_circle(200, 200, 143, 0xFF29202C);
 
 	serial_recv();
 	framebuffer_reset_screen();

@@ -72,3 +72,70 @@ void framebuffer_reset_screen(void)
 
 	framebuffer_set_background_color(gfx.global_background_color);
 }
+
+// draw a line to the framebuffer with start coordinates and end coordinates
+void framebuffer_draw_line(int x_start_pos, int y_start_pos, int x_end_pos, int y_end_pos, uint32_t color)
+{
+	int dx = x_end_pos - x_start_pos;
+	int dy = y_end_pos - y_start_pos;
+
+	int x = x_start_pos;
+	int y = y_start_pos;
+
+	int p = 2 * dy - dx;
+
+	while (x < x_end_pos)
+	{
+		if (p >= 0)
+		{
+			framebuffer_draw_pixel(x, y, color);
+			y += 1;
+			p = p + 2 * dy - 2 * dx;
+		}
+		else
+		{
+			framebuffer_draw_pixel(x, y, color);
+			p = p + 2 * dy;
+		}
+
+		x += 1;
+	}
+}
+
+// we divide the circle in 8 parts
+void draw_circle_helper(int xc, int yc, int x, int y, uint32_t color)
+{
+	framebuffer_draw_pixel(xc + x, yc + y, color);
+	framebuffer_draw_pixel(xc - x, yc + y, color);
+	framebuffer_draw_pixel(xc + x, yc - y, color);
+	framebuffer_draw_pixel(xc - x, yc - y, color);
+	framebuffer_draw_pixel(xc + y, yc + x, color);
+	framebuffer_draw_pixel(xc - y, yc + x, color);
+	framebuffer_draw_pixel(xc + y, yc - x, color);
+	framebuffer_draw_pixel(xc - y, yc - x, color);
+}
+
+// draw a circle to the framebuffer with the center of the circle and the radius
+void framebuffer_draw_circle(int x_center, int y_center, int radius, uint32_t color)
+{
+	int x = 0;
+	int y = radius;
+	int d = 3 - 2 * radius;
+
+	draw_circle_helper(x_center, y_center, x, y, color);
+
+	while (y >= x)
+	{
+		x += 1;
+
+		if (d > 0)
+		{
+			y -= 1;
+			d = d + 4 * (x - y) + 10;
+		}
+		else
+			d = d + 4 * x + 6;
+
+		draw_circle_helper(x_center, y_center, x, y, color);
+	}
+}
