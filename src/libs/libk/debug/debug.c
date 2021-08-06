@@ -22,7 +22,7 @@
 
 const char debug_buffer[512];
 
-// variadic function for format specifiers
+// variadic function for format specifiers to print to the serial console
 void debug(char *fmt, ...)
 {
 	va_list ptr;
