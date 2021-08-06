@@ -61,7 +61,10 @@ limine:
 	make -C third_party/limine
 
 $(TARGET): $(OBJ)
-	$(LD) $(OBJ) $(LD_FLAGS) $(INTERNAL_LD_FLAGS) -o $@
+	$(LD) -r -b binary -o src/kernel/devices/framebuffer/font_unifont.o sfn_fonts/unifont.sfn
+	$(LD) src/kernel/devices/framebuffer/font_unifont.o $(OBJ) $(LD_FLAGS) $(INTERNAL_LD_FLAGS) -o $@
+	@printf "\n\n \(^ᴗ^)/ Kernel compiled and linked successfully \(^ᴗ^)/ \n\n"
+
 
 $(ISO_IMAGE): limine $(TARGET)
 	rm -rf iso_root

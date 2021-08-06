@@ -27,7 +27,7 @@
 void kmain(struct stivale2_struct *stivale2_struct)
 {
 	serial_init();
-	framebuffer_init(stivale2_struct);
+	framebuffer_init(stivale2_struct, 0xFF754303);
 
 	debug("Hello %s!\n", "World");
 
@@ -35,26 +35,36 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	serial_send_string("Hello World!\n");
 	serial_set_color(TERM_COLOR_RESET);
 
-	framebuffer_set_background_color(0xFF754303);
-
 	for (int x = 0; x < 100; x++)
 	{
 		for (int y = 0; y < 100; y++)
-		{
 			framebuffer_draw_pixel(x, y, 0xFF29202C);
-		}
 	}
 
 	framebuffer_draw_line(100, 100, 200, 200, 0xFF29202C);
 
 	framebuffer_draw_circle(200, 200, 143, 0xFF29202C);
 
+	serial_set_color(TERM_CYAN);
+	serial_send_string("Press any key to change screen...");
+	serial_set_color(TERM_COLOR_RESET);
 	serial_recv();
 	framebuffer_reset_screen();
 
+	framebuffer_print_char('!', 0, 0, 0xFF29202C);
+	framebuffer_print_string("Hello World!\n", 0xFF29202C);
+	framebuffer_print_string("!HELLO\tWORLD!\n\n", 0xFF29202C);
 
 	for (;;)
-		serial_send(serial_recv());
+	{
+		framebuffer_print_string("hello\t", 0xFF29202C);
+
+		for (int i = 0; i < 10000000; i++) {}
+	}
+
+	serial_send_string("\n");
+	for (;;)
+		serial_send_char(serial_recv());
 
 
 	for (;;)

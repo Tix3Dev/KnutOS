@@ -18,11 +18,14 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-void framebuffer_init(struct stivale2_struct *stivale2_struct);
+void framebuffer_init(struct stivale2_struct *stivale2_struct, uint32_t background_color);
 void framebuffer_draw_pixel(int x, int y, uint32_t color);
 void framebuffer_set_background_color(uint32_t background_color);
 void framebuffer_reset_screen(void);
 void framebuffer_draw_line(int x_start_pos, int y_start_pos, int x_end_pos, int y_end_pos, uint32_t color);
 void framebuffer_draw_circle(int x_center, int y_center, int radius, uint32_t color);
+void framebuffer_move_one_row_up(void);
+void framebuffer_print_char(uint32_t unicode_character, int x, int y, uint32_t foreground_color);
+void framebuffer_print_string(char *string, uint32_t foreground_color);
 
 #endif
