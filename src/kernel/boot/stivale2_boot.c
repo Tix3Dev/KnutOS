@@ -18,7 +18,6 @@
 #include <stddef.h>
 
 #include "stivale2.h"
-#include "stivale2_boot.h"
 
 static uint8_t stack[4096];
 
