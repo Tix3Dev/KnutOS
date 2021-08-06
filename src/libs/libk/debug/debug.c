@@ -22,6 +22,7 @@
 
 const char debug_buffer[512];
 
+// variadic function for format specifiers
 void debug(char *fmt, ...)
 {
 	va_list ptr;

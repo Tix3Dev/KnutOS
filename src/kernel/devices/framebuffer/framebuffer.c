@@ -22,10 +22,14 @@
 #include "../../boot/stivale2_boot.h"
 #include "framebuffer.h"
 
-#define SSFN_CONSOLEBITMAP_TRUECOLOR	/* use the special renderer for 32 bit truecolor packed pixels */
-#define SSFN_NOIMPLEMENTATION			/* dont' use the normal renderer implementation */
+#define SSFN_CONSOLEBITMAP_TRUECOLOR	// use the special renderer for 32 bit truecolor packed pixels
+#define SSFN_NOIMPLEMENTATION			// dont' use the normal renderer implementation
 #include "../../../libs/libk/ssfn.h"
 
+// this name follows the SSFN rule: _binary_(filename)_start
+// we also need to do a few things in the makefile:
+// first we turn the .sfn font into an object file
+// then we have to link it as any other object file
 extern uint8_t _binary_sfn_fonts_unifont_sfn_start;
 
 struct GFX_Struct
@@ -40,6 +44,9 @@ struct GFX_Struct
 	int glyph_height;
 } gfx;
 
+// save information about the framebuffer in a struct
+// set the basic SSFN variables
+// change the background color
 void framebuffer_init(struct stivale2_struct *stivale2_struct, uint32_t background_color)
 {
 	struct stivale2_struct_tag_framebuffer *framebuffer_info = stivale2_get_tag(stivale2_struct,
@@ -64,6 +71,7 @@ void framebuffer_init(struct stivale2_struct *stivale2_struct, uint32_t backgrou
 	framebuffer_set_background_color(background_color);
 }
 
+// draw one pixel at coordinate x, y (0, 0 is top left corner) in a certain color
 void framebuffer_draw_pixel(int x, int y, uint32_t color)
 {
 	size_t fb_index = y * (gfx.fb_pitch / sizeof(uint32_t)) + x;
@@ -72,6 +80,7 @@ void framebuffer_draw_pixel(int x, int y, uint32_t color)
 	fb[fb_index] = color;
 }
 
+// set the 'global' background color and turn every pixel into that color
 void framebuffer_set_background_color(uint32_t background_color)
 {
 	ssfn_dst.bg = background_color;
@@ -83,6 +92,7 @@ void framebuffer_set_background_color(uint32_t background_color)
 	}
 }
 
+// reset pen position and turn every pixel into the default background color
 void framebuffer_reset_screen(void)
 {
 	ssfn_dst.x = 0;
@@ -120,7 +130,7 @@ void framebuffer_draw_line(int x_start_pos, int y_start_pos, int x_end_pos, int 
 	}
 }
 
-// we divide the circle in 8 parts
+// divide the circle into 8 parts
 void draw_circle_helper(int xc, int yc, int x, int y, uint32_t color)
 {
 	framebuffer_draw_pixel(xc + x, yc + y, color);
@@ -133,7 +143,7 @@ void draw_circle_helper(int xc, int yc, int x, int y, uint32_t color)
 	framebuffer_draw_pixel(xc - y, yc - x, color);
 }
 
-// draw a circle to the framebuffer with the center of the circle and the radius
+// draw a circle with the x, y coordinate being the center
 void framebuffer_draw_circle(int x_center, int y_center, int radius, uint32_t color)
 {
 	int x = 0;
@@ -158,7 +168,7 @@ void framebuffer_draw_circle(int x_center, int y_center, int radius, uint32_t co
 	}
 }
 
-// memmove the screen one row up
+// memmove the screen by one 'glyph height'
 void framebuffer_move_one_row_up(void)
 {
 	uint32_t *fb = (uint32_t *)gfx.fb_addr;
@@ -177,6 +187,7 @@ void framebuffer_move_one_row_up(void)
 	}
 }
 
+// print a glyph to the screen in a certain color
 void framebuffer_print_char(uint32_t unicode_character, int x, int y, uint32_t foreground_color)
 {
 	ssfn_dst.x = x;
@@ -199,6 +210,7 @@ void framebuffer_print_char(uint32_t unicode_character, int x, int y, uint32_t f
 		framebuffer_move_one_row_up();
 	}
 
+	// if the unicode character is a tab we print four spaces
 	if (unicode_character == '\t')
 	{
 		for (int i = 0; i < 4; i++)
@@ -212,6 +224,7 @@ void framebuffer_print_char(uint32_t unicode_character, int x, int y, uint32_t f
 	ssfn_putc(unicode_character);
 }
 
+// print a string of glyphs to the screen in a certain color
 void framebuffer_print_string(char *string, uint32_t foreground_color)
 {
 	while (*string)

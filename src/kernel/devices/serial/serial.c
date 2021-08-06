@@ -20,6 +20,7 @@
 #include "serial.h"
 #include "../../../libs/libk/io/io.h"
 
+// set COM1 offsets to init value
 void serial_init(void)
 {
 	io_outb(COM1 + 1, 0x00);
@@ -31,11 +32,13 @@ void serial_init(void)
 	io_outb(COM1 + 4, 0x0B);
 }
 
+// check if transmission buffer is not empty
 int is_serial_received(void)
 {
 	return io_inb(COM1 + 5) & 1;
 }
 
+// read data from COM1
 char serial_recv(void)
 {
 	while (is_serial_received() == 0);
@@ -43,11 +46,13 @@ char serial_recv(void)
 	return io_inb(COM1);
 }
 
+// check if transmission buffer is empty
 int is_transmit_empty(void)
 {
 	return io_inb(COM1 + 5) & 0x20;
 }
 
+// send data to COM1
 void serial_send_char(char c)
 {
 	while (is_transmit_empty() == 0);
@@ -55,12 +60,14 @@ void serial_send_char(char c)
 	io_outb(COM1, c);
 }
 
+// send even more data to COM1
 void serial_send_string(char *str)
 {
 	for (int i = 0; str[i] != '\0'; i++)
 		serial_send_char(str[i]);
 }
 
+// send bash color codes to COM1
 void serial_set_color(char *color_code)
 {
 	if (color_code[0] != '\e' || color_code[1] != '[')

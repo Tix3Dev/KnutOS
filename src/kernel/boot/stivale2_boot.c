@@ -29,6 +29,7 @@ static struct stivale2_header_tag_framebuffer framebuffer_hdr_tag =
 		.identifier	= STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
 		.next		= 0
 	},
+	// bootloader automatically finds best values
 	.framebuffer_width	= 0,
 	.framebuffer_height	= 0,
 	.framebuffer_bpp	= 0

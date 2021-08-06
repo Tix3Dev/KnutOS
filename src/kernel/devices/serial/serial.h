@@ -20,6 +20,7 @@
 
 #define COM1 0x3f8
 
+// bash color codes
 #define TERM_BLACK			"\e[0;30m"
 #define TERM_RED			"\e[0;31m"
 #define TERM_GREEN			"\e[0;32m"
