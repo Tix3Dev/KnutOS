@@ -23,6 +23,7 @@
 #include "devices/framebuffer/framebuffer.h"
 #include "devices/serial/serial.h"
 #include "../libs/libk/debug/debug.h"
+#include "../libs/libk/stdio/stdio.h"
 
 void kmain(struct stivale2_struct *stivale2_struct)
 {
@@ -53,7 +54,9 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	framebuffer_print_char('!', 0, 0, 0xFF29202C);
 	framebuffer_print_string("Hello World!\n", 0xFF29202C);
-	framebuffer_print_string("!HELLO\tWORLD!\n\n", 0xFF29202C);
+	framebuffer_print_string("!HELLO\tWORLD!\n", 0xFF29202C);
+
+	printk(0xFF29202C, "!Smooth Hello %s!\n\n", "World");
 
 	for (;;)
 	{
