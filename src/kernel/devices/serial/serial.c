@@ -48,7 +48,7 @@ int is_transmit_empty(void)
 	return io_inb(COM1 + 5) & 0x20;
 }
 
-void serial_send(char c)
+void serial_send_char(char c)
 {
 	while (is_transmit_empty() == 0);
 
@@ -58,7 +58,7 @@ void serial_send(char c)
 void serial_send_string(char *str)
 {
 	for (int i = 0; str[i] != '\0'; i++)
-		serial_send(str[i]);
+		serial_send_char(str[i]);
 }
 
 void serial_set_color(char *color_code)

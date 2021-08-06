@@ -32,7 +32,7 @@
 
 void serial_init();
 char serial_recv();
-void serial_send(char c);
+void serial_send_char(char c);
 void serial_send_string(char *str);
 void serial_set_color(char *color_code);
 
