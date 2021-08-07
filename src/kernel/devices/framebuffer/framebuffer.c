@@ -188,7 +188,7 @@ void framebuffer_move_one_row_up(void)
 }
 
 // print a glyph to the screen in a certain color
-void framebuffer_print_char(uint32_t unicode_character, int x, int y, uint32_t foreground_color)
+void framebuffer_print_char(uint32_t unicode, int x, int y, uint32_t foreground_color)
 {
 	ssfn_dst.x = x;
 	ssfn_dst.y = y;
@@ -211,7 +211,7 @@ void framebuffer_print_char(uint32_t unicode_character, int x, int y, uint32_t f
 	}
 
 	// if the unicode character is a tab we print four spaces
-	if (unicode_character == '\t')
+	if (unicode == '\t')
 	{
 		for (int i = 0; i < 4; i++)
 			framebuffer_print_string(" ", foreground_color);
@@ -221,12 +221,14 @@ void framebuffer_print_char(uint32_t unicode_character, int x, int y, uint32_t f
 
 	ssfn_dst.fg = foreground_color;
 
-	ssfn_putc(unicode_character);
+	ssfn_putc(unicode);
 }
 
 // print a string of glyphs to the screen in a certain color
 void framebuffer_print_string(char *string, uint32_t foreground_color)
 {
 	while (*string)
-		framebuffer_print_char(*string++, ssfn_dst.x, ssfn_dst.y, foreground_color);
+	{
+		framebuffer_print_char(ssfn_utf8(&string), ssfn_dst.x, ssfn_dst.y, foreground_color);
+	}
 }
