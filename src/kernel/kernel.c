@@ -22,6 +22,7 @@
 #include "boot/stivale2_boot.h"
 #include "devices/framebuffer/framebuffer.h"
 #include "devices/serial/serial.h"
+#include "logo.h"
 #include "../libs/libk/debug/debug.h"
 #include "../libs/libk/stdio/stdio.h"
 
@@ -30,46 +31,14 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	serial_init();
 	framebuffer_init(stivale2_struct, 0xFF754303);
 
-	debug("Hello %s!\n", "World");
+	debug("\e[0;35mWelcome to:\n");
+	debug("\e[0;35m%s", small_logo_text);
+	serial_set_color("\e[0m");
 
-	serial_set_color(TERM_RED);
-	serial_send_string("Hello World!\n");
-	serial_set_color(TERM_COLOR_RESET);
-
-	for (int x = 0; x < 100; x++)
-	{
-		for (int y = 0; y < 100; y++)
-			framebuffer_draw_pixel(x, y, 0xFF29202C);
-	}
-
-	framebuffer_draw_line(100, 100, 200, 200, 0xFF29202C);
-
-	framebuffer_draw_circle(200, 200, 143, 0xFF29202C);
-
-	serial_set_color(TERM_CYAN);
-	serial_send_string("Press any key to change screen...");
-	serial_set_color(TERM_COLOR_RESET);
-	serial_recv();
-	framebuffer_reset_screen();
-
-	framebuffer_print_char('!', 0, 0, 0xFF29202C);
-	framebuffer_print_string("Hello World!\n", 0xFF29202C);
-	framebuffer_print_string("!HELLO\tWORLD!\n", 0xFF29202C);
-
-	printk(0xFF29202C, "!Smooth Hello %s!\n\n", "World");
-
-	for (;;)
-	{
-		framebuffer_print_string("hello\t", 0xFF29202C);
-
-		for (int i = 0; i < 10000000; i++) {}
-	}
-
-	serial_send_string("\n");
-	for (;;)
-		serial_send_char(serial_recv());
-
-
+	printk(0xFF29202C, "Welcome to:\n\n");
+	printk(0xFF29202C, "%s", big_logo);
+	
 	for (;;)
 		asm ("hlt");
 }
+	
