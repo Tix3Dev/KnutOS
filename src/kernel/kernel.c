@@ -29,16 +29,25 @@
 void kmain(struct stivale2_struct *stivale2_struct)
 {
 	serial_init();
-	framebuffer_init(stivale2_struct, 0xFF754303);
+	framebuffer_init(stivale2_struct, GFX_BLACK);
 
-	debug("\e[0;35mWelcome to:\n");
-	debug("\e[0;35m%s", small_logo_text);
-	serial_set_color("\e[0m");
+	serial_set_color(TERM_BLUE);
+	debug("Welcome to:\n");
+	debug("%s", small_logo_text);
+	serial_set_color(TERM_COLOR_RESET);
 
-	printk(0xFF29202C, "Welcome to:\n\n");
-	printk(0xFF29202C, "%s", big_logo);
-	
+	printk(GFX_BLUE, "\nWelcome to:\n");
+	printk(GFX_BLUE, "%s", big_logo);
+
+	// printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
+	printk(GFX_RED,		"█color█ ");
+	printk(GFX_GREEN,	"█color█ ");
+	printk(GFX_YELLOW,	"█color█ ");
+	printk(GFX_BLUE,	"█color█ ");
+	printk(GFX_PURPLE,	"█color█ ");
+	printk(GFX_CYAN,	"█color█ ");
+	printk(GFX_WHITE,	"█color█");
+
 	for (;;)
 		asm ("hlt");
 }
-	
