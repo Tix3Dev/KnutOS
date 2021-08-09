@@ -22,12 +22,14 @@
 #include <boot/stivale2_boot.h>
 #include <devices/framebuffer/framebuffer.h>
 #include <devices/serial/serial.h>
+#include <interrupts/gdt.h>
 #include <logo.h>
 #include <libk/debug/debug.h>
 #include <libk/stdio/stdio.h>
 
 void kmain(struct stivale2_struct *stivale2_struct)
 {
+	gdt_init();
 	serial_init();
 	framebuffer_init(stivale2_struct, GFX_BLACK);
 
