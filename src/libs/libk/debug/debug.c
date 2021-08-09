@@ -17,8 +17,8 @@
 
 #include <stdarg.h>
 
-#include "../../../kernel/devices/serial/serial.h"
-#include "../kprintf/kprintf.h"
+#include <devices/serial/serial.h>
+#include <libk/kprintf/kprintf.h>
 
 const char debug_buffer[512];
 

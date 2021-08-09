@@ -18,13 +18,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "boot/stivale2.h"
-#include "boot/stivale2_boot.h"
-#include "devices/framebuffer/framebuffer.h"
-#include "devices/serial/serial.h"
-#include "logo.h"
-#include "../libs/libk/debug/debug.h"
-#include "../libs/libk/stdio/stdio.h"
+#include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
+#include <devices/framebuffer/framebuffer.h>
+#include <devices/serial/serial.h>
+#include <logo.h>
+#include <libk/debug/debug.h>
+#include <libk/stdio/stdio.h>
 
 void kmain(struct stivale2_struct *stivale2_struct)
 {

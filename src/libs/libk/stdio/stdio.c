@@ -18,9 +18,9 @@
 #include <stdarg.h>
 #include <stdint.h>
 
-#include "../../../kernel/boot/stivale2.h"
-#include "../../../kernel/devices/framebuffer/framebuffer.h"
-#include "../kprintf/kprintf.h"
+#include <boot/stivale2.h>
+#include <devices/framebuffer/framebuffer.h>
+#include <libk/kprintf/kprintf.h>
 
 const char printk_buffer[512];
 

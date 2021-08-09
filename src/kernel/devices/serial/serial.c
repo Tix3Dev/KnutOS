@@ -17,8 +17,8 @@
 
 #include <stdint.h>
 
-#include "serial.h"
-#include "../../../libs/libk/io/io.h"
+#include <devices/serial/serial.h>
+#include <libk/io/io.h>
 
 // set COM1 offsets to init value
 void serial_init(void)

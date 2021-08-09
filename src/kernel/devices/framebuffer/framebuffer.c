@@ -18,13 +18,13 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#include "../../boot/stivale2.h"
-#include "../../boot/stivale2_boot.h"
-#include "framebuffer.h"
+#include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
+#include <devices/framebuffer/framebuffer.h>
 
 #define SSFN_CONSOLEBITMAP_TRUECOLOR	// use the special renderer for 32 bit truecolor packed pixels
 #define SSFN_NOIMPLEMENTATION			// dont' use the normal renderer implementation
-#include "../../../libs/libk/ssfn.h"
+#include <libk/ssfn.h>
 
 // this name follows the SSFN rule: _binary_(filename)_start
 // we also need to do a few things in the makefile:

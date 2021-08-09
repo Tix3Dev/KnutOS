@@ -17,7 +17,7 @@
 
 #include <stddef.h>
 
-#include "stivale2.h"
+#include <boot/stivale2.h>
 
 static uint8_t stack[4096];
 
