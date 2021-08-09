@@ -18,23 +18,26 @@ ISO_IMAGE	:= disk.iso
 
 ARCH = @x86_64-elf
 
-CC = $(ARCH)-gcc
-LD = $(ARCH)-ld
+CC	= $(ARCH)-gcc
+AS	= @nasm
+LD	= $(ARCH)-ld
 
-CC_FLAGS = -Wall -Wextra -O2 -pipe
-LD_FLAGS =
+CC_FLAGS	= -Wall -Wextra -O2 -pipe
+AS_FLAGS	= -felf64
+LD_FLAGS	=
 
 INTERNAL_LD_FLAGS :=		\
 	-Tsrc/kernel/linker.ld	\
 	-nostdlib				\
-	-zmax-page-size=0x1000	\
 	-static					\
-	-pie					\
+	-zmax-page-size=0x1000	\
 	--no-dynamic-linker		\
-	-ztext
+	-ztext					
+	# -pie
 
 INTERNAL_CC_FLAGS :=		\
-	-I.						\
+	-Isrc/kernel/			\
+	-Isrc/libs				\
 	-std=gnu11				\
 	-ffreestanding			\
 	-fno-stack-protector	\
@@ -47,8 +50,11 @@ INTERNAL_CC_FLAGS :=		\
 	-mno-red-zone
 
 C_FILES		:= $(shell find src/ -type f -name '*.c')
+AS_FILES	:= $(shell find src/ -type f -name '*.s')
 
-OBJ			:= $(C_FILES:.c=.o)
+C_OBJ	= $(C_FILES:.c=.o)
+AS_OBJ	= $(AS_FILES:.s=.o)
+OBJ		= $(C_OBJ) $(AS_OBJ)
 
 .PHONY: all clean format run
 
@@ -84,6 +90,10 @@ $(ISO_IMAGE): limine $(TARGET)
 %.o: %.c
 	@printf " [CC]\t$<\n";
 	$(CC) $(CC_FLAGS) $(INTERNAL_CC_FLAGS) -c $< -o $@
+
+%.o: %.s
+	@printf " [AS]\t$<\n";
+	$(AS) $(AS_FLAGS) $< -o $@
 
 clean:
 	rm -rf $(TARGET) $(OBJ) $(ISO_IMAGE)
