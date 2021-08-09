@@ -15,7 +15,7 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// special thanks to this site (as parts of the code are from there): 
+// special thanks to this site (as parts of the code are from there):
 // https://blog.llandsmeer.com/tech/2019/07/21/uefi-x64-userland.html
 
 #include <stdint.h>
@@ -29,7 +29,7 @@ struct TSS			tss;
 struct GDT			gdt;
 struct GDT_Pointer	gdt_pointer;
 
-// set the arguments for a given segment 
+// set the arguments for a given segment
 void create_descriptors(void)
 {
 	// 0x00: null
@@ -57,7 +57,7 @@ void create_descriptors(void)
 	gdt.kernel_data.base_31_24				= 0;
 
 	// 0x18: null (user base selector)
-	gdt.null2.limit_15_0					= 0; 
+	gdt.null2.limit_15_0					= 0;
 	gdt.null2.base_15_0						= 0;
 	gdt.null2.base_23_16					= 0;
 	gdt.null2.type							= 0x00;
@@ -79,7 +79,7 @@ void create_descriptors(void)
 	gdt.user_code.type						= 0x9A;
 	gdt.user_code.limit_19_16_and_flags		= 0xA0;
 	gdt.user_code.base_31_24				= 0;
-	
+
 	// 0x30: ovmf data
 	gdt.ovmf_data.limit_15_0				= 0;
 	gdt.ovmf_data.base_15_0					= 0;
@@ -87,7 +87,7 @@ void create_descriptors(void)
 	gdt.ovmf_data.type						= 0x92;
 	gdt.ovmf_data.limit_19_16_and_flags		= 0xA0;
 	gdt.ovmf_data.base_31_24				= 0;
-	
+
 	// 0x38: ovmf code
 	gdt.ovmf_code.limit_15_0				= 0;
 	gdt.ovmf_code.base_15_0					= 0;
@@ -95,7 +95,7 @@ void create_descriptors(void)
 	gdt.ovmf_code.type						= 0x9A;
 	gdt.ovmf_code.limit_19_16_and_flags		= 0xA0;
 	gdt.ovmf_code.base_31_24				= 0;
-	
+
 	// 0x40: tss low
 	gdt.tss_low.limit_15_0					= 0;
 	gdt.tss_low.base_15_0					= 0;
@@ -103,7 +103,7 @@ void create_descriptors(void)
 	gdt.tss_low.type						= 0x89;
 	gdt.tss_low.limit_19_16_and_flags		= 0xA0;
 	gdt.tss_low.base_31_24					= 0;
-	
+
 	// 0x48: tss high
 	gdt.tss_high.limit_15_0					= 0;
 	gdt.tss_high.base_15_0					= 0;
@@ -124,12 +124,12 @@ void gdt_init(void)
 
 	uint64_t tss_base = ((uint64_t)&tss);
 
-    gdt.tss_low.base_15_0		= tss_base			& 0xffff;
-    gdt.tss_low.base_23_16		= (tss_base >> 16)	& 0xff;
-    gdt.tss_low.base_31_24		= (tss_base >> 24)	& 0xff;
-    gdt.tss_low.limit_15_0		= sizeof(tss);
-    gdt.tss_high.limit_15_0		= (tss_base >> 32)	& 0xffff;
-    gdt.tss_high.base_15_0		= (tss_base >> 48)	& 0xffff;
+	gdt.tss_low.base_15_0		= tss_base			& 0xffff;
+	gdt.tss_low.base_23_16		= (tss_base >> 16)	& 0xff;
+	gdt.tss_low.base_31_24		= (tss_base >> 24)	& 0xff;
+	gdt.tss_low.limit_15_0		= sizeof(tss);
+	gdt.tss_high.limit_15_0		= (tss_base >> 32)	& 0xffff;
+	gdt.tss_high.base_15_0		= (tss_base >> 48)	& 0xffff;
 
 	gdt_pointer.base	= sizeof(gdt) - 1;
 	gdt_pointer.limit	= (uint64_t)&gdt;

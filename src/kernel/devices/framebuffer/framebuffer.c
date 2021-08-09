@@ -228,7 +228,5 @@ void framebuffer_print_char(uint32_t unicode, int x, int y, uint32_t foreground_
 void framebuffer_print_string(char *string, uint32_t foreground_color)
 {
 	while (*string)
-	{
 		framebuffer_print_char(ssfn_utf8(&string), ssfn_dst.x, ssfn_dst.y, foreground_color);
-	}
 }
