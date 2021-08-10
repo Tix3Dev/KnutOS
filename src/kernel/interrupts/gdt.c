@@ -25,9 +25,9 @@
 
 extern void _load_gdt_and_tss(struct GDT_Pointer *ptr);
 
-struct TSS			tss;
-struct GDT			gdt;
-struct GDT_Pointer	gdt_pointer;
+static struct TSS			tss;
+static struct GDT			gdt;
+static struct GDT_Pointer	gdt_pointer;
 
 // set the arguments for a given segment
 void create_descriptors(void)
