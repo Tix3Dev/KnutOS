@@ -65,7 +65,7 @@ struct GDT
   struct GDT_Descriptor tss_high;
 } __attribute__((packed)); // for no special compiler optimization
 
-// used for loading the GDT into memory
+// used to load the GDT into the gdtr register
 struct GDT_Pointer
 {
 	uint16_t base;
