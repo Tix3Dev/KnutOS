@@ -21,7 +21,6 @@
 #include <stdint.h>
 
 #include <interrupts/gdt.h>
-#include <libk/debug/debug.h>
 
 extern void _load_gdt_and_tss(struct GDT_Pointer *ptr);
 
@@ -131,8 +130,8 @@ void gdt_init(void)
 	gdt.tss_high.limit_15_0		= (tss_base >> 32)	& 0xffff;
 	gdt.tss_high.base_15_0		= (tss_base >> 48)	& 0xffff;
 
-	gdt_pointer.base	= sizeof(gdt) - 1;
-	gdt_pointer.limit	= (uint64_t)&gdt;
+	gdt_pointer.limit	= sizeof(gdt) - 1;
+	gdt_pointer.base	= (uint64_t)&gdt;
 
 	_load_gdt_and_tss(&gdt_pointer);
 }

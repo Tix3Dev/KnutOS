@@ -68,8 +68,8 @@ struct GDT
 // used to load the GDT into the gdtr register
 struct GDT_Pointer
 {
-	uint16_t base;
-	uint64_t limit;
+	uint16_t limit;
+	uint64_t base;
 } __attribute__((packed)); // for no special compiler optimization
 
 void gdt_init(void);
