@@ -18,6 +18,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#include <devices/serial/serial.h>
+
 void debug(char *fmt, ...);
 
 #endif

@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 #include <boot/stivale2.h>
-#include <devices/framebuffer/framebuffer.h>
+#include <libk/stdio/stdio.h>
 #include <libk/kprintf/kprintf.h>
 
 const char printk_buffer[512];

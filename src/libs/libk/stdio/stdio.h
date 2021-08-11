@@ -18,6 +18,8 @@
 #ifndef PRINTK_H
 #define PRINTK_H
 
+#include <devices/framebuffer/framebuffer.h>
+
 void printk(uint32_t foreground_color, char *fmt, ...);
 
 #endif
