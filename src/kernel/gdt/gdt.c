@@ -20,9 +20,9 @@
 
 #include <stdint.h>
 
-#include <interrupts/gdt.h>
+#include <gdt/gdt.h>
 
-extern void _load_gdt_and_tss(struct GDT_Pointer *ptr);
+extern void _load_gdt_and_tss_asm(struct GDT_Pointer *ptr);
 
 static struct TSS			tss;
 static struct GDT			gdt;
@@ -133,5 +133,5 @@ void gdt_init(void)
 	gdt_pointer.limit	= sizeof(gdt) - 1;
 	gdt_pointer.base	= (uint64_t)&gdt;
 
-	_load_gdt_and_tss(&gdt_pointer);
+	_load_gdt_and_tss_asm(&gdt_pointer);
 }

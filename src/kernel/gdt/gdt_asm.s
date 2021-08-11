@@ -13,11 +13,11 @@
 ;	You should have received a copy of the GNU General Public License
 ;	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-global _load_gdt_and_tss
+global _load_gdt_and_tss_asm
 
-_load_gdt_and_tss:
+_load_gdt_and_tss_asm:
 	lgdt	[rdi]			; load GDT -> rdi is the first argument passed
-							; _load_gdt_and_tss(struct GDT_Pointer *ptr)
+							; _load_gdt_and_tss_asm(struct GDT_Pointer *ptr)
 	
 	mov		ax, 0x40		; 0x40 is the TSS segment 
 	ltr		ax				; load TSS
