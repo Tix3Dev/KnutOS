@@ -33,3 +33,9 @@ uint8_t io_inb(uint16_t port)
 
 	return ret;
 }
+
+// another I/0 cycle on an unused, CPU-speed independent port
+void io_wait(void)
+{
+	io_inb(0x80);
+}
