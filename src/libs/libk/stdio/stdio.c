@@ -22,7 +22,7 @@
 #include <libk/stdio/stdio.h>
 #include <libk/kprintf/kprintf.h>
 
-const char printk_buffer[512];
+const char printk_buffer[5120]; // big buffer so that big_logo from logo.h fits
 
 // variadic function for format specifiers to print to the framebuffer
 void printk(uint32_t foreground_color, char *fmt, ...)

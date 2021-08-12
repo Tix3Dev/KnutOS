@@ -38,12 +38,10 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	serial_set_color(TERM_BLUE);
 	debug("Welcome to:\n");
 	debug("%s", small_logo_text);
-	// debug("%s", big_logo2);
 	serial_set_color(TERM_COLOR_RESET);
 
 	printk(GFX_BLUE, "\nWelcome to:\n");
-	// printk(GFX_BLUE, "%s", big_logo1);
-	// printk(GFX_BLUE, "%s", big_logo2);
+	printk(GFX_BLUE, "%s", big_logo);
 
 	// printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
 	printk(GFX_RED,		"█color█ ");
@@ -53,6 +51,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	printk(GFX_PURPLE,	"█color█ ");
 	printk(GFX_CYAN,	"█color█ ");
 	printk(GFX_WHITE,	"█color█\n");
+
+	asm ("int $0x0");
 
 	for (;;)
 		asm ("hlt");
