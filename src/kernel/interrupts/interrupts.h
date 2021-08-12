@@ -36,7 +36,7 @@ struct CPU_State
     uint64_t rbx;
     uint64_t rax;
 
-    uint64_t interrupt_number;
+    uint64_t isr_number;
     uint64_t error;
 
     uint64_t rip;

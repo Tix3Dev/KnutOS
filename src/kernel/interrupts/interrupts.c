@@ -20,6 +20,7 @@
 #include <boot/stivale2.h>
 #include <interrupts/interrupts.h>
 #include <libk/debug/debug.h>
+#include <libk/io/io.h>
 #include <libk/stdio/stdio.h>
 
 static const char *exceptions[] =
@@ -58,27 +59,92 @@ static const char *exceptions[] =
 	"— : Intel reserved. Do not use."
 };
 
+static const char *isa_irq_descriptions[] =
+{
+	"Programmable Interrupt Timer Interrupt",
+	"Keyboard Interrupt",
+	"Cascade (used internally by the two PICs. never raised)",
+	"COM2 (if enabled)",
+	"COM1 (if enabled)",
+	"LPT2 (if enabled)",
+	"Floppy Disk",
+	"LPT1 / Unreliable \"spurious\" interrupt (usually)",
+	"CMOS real-time clock (if enabled)",
+	"Free for peripherals / legacy SCSI / NIC",
+	"Free for peripherals / SCSI / NIC",
+	"Free for peripherals / SCSI / NIC",
+	"PS2 Mouse",
+	"FPU / Coprocessor / Inter-processor",
+	"Primary ATA Hard Disk",
+	"Secondary ATA Hard Disk"
+};
+
 void isr_handler(struct CPU_State *cpu)
 {
-	if (cpu->interrupt_number < 32)
+	// handle exceptions
+	if (cpu->isr_number <= 31)
 	{
 		serial_set_color(TERM_RED);
 		debug("\n────────────────────────\n");
 		debug("⚠ EXCEPTION OCCURRED! ⚠\n\n");
-		debug("⤷ No. %d: %s\n", cpu->interrupt_number, exceptions[cpu->interrupt_number]);
+		debug("⤷ ISR-No. %d: %s\n\n\n", cpu->isr_number, exceptions[cpu->isr_number]);
+		debug("ℹ Register dump:\n\n");
+		debug("⤷ rax: 0x%.8x, rbx:    0x%.8x, rcx: 0x%.8x, rdx: 0x%.8x\n"
+		      "⤷ rsi: 0x%.8x, rdi:    0x%.8x, rbp: 0x%.8x, r8 : 0x%.8x\n"
+			  "⤷ r9 : 0x%.8x, r10:    0x%.8x, r11: 0x%.8x, r12: 0x%.8x\n"
+			  "⤷ r13: 0x%.8x, r14:    0x%.8x, r15: 0x%.8x, ss : 0x%.8x\n"
+			  "⤷ rsp: 0x%.8x, rflags: 0x%.8x, cs : 0x%.8x, rip: 0x%.8x\n",
+		      cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
+		      cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
+		      cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
+		      cpu->r13, cpu->r14,    cpu->r15, cpu->ss,
+		      cpu->rsp, cpu->rflags, cpu->cs,  cpu->rip);
+
 		serial_set_color(TERM_COLOR_RESET);
 
 		framebuffer_reset_screen();
-		printk(GFX_RED, "\n────────────────────────\n");
-		printk(GFX_RED, "⚠ EXCEPTION OCCURRED! ⚠\n\n");
-		printk(GFX_RED, "⤷ No. %d: %s\n", cpu->interrupt_number, exceptions[cpu->interrupt_number]);
+		printk(GFX_RED, 	"\n────────────────────────\n");
+		printk(GFX_RED, 	"⚠ EXCEPTION OCCURRED! ⚠\n\n");
+		printk(GFX_RED, 	"⤷ ISR-No. %d: %s\n\n\n", cpu->isr_number, exceptions[cpu->isr_number]);
+		printk(GFX_CYAN,	"ℹ Register dump:\n\n");
+		printk(GFX_CYAN,	"⤷ rax: 0x%.8x, rbx:    0x%.8x, rcx: 0x%.8x, rdx: 0x%.8x\n"
+						    "⤷ rsi: 0x%.8x, rdi:    0x%.8x, rbp: 0x%.8x, r8 : 0x%.8x\n"
+						    "⤷ r9 : 0x%.8x, r10:    0x%.8x, r11: 0x%.8x, r12: 0x%.8x\n"
+						    "⤷ r13: 0x%.8x, r14:    0x%.8x, r15: 0x%.8x, ss : 0x%.8x\n"
+						    "⤷ rsp: 0x%.8x, rflags: 0x%.8x, cs : 0x%.8x, rip: 0x%.8x\n",
+						    cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
+						    cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
+						    cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
+						    cpu->r13, cpu->r14,    cpu->r15, cpu->ss,
+						    cpu->rsp, cpu->rflags, cpu->cs,  cpu->rip);
 
+		// clear interrupts and halt forever
 		while (1)
 			asm volatile("cli; hlt");
 	}
-	else
+	// handle IRQ's / hardware interrupts
+	else if (cpu->isr_number >= 32 && cpu->isr_number <= 47)
 	{
-		// handle IRQ
-	}
+		serial_set_color(TERM_RED);
+		debug("\n────────────────────────\n");
+		debug("⚠ IRQ OCCURRED! ⚠\n\n");
+		debug("⤷ ISR-No. %d: %s\n\n\n", cpu->isr_number, isa_irq_descriptions[cpu->isr_number-32]);
+		debug("ℹ Register dump:\n\n");
+		debug("⤷ rax: 0x%.8x, rbx:    0x%.8x, rcx: 0x%.8x, rdx: 0x%.8x\n"
+		      "⤷ rsi: 0x%.8x, rdi:    0x%.8x, rbp: 0x%.8x, r8 : 0x%.8x\n"
+			  "⤷ r9 : 0x%.8x, r10:    0x%.8x, r11: 0x%.8x, r12: 0x%.8x\n"
+			  "⤷ r13: 0x%.8x, r14:    0x%.8x, r15: 0x%.8x, ss : 0x%.8x\n"
+			  "⤷ rsp: 0x%.8x, rflags: 0x%.8x, cs : 0x%.8x, rip: 0x%.8x\n",
+		      cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
+		      cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
+		      cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
+		      cpu->r13, cpu->r14,    cpu->r15, cpu->ss,
+		      cpu->rsp, cpu->rflags, cpu->cs,  cpu->rip);
 
+		serial_set_color(TERM_COLOR_RESET);
+
+		// signal end of interrupt (EOI)
+		io_outb(0xA0, 0x20);
+		io_outb(0x20, 0x20);
+	}
 }
