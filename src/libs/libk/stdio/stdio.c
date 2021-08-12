@@ -27,11 +27,11 @@ const char printk_buffer[512];
 // variadic function for format specifiers to print to the framebuffer
 void printk(uint32_t foreground_color, char *fmt, ...)
 {
-	va_list ap;
-	va_start(ap, fmt);
-	vsnprintf((char*)&printk_buffer, -1, fmt, ap);
+	va_list ptr;
+	va_start(ptr, fmt);
+	vsnprintf((char *)&printk_buffer, -1, fmt, ptr);
 
-	framebuffer_print_string((char*)printk_buffer, foreground_color);
+	framebuffer_print_string((char *)printk_buffer, foreground_color);
 
-	va_end(ap);
+	va_end(ptr);
 }
