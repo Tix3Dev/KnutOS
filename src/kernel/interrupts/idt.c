@@ -94,12 +94,12 @@ void idt_init(void)
  	create_descriptor(28, 0x8E);
  	create_descriptor(29, 0x8E);
  	create_descriptor(30, 0x8E);
- 	create_descriptor(31, 0x8E);
+	create_descriptor(31, 0x8E);
 
 	// remap the PIC
 	PIC_remap();
 	
-	// create 16 descriptoor IRQ (the 16 standard ISA IRQs)
+	// create 16 descriptors IRQ (the 16 standard ISA IRQs)
 	create_descriptor(32, 0x8E);
     create_descriptor(33, 0x8E);
     create_descriptor(34, 0x8E);
