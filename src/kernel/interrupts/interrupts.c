@@ -45,7 +45,7 @@ static const char *exceptions[] =
 	"#MC: Machine Check",
 	"#XM: SIMD Floating-Point Exception",
 	"#VE: Virtualization Exception",
-	"#CP Control Protection Exception",
+	"#CP: Control Protection Exception",
 	"— : Intel reserved. Do not use.",
 	"— : Intel reserved. Do not use.",
 	"— : Intel reserved. Do not use.",
