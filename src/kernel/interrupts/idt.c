@@ -17,6 +17,7 @@
 
 #include <stdint.h>
 
+#include <devices/pic/pic.h>
 #include <interrupts/idt.h>
 #include <libk/io/io.h>
 
@@ -38,25 +39,6 @@ void create_descriptor(uint8_t index, uint8_t type_and_attributes)
 	idt[index].offset_31_16			= (offset >> 16) & 0xFFFF;
 	idt[index].offset_63_32			= (offset >> 32) & 0xFFFFFFFF;
 	idt[index].zero					= 0;
-}
-
-// remap the programmable interrupt controller
-void PIC_remap(void)
-{
-	io_outb(0x20, 0x11);
-	io_outb(0xA0, 0x11);
-	io_wait();
-	io_outb(0x21, 0x20);
-	io_outb(0xA1, 0x28);
-	io_wait();
-	io_outb(0x21, 0x04);
-	io_outb(0xA1, 0x02);
-	io_wait();
-	io_outb(0x21, 0x01);
-	io_outb(0xA1, 0x01);
-	io_wait();
-	io_outb(0x21, 0x00);
-	io_outb(0xA1, 0x00);
 }
 
 // create descriptors, remap the PIC and load IDT
@@ -97,7 +79,7 @@ void idt_init(void)
 	create_descriptor(31, 0x8E);
 
 	// remap the PIC
-	PIC_remap();
+	pic_remap();
 
 	// create 16 descriptors IRQ (the 16 standard ISA IRQs)
 	create_descriptor(32, 0x8E);
