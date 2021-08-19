@@ -55,13 +55,16 @@ void pic_set_mask(uint8_t irq_line)
 {
 	uint16_t port;
 	uint8_t value;
- 
-	if(irq_line < 8) {
+
+	if (irq_line < 8)
 		port = PIC1_DATA;
-	} else {
+
+	else
+	{
 		port = PIC2_DATA;
 		irq_line -= 8;
 	}
+
 	value = io_inb(port) | (1 << irq_line);
 	io_outb(port, value);
 }
@@ -72,14 +75,17 @@ void pic_clear_mask(uint8_t irq_line)
 	uint16_t port;
 	uint8_t value;
 
-	if(irq_line < 8) {
+	if (irq_line < 8)
 		port = PIC1_DATA;
-	} else {
+
+	else
+	{
 		port = PIC2_DATA;
 		irq_line -= 8;
 	}
+
 	value = io_inb(port) & ~(1 << irq_line);
-	io_outb(port, value); 
+	io_outb(port, value);
 }
 
 // signal an end of interrupt

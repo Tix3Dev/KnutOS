@@ -62,6 +62,7 @@ static const char *exceptions[] =
 uint64_t isr_handler(uint64_t rsp)
 {
 	struct CPU_State *cpu = (struct CPU_State *)rsp;
+
 	// handle exceptions
 	if (cpu->isr_number <= 31)
 	{
@@ -73,15 +74,15 @@ uint64_t isr_handler(uint64_t rsp)
 		serial_set_color(TERM_CYAN);
 		debug("ℹ Register dump:\n\n");
 		debug("⤷ rax: 0x%.16llx, rbx:    0x%.16llx, rcx: 0x%.16llx, rdx: 0x%.16llx\n"
-		      "⤷ rsi: 0x%.16llx, rdi:    0x%.16llx, rbp: 0x%.16llx, r8 : 0x%.16llx\n"
+			  "⤷ rsi: 0x%.16llx, rdi:    0x%.16llx, rbp: 0x%.16llx, r8 : 0x%.16llx\n"
 			  "⤷ r9 : 0x%.16llx, r10:    0x%.16llx, r11: 0x%.16llx, r12: 0x%.16llx\n"
 			  "⤷ r13: 0x%.16llx, r14:    0x%.16llx, r15: 0x%.16llx, ss : 0x%.16llx\n"
 			  "⤷ rsp: 0x%.16llx, rflags: 0x%.16llx, cs : 0x%.16llx, rip: 0x%.16llx\n",
-		      cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
-		      cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
-		      cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
-		      cpu->r13, cpu->r14,    cpu->r15, cpu->ss,
-		      cpu->rsp, cpu->rflags, cpu->cs,  cpu->rip);
+			  cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
+			  cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
+			  cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
+			  cpu->r13, cpu->r14,    cpu->r15, cpu->ss,
+			  cpu->rsp, cpu->rflags, cpu->cs,  cpu->rip);
 
 		serial_set_color(TERM_COLOR_RESET);
 
@@ -92,15 +93,15 @@ uint64_t isr_handler(uint64_t rsp)
 		printk(GFX_RED, 	"⤷ Error code: 0x%.16llx\n\n\n", cpu->error_code);
 		printk(GFX_CYAN,	"ℹ Register dump:\n\n");
 		printk(GFX_CYAN,	"⤷ rax: 0x%.16llx, rbx:    0x%.16llx, rcx: 0x%.16llx, rdx: 0x%.16llx\n"
-						    "⤷ rsi: 0x%.16llx, rdi:    0x%.16llx, rbp: 0x%.16llx, r8 : 0x%.16llx\n"
-						    "⤷ r9 : 0x%.16llx, r10:    0x%.16llx, r11: 0x%.16llx, r12: 0x%.16llx\n"
-						    "⤷ r13: 0x%.16llx, r14:    0x%.16llx, r15: 0x%.16llx, ss : 0x%.16llx\n"
-						    "⤷ rsp: 0x%.16llx, rflags: 0x%.16llx, cs : 0x%.16llx, rip: 0x%.16llx\n",
-						    cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
-						    cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
-						    cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
-						    cpu->r13, cpu->r14,    cpu->r15, cpu->ss,
-						    cpu->rsp, cpu->rflags, cpu->cs,  cpu->rip);
+			   "⤷ rsi: 0x%.16llx, rdi:    0x%.16llx, rbp: 0x%.16llx, r8 : 0x%.16llx\n"
+			   "⤷ r9 : 0x%.16llx, r10:    0x%.16llx, r11: 0x%.16llx, r12: 0x%.16llx\n"
+			   "⤷ r13: 0x%.16llx, r14:    0x%.16llx, r15: 0x%.16llx, ss : 0x%.16llx\n"
+			   "⤷ rsp: 0x%.16llx, rflags: 0x%.16llx, cs : 0x%.16llx, rip: 0x%.16llx\n",
+			   cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
+			   cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
+			   cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
+			   cpu->r13, cpu->r14,    cpu->r15, cpu->ss,
+			   cpu->rsp, cpu->rflags, cpu->cs,  cpu->rip);
 
 		// clear interrupts and halt forever
 		while (1)
