@@ -22,7 +22,7 @@ CC	= $(ARCH)-gcc
 AS	= @nasm
 LD	= $(ARCH)-ld
 
-CC_FLAGS	= -Wall -Wextra -O2 -pipe
+CC_FLAGS	= -Wall -Wextra -O2 -pipe -ggdb
 AS_FLAGS	= -felf64
 LD_FLAGS	=
 
