@@ -20,14 +20,10 @@
 
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
-#include <devices/framebuffer/framebuffer.h>
-#include <devices/pit/pit.h>
-#include <devices/serial/serial.h>
 #include <gdt/gdt.h>
 #include <interrupts/idt.h>
 #include <logo.h>
 #include <libk/debug/debug.h>
-#include <libk/io/io.h>
 #include <libk/stdio/stdio.h>
 
 void kmain(struct stivale2_struct *stivale2_struct)
@@ -36,18 +32,14 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	idt_init();
 	serial_init();
 	framebuffer_init(stivale2_struct, GFX_BLACK);
-	pit_init(1000);
-
 
 	serial_set_color(TERM_BLUE);
+
 	debug("Welcome to:\n");
 	debug("%s", small_logo_text);
 	serial_set_color(TERM_COLOR_RESET);
 
 	printk(GFX_BLUE, "\nWelcome to:\n");
-
-	pit_wait_ms(5000);
-
 	printk(GFX_BLUE, "%s", big_logo);
 
 	// printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
@@ -58,8 +50,6 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	printk(GFX_PURPLE,	"█color█ ");
 	printk(GFX_CYAN,	"█color█ ");
 	printk(GFX_WHITE,	"█color█\n");
-
-	// asm ("int $0x0");
 
 	for (;;)
 		asm ("hlt");

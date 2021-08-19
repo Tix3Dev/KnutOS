@@ -59,21 +59,24 @@ static const char *exceptions[] =
 	"— : Intel reserved. Do not use."
 };
 
-void isr_handler(struct CPU_State *cpu)
+uint64_t isr_handler(uint64_t rsp)
 {
+	struct CPU_State *cpu = (struct CPU_State *)rsp;
 	// handle exceptions
 	if (cpu->isr_number <= 31)
 	{
 		serial_set_color(TERM_RED);
 		debug("\n────────────────────────\n");
 		debug("⚠ EXCEPTION OCCURRED! ⚠\n\n");
-		debug("⤷ ISR-No. %d: %s\n\n\n", cpu->isr_number, exceptions[cpu->isr_number]);
+		debug("⤷ ISR-No. %d: %s\n", cpu->isr_number, exceptions[cpu->isr_number]);
+		debug("⤷ Error code: 0x%.16llx\n\n\n", cpu->error_code);
+		serial_set_color(TERM_CYAN);
 		debug("ℹ Register dump:\n\n");
-		debug("⤷ rax: 0x%.8x, rbx:    0x%.8x, rcx: 0x%.8x, rdx: 0x%.8x\n"
-		      "⤷ rsi: 0x%.8x, rdi:    0x%.8x, rbp: 0x%.8x, r8 : 0x%.8x\n"
-			  "⤷ r9 : 0x%.8x, r10:    0x%.8x, r11: 0x%.8x, r12: 0x%.8x\n"
-			  "⤷ r13: 0x%.8x, r14:    0x%.8x, r15: 0x%.8x, ss : 0x%.8x\n"
-			  "⤷ rsp: 0x%.8x, rflags: 0x%.8x, cs : 0x%.8x, rip: 0x%.8x\n",
+		debug("⤷ rax: 0x%.16llx, rbx:    0x%.16llx, rcx: 0x%.16llx, rdx: 0x%.16llx\n"
+		      "⤷ rsi: 0x%.16llx, rdi:    0x%.16llx, rbp: 0x%.16llx, r8 : 0x%.16llx\n"
+			  "⤷ r9 : 0x%.16llx, r10:    0x%.16llx, r11: 0x%.16llx, r12: 0x%.16llx\n"
+			  "⤷ r13: 0x%.16llx, r14:    0x%.16llx, r15: 0x%.16llx, ss : 0x%.16llx\n"
+			  "⤷ rsp: 0x%.16llx, rflags: 0x%.16llx, cs : 0x%.16llx, rip: 0x%.16llx\n",
 		      cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
 		      cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
 		      cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
@@ -85,13 +88,14 @@ void isr_handler(struct CPU_State *cpu)
 		framebuffer_reset_screen();
 		printk(GFX_RED, 	"\n────────────────────────\n");
 		printk(GFX_RED, 	"⚠ EXCEPTION OCCURRED! ⚠\n\n");
-		printk(GFX_RED, 	"⤷ ISR-No. %d: %s\n\n\n", cpu->isr_number, exceptions[cpu->isr_number]);
+		printk(GFX_RED, 	"⤷ ISR-No. %d: %s\n", cpu->isr_number, exceptions[cpu->isr_number]);
+		printk(GFX_RED, 	"⤷ Error code: 0x%.16llx\n\n\n", cpu->error_code);
 		printk(GFX_CYAN,	"ℹ Register dump:\n\n");
-		printk(GFX_CYAN,	"⤷ rax: 0x%.8x, rbx:    0x%.8x, rcx: 0x%.8x, rdx: 0x%.8x\n"
-						    "⤷ rsi: 0x%.8x, rdi:    0x%.8x, rbp: 0x%.8x, r8 : 0x%.8x\n"
-						    "⤷ r9 : 0x%.8x, r10:    0x%.8x, r11: 0x%.8x, r12: 0x%.8x\n"
-						    "⤷ r13: 0x%.8x, r14:    0x%.8x, r15: 0x%.8x, ss : 0x%.8x\n"
-						    "⤷ rsp: 0x%.8x, rflags: 0x%.8x, cs : 0x%.8x, rip: 0x%.8x\n",
+		printk(GFX_CYAN,	"⤷ rax: 0x%.16llx, rbx:    0x%.16llx, rcx: 0x%.16llx, rdx: 0x%.16llx\n"
+						    "⤷ rsi: 0x%.16llx, rdi:    0x%.16llx, rbp: 0x%.16llx, r8 : 0x%.16llx\n"
+						    "⤷ r9 : 0x%.16llx, r10:    0x%.16llx, r11: 0x%.16llx, r12: 0x%.16llx\n"
+						    "⤷ r13: 0x%.16llx, r14:    0x%.16llx, r15: 0x%.16llx, ss : 0x%.16llx\n"
+						    "⤷ rsp: 0x%.16llx, rflags: 0x%.16llx, cs : 0x%.16llx, rip: 0x%.16llx\n",
 						    cpu->rax, cpu->rbx,    cpu->rcx, cpu->rdx,
 						    cpu->rsi, cpu->rdi,    cpu->rbp, cpu->r8,
 						    cpu->r9,  cpu->r10,    cpu->r11, cpu->r12,
@@ -105,11 +109,11 @@ void isr_handler(struct CPU_State *cpu)
 	// handle IRQ's / hardware interrupts
 	else if (cpu->isr_number >= 32 && cpu->isr_number <= 47)
 	{
-		if (cpu->isr_number == 32)
-		{
-			debug("timer IRQ occurred");
-		}
+		// check for specific ISR number
+		// call handler for it
 
 		pic_signal_EOI(cpu->isr_number);
 	}
+
+	return rsp;
 }
