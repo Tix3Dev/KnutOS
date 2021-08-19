@@ -4,6 +4,8 @@ When contributing to KnutOS, it is important that the changes you wish to make a
 
 For your first pull request, start with something small to get familiar with the project and its development processes.
 
+**NOTE: I would be very glad if someone could help me get the PIT to work :)**
+
 ## Coding style
 
 It is also important that the coding style is the same across the whole project. Because of that, we make use of the syntax formatting tool [Artistic Style](http://astyle.sourceforge.net/).
