@@ -10,6 +10,17 @@
 
 <img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS.png"> </a>
 
+## Features
+
+- Limine bootloader
+- Stivale2 boot protocol
+- GDT
+- TSS
+- IDT & ISR's
+- Serial communication
+- Basic framebuffer
+- Basic kernel libraries
+
 ## Dependencies
 
 **NOTE: Depending on your Linux Distribution the package names might be different (supposing you are using Linux)**
