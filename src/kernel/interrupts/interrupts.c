@@ -19,6 +19,7 @@
 
 #include <boot/stivale2.h>
 #include <devices/pic/pic.h>
+#include <devices/ps2/keyboard/keyboard.h>
 #include <interrupts/interrupts.h>
 #include <libk/debug/debug.h>
 #include <libk/stdio/stdio.h>
@@ -110,8 +111,9 @@ uint64_t isr_handler(uint64_t rsp)
 	// handle IRQ's / hardware interrupts
 	else if (cpu->isr_number >= 32 && cpu->isr_number <= 47)
 	{
-		// check for specific ISR number
-		// call handler for it
+		// keyboard IRQ check -> call handler
+		if (cpu->isr_number == 33)
+			keyboard_irq_handler();
 
 		pic_signal_EOI(cpu->isr_number);
 	}

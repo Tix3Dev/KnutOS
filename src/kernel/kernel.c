@@ -20,8 +20,10 @@
 
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
+#include <devices/ps2/keyboard/keyboard.h>
 #include <gdt/gdt.h>
 #include <interrupts/idt.h>
+#include <shell/shell_screen.h>
 #include <logo.h>
 #include <libk/debug/debug.h>
 #include <libk/stdio/stdio.h>
@@ -32,6 +34,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	idt_init();
 	serial_init();
 	framebuffer_init(stivale2_struct, GFX_BLACK);
+	keyboard_init();								// NOTE: is_keyboard_active is still false so no processing
 
 	serial_set_color(TERM_BLUE);
 
@@ -50,6 +53,12 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	printk(GFX_PURPLE,	"█color█ ");
 	printk(GFX_CYAN,	"█color█ ");
 	printk(GFX_WHITE,	"█color█\n");
+
+	// TODO: proper timer
+	for (long i = 0; i < 5500000000; i++)	// ~10 seconds
+		asm ("nop");
+
+	shell_screen_init();
 
 	for (;;)
 		asm ("hlt");

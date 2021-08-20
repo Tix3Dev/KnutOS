@@ -99,6 +99,9 @@ void idt_init(void)
 	create_descriptor(46, 0x8E);
 	create_descriptor(47, 0x8E);
 
+	// mask keyboard IRQ
+	pic_set_mask(1);
+
 	// load IDT into idtr register
 	idt_pointer.limit	= sizeof(idt) - 1;
 	idt_pointer.base	= (uint64_t)&idt;
