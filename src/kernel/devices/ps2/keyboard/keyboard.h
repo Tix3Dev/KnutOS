@@ -24,6 +24,7 @@
 void keyboard_init(void);
 void keyboard_send_command(uint8_t command_byte);
 void keyboard_irq_handler(void);
+uint8_t scancode_to_keycode(uint8_t scancode_set, uint16_t scancode);
 void activate_keyboard_processing(void);
 void disable_keyboard_processing(void);
 
