@@ -15,8 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// The keyboard IRQ handler function (+ scancode to keycode) is partially copied from this tutorial:
-// https://lowlevel.eu/wiki/Keyboard_Controller
+// The standard_keycodes array + the KEY enum is from this tutorial:
+// http://www.brokenthorn.com/Resources/OSDev19.html
 
 #include <stdint.h>
 
@@ -29,39 +29,101 @@
 
 static uint8_t is_keyboard_active = 0;	// boolean whether keyboard IRQ should get processed
 
-static uint8_t standard_keycodes[128] =
+static uint32_t standard_keycodes[] =
 {
-	0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
-	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-	20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-	30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-	40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-	50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-	60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
-	70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-	80, 81, 82, 84, 00, 00, 86, 87, 88, 00,
-	00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-	00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-	00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-	00, 00, 00, 00, 00, 00, 00, 00
+//	key					scancode
+	KEY_UNKNOWN,		//0x0
+	KEY_ESCAPE,			//0x1
+	KEY_1,				//0x2
+	KEY_2,				//0x3
+	KEY_3,				//0x4
+	KEY_4,				//0x5
+	KEY_5,				//0x6
+	KEY_6,				//0x7
+	KEY_7,				//0x8
+	KEY_8,				//0x9
+	KEY_9,				//0xa
+	KEY_0,				//0xb
+	KEY_MINUS,			//0xc
+	KEY_EQUAL,			//0xd
+	KEY_BACKSPACE,		//0xe
+	KEY_TAB,			//0xf
+	KEY_Q,				//0x10
+	KEY_W,				//0x11
+	KEY_E,				//0x12
+	KEY_R,				//0x13
+	KEY_T,				//0x14
+	KEY_Y,				//0x15
+	KEY_U,				//0x16
+	KEY_I,				//0x17
+	KEY_O,				//0x18
+	KEY_P,				//0x19
+	KEY_LEFTBRACKET,	//0x1a
+	KEY_RIGHTBRACKET,	//0x1b
+	KEY_RETURN,			//0x1c
+	KEY_LCTRL,			//0x1d
+	KEY_A,				//0x1e
+	KEY_S,				//0x1f
+	KEY_D,				//0x20
+	KEY_F,				//0x21
+	KEY_G,				//0x22
+	KEY_H,				//0x23
+	KEY_J,				//0x24
+	KEY_K,				//0x25
+	KEY_L,				//0x26
+	KEY_SEMICOLON,		//0x27
+	KEY_QUOTE,			//0x28
+	KEY_GRAVE,			//0x29
+	KEY_LSHIFT,			//0x2a
+	KEY_BACKSLASH,		//0x2b
+	KEY_Z,				//0x2c
+	KEY_X,				//0x2d
+	KEY_C,				//0x2e
+	KEY_V,				//0x2f
+	KEY_B,				//0x30
+	KEY_N,				//0x31
+	KEY_M,				//0x32
+	KEY_COMMA,			//0x33
+	KEY_DOT,			//0x34
+	KEY_SLASH,			//0x35
+	KEY_RSHIFT,			//0x36
+	KEY_KP_ASTERISK,	//0x37
+	KEY_RALT,			//0x38
+	KEY_SPACE,			//0x39
+	KEY_CAPSLOCK,		//0x3a
+	KEY_F1,				//0x3b
+	KEY_F2,				//0x3c
+	KEY_F3,				//0x3d
+	KEY_F4,				//0x3e
+	KEY_F5,				//0x3f
+	KEY_F6,				//0x40
+	KEY_F7,				//0x41
+	KEY_F8,				//0x42
+	KEY_F9,				//0x43
+	KEY_F10,			//0x44
+	KEY_KP_NUMLOCK,		//0x45
+	KEY_SCROLLLOCK,		//0x46
+	KEY_HOME,			//0x47
+	KEY_KP_8,			//0x48
+	KEY_PAGEUP,			//0x49
+	KEY_KP_2,			//0x50
+	KEY_KP_3,			//0x51
+	KEY_KP_0,			//0x52
+	KEY_KP_DECIMAL,		//0x53
+	KEY_UNKNOWN,		//0x54
+	KEY_UNKNOWN,		//0x55
+	KEY_UNKNOWN,		//0x56
+	KEY_F11,			//0x57
+	KEY_F12				//0x58
 };
 
-static uint8_t e0_keycodes[128] =
-{
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00,  96,  97,
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  99,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00, 102, 103, 104,  00, 105,  00, 106,  00, 107,
-	108, 109, 110, 111,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00,  00,  00,
-	00,  00,  00,  00,  00,  00,  00,  00
-};
+static uint8_t ctrl			= 0;
+static uint8_t alt			= 0;
+static uint8_t shift		= 0;
+
+static uint8_t capslock		= 0;
+static uint8_t numlock		= 0;
+static uint8_t scrolllock	= 0;
 
 // initialize the keyboard
 void keyboard_init(void)
@@ -88,88 +150,53 @@ void keyboard_send_command(uint8_t command_byte)
 // gets called whenever a keyboard IRQ occurrs
 void keyboard_irq_handler(void)
 {
-	// this positioning is important
-	// because one has to read from the keyboard controller
-	// before returning in case of not continuing
+	// read from keyboard controller so that in any case it will be able to send more IRQs
 	uint8_t scancode = io_inb(KB_CONTROLLER_DATA);
 
 	// check if keyboard IRQ should get processed
 	if (!is_keyboard_active)
 		return;
 
-	uint8_t		keycode		= 0;
-	uint32_t	break_code	= 0;
-
-	static uint32_t	e0_code			= 0;
-	static uint32_t e1_code			= 0;
-	static uint16_t	first_e1_part	= 0;
+	debug("keycode: 0x%x\n", standard_keycodes[scancode]);
 
 	// check for breakcode
-	if ((scancode & 0x80)				&&
-			(e1_code || (scancode != 0xE1))	&&
-			(e0_code || (scancode != 0xE0)))
+	if (scancode & 0x80)
 	{
-		break_code	= 1;
-		scancode	&= ~0x80;
-	}
+		scancode -= 0x80;
 
-	// check if e0 was read
-	if (e0_code)
-	{
-		// check for fake shifts
-		if ((scancode == 0x2A) || (scancode == 0x36))
-		{
-			e0_code = 0;
-			return;
-		}
+		uint32_t key = standard_keycodes[scancode];
 
-		keycode = scancode_to_keycode(1, scancode);
-		e0_code = 0;
+		if (key == KEY_LCTRL || key == KEY_RCTRL)
+			ctrl = 0;
+		else if (key == KEY_LALT || key == KEY_RALT)
+			alt = 0;
+		else if (key == KEY_LSHIFT || key == KEY_RSHIFT)
+			shift = 0;
 	}
-	// check if e1 was read
-	else if (e1_code == 1)
-	{
-		first_e1_part = scancode;
-		e1_code++;
-	}
-	// check if first data byte was read
-	else if (e1_code == 2)
-	{
-		first_e1_part	|= ((uint16_t) scancode << 8);
-		keycode			= scancode_to_keycode(2, first_e1_part);
-		e1_code			= 0;
-	}
-	// check for beginning of a e0 code
-	else if (scancode == 0xE0)
-		e0_code = 1;
-	// check for beginning of a e1 code
-	else if (scancode == 0xE1)
-		e1_code = 1;
-	// else -> normal scancode
 	else
-		keycode = scancode_to_keycode(0, scancode);
+	{
+		uint32_t key = standard_keycodes[scancode];
 
-	printk(GFX_BLUE, "%c", keycode);
-}
+		if (key == KEY_LCTRL || key == KEY_RCTRL)
+			ctrl = 1;
+		else if (key == KEY_LALT || key == KEY_RALT)
+			alt = 1;
+		else if (key == KEY_LSHIFT || key == KEY_RSHIFT)
+			shift = 1;
+		else if (key == KEY_CAPSLOCK)
+			capslock = capslock ? 0 : 1;
+		else if (key == KEY_KP_NUMLOCK)
+			numlock = numlock ? 0 : 1;
+		else if (key == KEY_SCROLLLOCK)
+			scrolllock = scrolllock ? 0 : 1;
+		else if (key == KEY_RETURN)
+			printk(GFX_BLUE, "\n");
+		else if (key <= 0x7F)
+			printk(GFX_BLUE, "%c", keycode_to_ascii(key));
+	}
 
-uint8_t scancode_to_keycode(uint8_t scancode_set, uint16_t scancode)
-{
-	uint8_t keycode = 0;
-
-	// standard scancode set
-	if (scancode_set == 0)
-		keycode = standard_keycodes[scancode];
-	// extended 0 scancode set
-	else if (scancode_set == 1)
-		keycode = e0_keycodes[scancode];
-	// extended 1 scancode set - pause
-	else if (scancode_set == 2 && scancode == 0x451D)
-		keycode = 119;
-	// extended 1 scancode set - rest
-	else if (scancode_set == 2 && scancode != 0x451D)
-		keycode = 0;
-
-	if (keycode == 0)
+	/*
+	if ()
 	{
 		serial_set_color(TERM_RED);
 		debug("\n──────────────────────────────\n");
@@ -177,8 +204,113 @@ uint8_t scancode_to_keycode(uint8_t scancode_set, uint16_t scancode)
 		debug("⤷ Scancode: 0x%x | Set: %d\n", scancode, scancode_set);
 		serial_set_color(TERM_COLOR_RESET);
 	}
+	*/
+}
 
-	return keycode;
+char keycode_to_ascii(KEYCODE_t keycode)
+{
+	uint8_t character = keycode;
+
+	if (shift && capslock)
+	{
+		if (character == '0')
+			character = KEY_RIGHTPARENTHESIS;
+		else if (character == '1')
+			character = KEY_EXCLAMATION;
+		else if (character == '2')
+		 	character = KEY_AT;
+		else if (character == '3')
+		 	character = KEY_HASH;
+		else if (character == '4')
+		 	character = KEY_DOLLAR;
+		else if (character == '5')
+		 	character = KEY_PERCENT;
+		else if (character == '6')
+		 	character = KEY_CARRET;
+		else if (character == '7')
+		 	character = KEY_AMPERSAND;
+		else if (character == '8')
+		 	character = KEY_ASTERISK;
+		else if (character == '9')
+			character = KEY_LEFTPARENTHESIS;
+		else if (character == KEY_COMMA)
+			character = KEY_LESS;
+		else if (character == KEY_DOT)
+			character = KEY_GREATER;
+		else if (character == KEY_SLASH)
+			character = KEY_QUESTION;
+		else if (character == KEY_SEMICOLON)
+			character = KEY_COLON;
+		else if (character == KEY_QUOTE)
+			character = KEY_QUOTEDOUBLE;
+		else if (character == KEY_LEFTBRACKET)
+			character = KEY_LEFTCURL;
+		else if (character == KEY_RIGHTBRACKET)
+			character = KEY_RIGHTCURL;
+		else if (character == KEY_GRAVE)
+			character = KEY_TILDE;
+		else if (character == KEY_MINUS)
+			character = KEY_UNDERSCORE;
+		else if (character == KEY_EQUAL)
+			character = KEY_PLUS;
+		else if (character == KEY_BACKSLASH)
+			character = KEY_BAR;
+	}
+	else if (shift && !capslock)
+	{
+		if (character >= 'a' && character <= 'z')
+			character -= 32;
+		if (character == '0')
+			character = KEY_RIGHTPARENTHESIS;
+		else if (character == '1')
+			character = KEY_EXCLAMATION;
+		else if (character == '2')
+		 	character = KEY_AT;
+		else if (character == '3')
+		 	character = KEY_HASH;
+		else if (character == '4')
+		 	character = KEY_DOLLAR;
+		else if (character == '5')
+		 	character = KEY_PERCENT;
+		else if (character == '6')
+		 	character = KEY_CARRET;
+		else if (character == '7')
+		 	character = KEY_AMPERSAND;
+		else if (character == '8')
+		 	character = KEY_ASTERISK;
+		else if (character == '9')
+			character = KEY_LEFTPARENTHESIS;
+		else if (character == KEY_COMMA)
+			character = KEY_LESS;
+		else if (character == KEY_DOT)
+			character = KEY_GREATER;
+		else if (character == KEY_SLASH)
+			character = KEY_QUESTION;
+		else if (character == KEY_SEMICOLON)
+			character = KEY_COLON;
+		else if (character == KEY_QUOTE)
+			character = KEY_QUOTEDOUBLE;
+		else if (character == KEY_LEFTBRACKET)
+			character = KEY_LEFTCURL;
+		else if (character == KEY_RIGHTBRACKET)
+			character = KEY_RIGHTCURL;
+		else if (character == KEY_GRAVE)
+			character = KEY_TILDE;
+		else if (character == KEY_MINUS)
+			character = KEY_UNDERSCORE;
+		else if (character == KEY_EQUAL)
+			character = KEY_PLUS;
+		else if (character == KEY_BACKSLASH)
+			character = KEY_BAR;
+
+	}
+	else if (!shift && capslock)
+	{
+		if (character >= 'a' && character <= 'z')
+			character -= 32;
+	}
+
+	return character;
 }
 
 void activate_keyboard_processing(void)
