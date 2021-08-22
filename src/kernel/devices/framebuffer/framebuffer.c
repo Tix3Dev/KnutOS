@@ -193,20 +193,16 @@ void framebuffer_print_char(uint32_t unicode, int x, int y, uint32_t foreground_
 	ssfn_dst.x = x;
 	ssfn_dst.y = y;
 
-	if (x + gfx.glyph_width > gfx.fb_width || ssfn_dst.x + gfx.glyph_width > gfx.fb_width)
+	if (ssfn_dst.x + gfx.glyph_width > gfx.fb_width) // here too problematic
 	{
-		x = 0;
-		y += gfx.glyph_height;
-		ssfn_dst.x = x;
-		ssfn_dst.y = y;
+		ssfn_dst.x = 0;
+		ssfn_dst.y += gfx.glyph_height;
 	}
 
-	if (y + gfx.glyph_height > gfx.fb_height || ssfn_dst.y >= gfx.fb_height)
+	if (ssfn_dst.y >= gfx.fb_height) // this is problematic cuz don't do this when backspace
 	{
-		x = 0;
-		y = gfx.fb_height - gfx.glyph_height;
-		ssfn_dst.x = x;
-		ssfn_dst.y = y;
+		ssfn_dst.x = 0;
+		ssfn_dst.y = gfx.fb_height - gfx.glyph_height;
 		framebuffer_move_one_row_up();
 	}
 
@@ -215,6 +211,32 @@ void framebuffer_print_char(uint32_t unicode, int x, int y, uint32_t foreground_
 	{
 		for (int i = 0; i < 4; i++)
 			framebuffer_print_string(" ", foreground_color);
+
+		return;
+	}
+	// if the unicode character is a backspace we check where the cursor is and then
+	// replace the last character with space and put the cursor there
+	if (unicode == '\b')
+	{
+		if (ssfn_dst.x == 0)
+		{
+			if (ssfn_dst.y == 0)
+				return;
+
+			ssfn_dst.x = gfx.fb_width - gfx.glyph_width;
+			ssfn_dst.y -= gfx.glyph_height;
+
+			ssfn_putc(' ');
+
+			ssfn_dst.x -= gfx.glyph_width;
+		}
+		else {
+			ssfn_dst.x -= gfx.glyph_width;
+
+			ssfn_putc(' ');
+
+			ssfn_dst.x -= gfx.glyph_width;
+		}
 
 		return;
 	}
