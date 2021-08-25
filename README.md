@@ -19,6 +19,7 @@
 - IDT & ISR's
 - Serial communication
 - Basic framebuffer
+- Basic keyboard driver with a small shell
 - Basic kernel libraries
 
 ## Dependencies
