@@ -21,18 +21,31 @@
 #include <devices/ps2/keyboard/keyboard.h>
 #include <shell/shell_screen.h>
 #include <libk/stdio/stdio.h>
+#include <libk/ssfn.h>
 
+// create a "new" screen and print a basic shell prompt
+// after that activate keyboard processing and configure it to call
+// shell_print_char
 void shell_screen_init(void)
 {
 	framebuffer_reset_screen();
-	activate_keyboard_processing();
-
-	// loop (new iteration after enter has been pressed)
 	shell_prompt();
+
+	// set barrier at last cursor position (ssfn_dst x/y)
+	activate_keyboard_processing(*shell_print_char, ssfn_dst.x, ssfn_dst.y, ssfn_dst.x+100, ssfn_dst.y+100);
 }
 
+// print basic shell prompt
 void shell_prompt(void)
 {
 	printk(GFX_PURPLE, "┌─ KnutOS\n");
 	printk(GFX_PURPLE, "└→ ");
+}
+
+// get informations about what was being pressed
+// and just print if it is a valid ascii_character
+void shell_print_char(KEY_INFO_t key_info)
+{
+	if (key_info.ascii_character != '\0')
+		printk(GFX_BLUE, "%c", key_info.ascii_character);
 }

@@ -18,6 +18,8 @@
 // The standard_keycodes array + the KEY enum is from this tutorial:
 // http://www.brokenthorn.com/Resources/OSDev19.html
 
+#include <stddef.h>
+
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
@@ -168,12 +170,17 @@ typedef enum {
 	KEY_NUMKEYCODES
 } KEYCODE_t;
 
+typedef struct
+{
+	uint32_t	keycode;
+	char		ascii_character;
+} KEY_INFO_t;
 
 void keyboard_init(void);
 void keyboard_send_command(uint8_t command_byte);
 void keyboard_irq_handler(void);
 char keycode_to_ascii(KEYCODE_t keycode);
-void activate_keyboard_processing(void);
+void activate_keyboard_processing(void *handler, int x_start_pos, int y_start_pos, int x_end_pos, int y_end_pos);
 void disable_keyboard_processing(void);
 
 #endif

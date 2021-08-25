@@ -24,10 +24,17 @@
 #include <devices/pic/pic.h>
 #include <devices/ps2/keyboard/keyboard.h>
 #include <libk/io/io.h>
-#include <libk/debug/debug.h>
-#include <libk/stdio/stdio.h>
+
+// #include <libk/debug/debug.h>
+// #include <libk/stdio/stdio.h>
 
 static uint8_t is_keyboard_active = 0;	// boolean whether keyboard IRQ should get processed
+
+static void		(*final_handler)(KEY_INFO_t);
+static int		final_x_start_pos;
+static int		final_y_start_pos;
+static int		final_x_end_pos;
+static int		final_y_end_pos;
 
 static uint32_t standard_keycodes[] =
 {
@@ -157,7 +164,12 @@ void keyboard_irq_handler(void)
 	if (!is_keyboard_active)
 		return;
 
-	debug("keycode: 0x%x\n", standard_keycodes[scancode]);
+	// debug("keycode: 0x%x\n", standard_keycodes[scancode]);
+
+	KEY_INFO_t key_info;
+
+	key_info.keycode			= KEY_UNKNOWN;
+	key_info.ascii_character	= '\0';
 
 	// check for breakcode
 	if (scancode & 0x80)
@@ -177,6 +189,8 @@ void keyboard_irq_handler(void)
 	{
 		uint32_t key = standard_keycodes[scancode];
 
+		key_info.keycode			= key;
+
 		if (key == KEY_LCTRL || key == KEY_RCTRL)
 			ctrl = 1;
 		else if (key == KEY_LALT || key == KEY_RALT)
@@ -190,10 +204,15 @@ void keyboard_irq_handler(void)
 		else if (key == KEY_SCROLLLOCK)
 			scrolllock = scrolllock ? 0 : 1;
 		else if (key == KEY_RETURN)
-			printk(GFX_BLUE, "\n");
+			key_info.ascii_character = '\n';
+			// printk(GFX_BLUE, "\n");
 		else if (key <= 0x7F)
-			printk(GFX_BLUE, "%c", keycode_to_ascii(key));
+			key_info.ascii_character = keycode_to_ascii(key);
+			// printk(GFX_BLUE, "%c", keycode_to_ascii(key));
+		
 	}
+
+	final_handler(key_info);
 
 	/*
 	if ()
@@ -207,6 +226,7 @@ void keyboard_irq_handler(void)
 	*/
 }
 
+// type change and conversion for upper- or lowercase if shift or capslock is pressed
 char keycode_to_ascii(KEYCODE_t keycode)
 {
 	uint8_t character = keycode;
@@ -313,11 +333,25 @@ char keycode_to_ascii(KEYCODE_t keycode)
 	return character;
 }
 
-void activate_keyboard_processing(void)
+// KEY_INFO_t struct will be passed to handler so it must take it as argument
+// the x, y coordinates are optional, if not used pass NULL otherwise it will set a writable area
+// -> set a barrier
+void activate_keyboard_processing(void *handler, int x_start_pos, int y_start_pos, int x_end_pos, int y_end_pos)
 {
+	// struct KEY_INFO_t keyinfo;
+	// keyinfo.keycode = KEY_A;
+	// keyinfo.ascii_character = 'A';
+	// handler(key_info);
+	final_handler		= handler;
+	final_x_start_pos	= x_start_pos;
+	final_y_start_pos	= y_start_pos;
+	final_x_end_pos		= x_end_pos;
+	final_y_end_pos		= y_end_pos;
+
 	is_keyboard_active = 1;
 }
 
+// to undo activate_keyboard_processing (otherwise no change because 0 is default state)
 void disable_keyboard_processing(void)
 {
 	is_keyboard_active = 0;
