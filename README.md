@@ -10,6 +10,7 @@
 
 <img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS.png"> </a>
 <img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS%20shell.png"> </a>
+<img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS%20interrupt%20screen.png"> </a>
 
 ## Features
 
