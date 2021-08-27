@@ -55,8 +55,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	printk(GFX_WHITE,	"█color█\n");
 
 	/*
-	// TODO: proper timer
-	for (long i = 0; i < 5500000000; i++)	// ~10 seconds
+	    // TODO: proper timer
+	    for (long i = 0; i < 5500000000; i++)	// ~10 seconds
 		asm ("nop");
 	*/
 

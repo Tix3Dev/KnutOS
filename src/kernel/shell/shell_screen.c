@@ -23,6 +23,9 @@
 #include <libk/stdio/stdio.h>
 #include <libk/ssfn.h>
 
+static int shell_prompt_x_barrier;
+static int shell_prompt_y_barrier;
+
 // create a "new" screen and print a basic shell prompt
 // after that activate keyboard processing and configure it to call
 // shell_print_char
@@ -31,21 +34,51 @@ void shell_screen_init(void)
 	framebuffer_reset_screen();
 	shell_prompt();
 
-	// set barrier at last cursor position (ssfn_dst x/y)
-	activate_keyboard_processing(*shell_print_char, ssfn_dst.x, ssfn_dst.y, ssfn_dst.x+100, ssfn_dst.y+100);
+	activate_keyboard_processing(*shell_print_char);
 }
 
 // print basic shell prompt
 void shell_prompt(void)
 {
-	printk(GFX_PURPLE, "┌─ KnutOS\n");
+	printk(GFX_PURPLE, "\n┌─ KnutOS\n");
 	printk(GFX_PURPLE, "└→ ");
+
+	// set x, y barrier to last know cursor position
+	shell_prompt_x_barrier = ssfn_dst.x;
+	shell_prompt_y_barrier = ssfn_dst.y;
 }
 
 // get informations about what was being pressed
 // and just print if it is a valid ascii_character
 void shell_print_char(KEY_INFO_t key_info)
 {
-	if (key_info.ascii_character != '\0')
+	// if it's nothing to print, return
+	if (key_info.ascii_character == '\0')
+		return;
+	// if return is pressed, make a newline and create a new prompt
+	else if (key_info.ascii_character == KEY_RETURN)
+	{
+		// move barrier if screen scolls
+		if (ssfn_dst.y + gfx.glyph_height == gfx.fb_height)
+			shell_prompt_y_barrier += gfx.glyph_height;
+
+		printk(GFX_BLUE, "\n");
+		shell_prompt();
+	}
+	// if backspace is pressed check for barrier (prompt)
+	else if (key_info.ascii_character == KEY_BACKSPACE)
+	{
+		if (ssfn_dst.x == shell_prompt_x_barrier && ssfn_dst.y == shell_prompt_y_barrier)
+			return;
+
+		printk(GFX_BLUE, "\b");
+	}
+	else
+	{
+		// move barrier if screen scrolls
+		if (ssfn_dst.y + gfx.glyph_height == gfx.fb_height && ssfn_dst.x + gfx.glyph_width == gfx.fb_width)
+			shell_prompt_y_barrier -= gfx.glyph_height;
+
 		printk(GFX_BLUE, "%c", key_info.ascii_character);
+	}
 }

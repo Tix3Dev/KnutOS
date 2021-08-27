@@ -27,6 +27,18 @@
 #define GFX_CYAN	0xFF88C0D0
 #define GFX_WHITE	0xFFE5E9F0
 
+struct GFX_Struct
+{
+	uint64_t fb_addr;
+	uint16_t fb_width;
+	uint16_t fb_height;
+	uint16_t fb_pitch;
+	uint16_t fb_bpp;
+
+	int glyph_width;
+	int glyph_height;
+};
+
 void framebuffer_init(struct stivale2_struct *stivale2_struct, uint32_t background_color);
 void framebuffer_draw_pixel(int x, int y, uint32_t color);
 void framebuffer_set_background_color(uint32_t background_color);

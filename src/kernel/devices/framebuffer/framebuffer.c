@@ -32,17 +32,7 @@
 // then we have to link it as any other object file
 extern uint8_t _binary_sfn_fonts_unifont_sfn_start;
 
-struct GFX_Struct
-{
-	uint64_t fb_addr;
-	uint16_t fb_width;
-	uint16_t fb_height;
-	uint16_t fb_pitch;
-	uint16_t fb_bpp;
-
-	int glyph_width;
-	int glyph_height;
-} gfx;
+struct GFX_Struct gfx;
 
 // save information about the framebuffer in a struct
 // set the basic SSFN variables
@@ -214,6 +204,7 @@ void framebuffer_print_char(uint32_t unicode, int x, int y, uint32_t foreground_
 
 		return;
 	}
+
 	// if the unicode character is a backspace we check where the cursor is and then
 	// replace the last character with space and put the cursor there
 	if (unicode == '\b')
@@ -230,7 +221,8 @@ void framebuffer_print_char(uint32_t unicode, int x, int y, uint32_t foreground_
 
 			ssfn_dst.x -= gfx.glyph_width;
 		}
-		else {
+		else
+		{
 			ssfn_dst.x -= gfx.glyph_width;
 
 			ssfn_putc(' ');

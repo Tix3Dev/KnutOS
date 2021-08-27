@@ -25,16 +25,9 @@
 #include <devices/ps2/keyboard/keyboard.h>
 #include <libk/io/io.h>
 
-// #include <libk/debug/debug.h>
-// #include <libk/stdio/stdio.h>
-
 static uint8_t is_keyboard_active = 0;	// boolean whether keyboard IRQ should get processed
 
-static void		(*final_handler)(KEY_INFO_t);
-static int		final_x_start_pos;
-static int		final_y_start_pos;
-static int		final_x_end_pos;
-static int		final_y_end_pos;
+static void (*final_handler)(KEY_INFO_t);
 
 static uint32_t standard_keycodes[] =
 {
@@ -164,8 +157,6 @@ void keyboard_irq_handler(void)
 	if (!is_keyboard_active)
 		return;
 
-	// debug("keycode: 0x%x\n", standard_keycodes[scancode]);
-
 	KEY_INFO_t key_info;
 
 	key_info.keycode			= KEY_UNKNOWN;
@@ -203,26 +194,23 @@ void keyboard_irq_handler(void)
 			numlock = numlock ? 0 : 1;
 		else if (key == KEY_SCROLLLOCK)
 			scrolllock = scrolllock ? 0 : 1;
-		else if (key == KEY_RETURN)
-			key_info.ascii_character = '\n';
-			// printk(GFX_BLUE, "\n");
+		// else if (key == KEY_RETURN)
+		// 	key_info.ascii_character = '\n';
 		else if (key <= 0x7F)
 			key_info.ascii_character = keycode_to_ascii(key);
-			// printk(GFX_BLUE, "%c", keycode_to_ascii(key));
-		
 	}
 
 	final_handler(key_info);
 
 	/*
-	if ()
-	{
+	    if ()
+	    {
 		serial_set_color(TERM_RED);
 		debug("\n──────────────────────────────\n");
 		debug("⚠ UNKNOWN SCANCODE RECEIVED! ⚠\n\n");
 		debug("⤷ Scancode: 0x%x | Set: %d\n", scancode, scancode_set);
 		serial_set_color(TERM_COLOR_RESET);
-	}
+	    }
 	*/
 }
 
@@ -238,19 +226,19 @@ char keycode_to_ascii(KEYCODE_t keycode)
 		else if (character == '1')
 			character = KEY_EXCLAMATION;
 		else if (character == '2')
-		 	character = KEY_AT;
+			character = KEY_AT;
 		else if (character == '3')
-		 	character = KEY_HASH;
+			character = KEY_HASH;
 		else if (character == '4')
-		 	character = KEY_DOLLAR;
+			character = KEY_DOLLAR;
 		else if (character == '5')
-		 	character = KEY_PERCENT;
+			character = KEY_PERCENT;
 		else if (character == '6')
-		 	character = KEY_CARRET;
+			character = KEY_CARRET;
 		else if (character == '7')
-		 	character = KEY_AMPERSAND;
+			character = KEY_AMPERSAND;
 		else if (character == '8')
-		 	character = KEY_ASTERISK;
+			character = KEY_ASTERISK;
 		else if (character == '9')
 			character = KEY_LEFTPARENTHESIS;
 		else if (character == KEY_COMMA)
@@ -280,24 +268,25 @@ char keycode_to_ascii(KEYCODE_t keycode)
 	{
 		if (character >= 'a' && character <= 'z')
 			character -= 32;
+
 		if (character == '0')
 			character = KEY_RIGHTPARENTHESIS;
 		else if (character == '1')
 			character = KEY_EXCLAMATION;
 		else if (character == '2')
-		 	character = KEY_AT;
+			character = KEY_AT;
 		else if (character == '3')
-		 	character = KEY_HASH;
+			character = KEY_HASH;
 		else if (character == '4')
-		 	character = KEY_DOLLAR;
+			character = KEY_DOLLAR;
 		else if (character == '5')
-		 	character = KEY_PERCENT;
+			character = KEY_PERCENT;
 		else if (character == '6')
-		 	character = KEY_CARRET;
+			character = KEY_CARRET;
 		else if (character == '7')
-		 	character = KEY_AMPERSAND;
+			character = KEY_AMPERSAND;
 		else if (character == '8')
-		 	character = KEY_ASTERISK;
+			character = KEY_ASTERISK;
 		else if (character == '9')
 			character = KEY_LEFTPARENTHESIS;
 		else if (character == KEY_COMMA)
@@ -336,19 +325,11 @@ char keycode_to_ascii(KEYCODE_t keycode)
 // KEY_INFO_t struct will be passed to handler so it must take it as argument
 // the x, y coordinates are optional, if not used pass NULL otherwise it will set a writable area
 // -> set a barrier
-void activate_keyboard_processing(void *handler, int x_start_pos, int y_start_pos, int x_end_pos, int y_end_pos)
+void activate_keyboard_processing(void *handler)
 {
-	// struct KEY_INFO_t keyinfo;
-	// keyinfo.keycode = KEY_A;
-	// keyinfo.ascii_character = 'A';
-	// handler(key_info);
 	final_handler		= handler;
-	final_x_start_pos	= x_start_pos;
-	final_y_start_pos	= y_start_pos;
-	final_x_end_pos		= x_end_pos;
-	final_y_end_pos		= y_end_pos;
 
-	is_keyboard_active = 1;
+	is_keyboard_active	= 1;
 }
 
 // to undo activate_keyboard_processing (otherwise no change because 0 is default state)

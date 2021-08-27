@@ -180,7 +180,7 @@ void keyboard_init(void);
 void keyboard_send_command(uint8_t command_byte);
 void keyboard_irq_handler(void);
 char keycode_to_ascii(KEYCODE_t keycode);
-void activate_keyboard_processing(void *handler, int x_start_pos, int y_start_pos, int x_end_pos, int y_end_pos);
+void activate_keyboard_processing(void *handler);
 void disable_keyboard_processing(void);
 
 #endif
