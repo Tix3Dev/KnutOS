@@ -21,6 +21,7 @@
 #include <stdint.h>
 
 #include <gdt/gdt.h>
+#include <libk/log/log.h>
 
 extern void _load_gdt_and_tss_asm(struct GDT_Pointer *ptr);
 
@@ -134,4 +135,6 @@ void gdt_init(void)
 	gdt_pointer.base	= (uint64_t)&gdt;
 
 	_load_gdt_and_tss_asm(&gdt_pointer);
+
+	log(__FILE__, "GDT initialized\n");
 }

@@ -20,6 +20,7 @@
 #include <devices/pic/pic.h>
 #include <interrupts/idt.h>
 #include <libk/io/io.h>
+#include <libk/log/log.h>
 
 extern void			_load_idt_asm(struct IDT_Pointer *ptr);
 extern uintptr_t	_isr_names_asm[];
@@ -107,4 +108,6 @@ void idt_init(void)
 	idt_pointer.base	= (uint64_t)&idt;
 
 	_load_idt_asm(&idt_pointer);
+
+	log(__FILE__, "IDT initialized\n");
 }

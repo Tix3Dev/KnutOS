@@ -24,6 +24,7 @@
 #include <devices/pic/pic.h>
 #include <devices/ps2/keyboard/keyboard.h>
 #include <libk/io/io.h>
+#include <libk/log/log.h>
 
 static uint8_t is_keyboard_active = 0;	// boolean whether keyboard IRQ should get processed
 
@@ -137,6 +138,8 @@ void keyboard_init(void)
 
 	// enable scanning (so that the keyboard will send scan codes)
 	keyboard_send_command(0xF4);
+
+	log(__FILE__, "Keyboard driver initialized\n");
 }
 
 // send a command byte to the keyboard controller

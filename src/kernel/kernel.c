@@ -26,13 +26,17 @@
 #include <shell/shell_screen.h>
 #include <logo.h>
 #include <libk/debug/debug.h>
+#include <libk/log/log.h>
 #include <libk/stdio/stdio.h>
 
 void kmain(struct stivale2_struct *stivale2_struct)
 {
+	serial_init();
+
+	log(__FILE__, "Kernel started\n");
+
 	gdt_init();
 	idt_init();
-	serial_init();
 	framebuffer_init(stivale2_struct, GFX_BLACK);
 	keyboard_init();								// NOTE: is_keyboard_active is still false so no processing
 
