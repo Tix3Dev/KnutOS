@@ -39,8 +39,6 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	serial_set_color(TERM_COLOR_RESET);
 
 	log(INFO, __FILE__, "Kernel started\n");
-	log(WARNING, __FILE__, "Test\n");
-	log(ERROR, __FILE__, "OH NO!\n");
 
 	gdt_init();
 	idt_init();
