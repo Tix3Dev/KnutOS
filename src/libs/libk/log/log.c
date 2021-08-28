@@ -19,16 +19,32 @@
 
 #include <libk/debug/debug.h>
 #include <libk/kprintf/kprintf.h>
+#include <libk/log/log.h>
 
 const char log_buffer[5120];
 
 // variadic function for format specifiers
-void log(char *description, char *fmt, ...)
+void log(STATUS status, char *description, char *fmt, ...)
 {
 	va_list ptr;
 	va_start(ptr, fmt);
 	vsnprintf((char *)&log_buffer, -1, fmt, ptr);
 
-	serial_set_color(TERM_CYAN);
-	debug("[%s] ─→ %s", description, (char *)log_buffer);
+	if (status == INFO)
+	{
+		serial_set_color(TERM_CYAN);
+		debug("[INFO]    | ");
+	}
+	else if (status == WARNING)
+	{
+		serial_set_color(TERM_YELLOW);
+		debug("[WARNING] | ");
+	}
+	else if (status == ERROR)
+	{
+		serial_set_color(TERM_RED);
+		debug("[ERROR]   | ");
+	}
+	debug("%s ─→ %s", description, (char *)log_buffer);
+	serial_set_color(TERM_COLOR_RESET);
 }

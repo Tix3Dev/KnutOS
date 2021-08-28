@@ -109,5 +109,5 @@ void idt_init(void)
 
 	_load_idt_asm(&idt_pointer);
 
-	log(__FILE__, "IDT initialized\n");
+	log(INFO, __FILE__, "IDT initialized\n");
 }

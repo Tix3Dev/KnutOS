@@ -33,18 +33,19 @@ void kmain(struct stivale2_struct *stivale2_struct)
 {
 	serial_init();
 
-	log(__FILE__, "Kernel started\n");
+	serial_set_color(TERM_BLUE);
+	debug("Welcome to:\n");
+	debug("%s", small_logo_text);
+	serial_set_color(TERM_COLOR_RESET);
+
+	log(INFO, __FILE__, "Kernel started\n");
+	log(WARNING, __FILE__, "Test\n");
+	log(ERROR, __FILE__, "OH NO!\n");
 
 	gdt_init();
 	idt_init();
 	framebuffer_init(stivale2_struct, GFX_BLACK);
 	keyboard_init();								// NOTE: is_keyboard_active is still false so no processing
-
-	serial_set_color(TERM_BLUE);
-
-	debug("Welcome to:\n");
-	debug("%s", small_logo_text);
-	serial_set_color(TERM_COLOR_RESET);
 
 	printk(GFX_BLUE, "\nWelcome to:\n");
 	printk(GFX_BLUE, "%s", big_logo);

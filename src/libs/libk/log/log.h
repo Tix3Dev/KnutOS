@@ -18,6 +18,12 @@
 #ifndef LOG_H
 #define LOG_H
 
-void log(char *description, char *fmt, ...);
+typedef enum {
+	INFO,
+	WARNING,
+	ERROR
+} STATUS;
+
+void log(STATUS status, char *description, char *fmt, ...);
 
 #endif
