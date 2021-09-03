@@ -15,4 +15,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef STRING_H
+#define STRING_H
+
 void *memset(uint32_t *pointer, uint32_t value, size_t size);
+
+#endif
