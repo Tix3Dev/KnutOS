@@ -45,6 +45,7 @@ void log(STATUS status, char *description, char *fmt, ...)
 		serial_set_color(TERM_RED);
 		debug("[ERROR]   | ");
 	}
+
 	debug("%s ─→ %s", description, (char *)log_buffer);
 	serial_set_color(TERM_COLOR_RESET);
 }
