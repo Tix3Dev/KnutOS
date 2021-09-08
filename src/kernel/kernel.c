@@ -23,6 +23,7 @@
 #include <devices/ps2/keyboard/keyboard.h>
 #include <gdt/gdt.h>
 #include <interrupts/idt.h>
+#include <memory/pmm.h>
 #include <shell/shell_screen.h>
 #include <logo.h>
 #include <libk/debug/debug.h>
@@ -42,6 +43,28 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	gdt_init();
 	idt_init();
+	pmm_init(stivale2_struct);
+
+
+	// physical memory management test
+
+	serial_set_color(TERM_PURPLE);
+
+	uint32_t *pointer1 = (uint32_t *)pmm_alloc();
+	debug("pointer1 allocated at 0x%x\n", pointer1);
+
+	uint32_t *pointer2 = (uint32_t *)pmm_alloc();
+	debug("pointer2 allocated at 0x%x\n", pointer2);
+
+	pmm_free(pointer1);
+	debug("pointer1 freed\n");
+
+	pmm_free(pointer2);
+	debug("pointer2 freed\n");
+
+	serial_set_color(TERM_COLOR_RESET);
+
+
 	framebuffer_init(stivale2_struct, GFX_BLACK);
 	keyboard_init();								// NOTE: is_keyboard_active is still false so no processing
 
@@ -59,7 +82,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	// TODO: proper timer
 	for (long i = 0; i < 5500000000; i++)	// ~10 seconds
-	asm ("nop");
+		asm ("nop");
 
 	shell_screen_init();
 
