@@ -19,6 +19,7 @@
 - GDT
 - TSS
 - IDT & ISR's
+- Physical memory manager
 - Serial communication
 - Basic framebuffer
 - Basic keyboard driver with a small shell
