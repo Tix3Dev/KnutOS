@@ -18,8 +18,8 @@
 #ifndef BITMAP_H
 #define BITMAP_H
 
-void bitmap_set_bit(struct stivale2_struct_tag_memmap *bitmap, int bit);
-void bitmap_unset_bit(struct stivale2_struct_tag_memmap *bitmap, int bit);
-uint8_t bitmap_check_bit(struct stivale2_struct_tag_memmap *bitmap, int bit);
+void bitmap_set_bit(struct stivale2_struct_tag_memmap *bitmap, uint64_t bit);
+void bitmap_unset_bit(struct stivale2_struct_tag_memmap *bitmap, uint64_t bit);
+uint8_t bitmap_check_bit(struct stivale2_struct_tag_memmap *bitmap, uint64_t bit);
 
 #endif

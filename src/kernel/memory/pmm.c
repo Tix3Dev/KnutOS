@@ -128,8 +128,17 @@ void *pmm_alloc(void)
 	bitmap_set_bit(pmm_info.memory_map, index);
 	pmm_info.used_blocks++;
 
-	return (void *)(uint64_t)(index * BLOCK_SIZE);
+	return (void *)(uint64_t)(pmm_info.memory_map->memmap[0].base + index * BLOCK_SIZE);
 }
+
+/* TODO
+// allocate multiple pages
+void pmm_alloc_pages(uint64_t page_count)
+{
+	for (uint64_t i = 0; i < page_count; i++)
+		pmm_alloc();
+}
+*/
 
 // convert pointer to index
 // unset the matching bit
@@ -141,3 +150,12 @@ void pmm_free(void *pointer)
 	bitmap_unset_bit(pmm_info.memory_map, index);
 	pmm_info.used_blocks--;
 }
+
+/* TODO
+// free multiple pages
+void pmm_free_pages(void *pointer, uint64_t page_count)
+{
+	for (uint64_t i = 0; i < page_count; i++)
+		pmm_free(pointer + i);
+}
+*/

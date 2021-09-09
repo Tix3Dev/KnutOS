@@ -35,6 +35,8 @@ void pmm_init(struct stivale2_struct *stivale2_struct);
 const char *get_memory_map_entry_type(uint32_t type);
 int pmm_find_first_free_block(void);
 void *pmm_alloc(void);
+void pmm_alloc_pages(uint64_t page_count);
 void pmm_free(void *pointer);
+void pmm_free_pages(void *pointer, uint64_t page_count);
 
 #endif
