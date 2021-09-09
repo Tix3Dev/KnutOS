@@ -60,7 +60,27 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	debug("pointer1 freed\n");
 
 	pmm_free(pointer2);
-	debug("pointer2 freed\n");
+	debug("pointer2 freed\n\n");
+
+
+	uint64_t *pointer3 = (uint64_t *)pmm_alloc();
+	debug("pointer3 allocated at 0x%x\n", pointer3);
+
+	uint64_t *pointer4 = (uint64_t *)pmm_alloc();
+	debug("pointer4 allocated at 0x%x\n", pointer4);
+
+	pmm_free(pointer3);
+	debug("pointer3 freed\n");
+
+	pmm_free(pointer4);
+	debug("pointer4 freed\n");
+
+
+	uint64_t *pointer5 = (uint64_t *)pmm_alloc();
+	debug("pointer5 allocated at 0x%x\n", pointer5);
+
+	pmm_free(pointer5);
+	debug("pointer5 freed\n");
 
 	serial_set_color(TERM_COLOR_RESET);
 
