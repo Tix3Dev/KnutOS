@@ -91,7 +91,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 	serial_set_color(TERM_PURPLE);
 	current_entry = &pmm_info.memory_map->memmap[0];
-	debug("Total amount of memory: %x kB\n", current_entry->base + current_entry->length - 1);
+	debug("Total amount of memory: %d kB\n", current_entry->base + current_entry->length - 1);
 	debug("Size of bitmap: %d kB\n", bitmap.size / 1024);
 	serial_set_color(TERM_COLOR_RESET);
 
