@@ -1,10 +1,3 @@
-// TODO i dunno about the passing of the bitmap / bitmap.map
-
-
-
-
-
-
 /*
 	This file is part of an x86_64 hobbyist operating system called KnutOS
 	Everything is openly developed on GitHub: https://github.com/Tix3Dev/KnutOS/
@@ -44,14 +37,10 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	// --- step 1 ---
 
 	// set basic values
-	struct stivale2_struct_vmap *vmap_info = stivale2_get_tag(stivale2_struct,
-			STIVALE2_STRUCT_TAG_VMAP);
+	struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct,
+			STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-	pmm_info.memory_size	= 1024 + vmap_info->addr;
-	pmm_info.max_blocks		= KB_TO_BLOCKS(pmm_info.memory_size);
-	pmm_info.used_blocks	= pmm_info.max_blocks;
-	pmm_info.memory_map		= stivale2_get_tag(stivale2_struct,
-							  STIVALE2_STRUCT_TAG_MEMMAP_ID);
+	pmm_info.memory_map		= memory_map;
 
 	struct stivale2_mmap_entry *current_entry;
 
@@ -81,6 +70,10 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 			highest_page = top;
 	}
 
+	pmm_info.memory_size	= highest_page;
+	pmm_info.max_blocks		= KB_TO_BLOCKS(pmm_info.memory_size);
+	pmm_info.used_blocks	= pmm_info.max_blocks;
+
 
 	// --- step 3 ---
 
@@ -105,13 +98,13 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 		serial_set_color(TERM_PURPLE);
 		debug("Found big enough block of memory to host the bitmap!\n");
-		debug("Bitmap stored between 0x%.8lx and 0x%.8lx", current_entry->base, current_entry->base + current_entry->length - 1);
+		debug("Bitmap stored between 0x%.8lx and 0x%.8lx\n", current_entry->base, current_entry->base + current_entry->length - 1);
 		serial_set_color(TERM_COLOR_RESET);
 
-		if (current_entry->type != STIVALE2_MMAP_USABLE &&
+		if (current_entry->type == STIVALE2_MMAP_USABLE &&
 				current_entry->length >= bitmap.size)
 		{
-			bitmap.map		= (uint8_t *)(PM_OFFSET + current_entry->base); 
+			bitmap.map				= (uint8_t *)(PM_OFFSET + current_entry->base); 
 			
 			current_entry->base		+= bitmap.size;
 			current_entry->length	-= bitmap.size;
@@ -135,7 +128,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 		current_entry = &pmm_info.memory_map->memmap[i];
 
 		if (current_entry->type == STIVALE2_MMAP_USABLE)
-			pmm_free((void *)current_entry->base, current_entry->length / BLOCK_SIZE); // TODO dunno if right
+			pmm_free((void *)current_entry->base, current_entry->length / BLOCK_SIZE);
 	}
 
 	log(INFO, __FILE__, "PMM initialized\n");
@@ -211,21 +204,12 @@ void *pmm_alloc(size_t block_count)
 		return 0;
 
 	for (size_t i = 0; i < block_count; i++)
-		bitmap_set_bit((void *)bitmap.map, index); // TODO dunno if right
+		bitmap_set_bit((void *)bitmap.map, index + i);
 
 	pmm_info.used_blocks += block_count;
 
 	return (void *)(uint64_t)(pmm_info.memory_map->memmap[0].base + index * BLOCK_SIZE);
 }
-
-/* TODO
-// allocate multiple pages
-void pmm_alloc_pages(uint64_t page_count)
-{
-	for (uint64_t i = 0; i < page_count; i++)
-		pmm_alloc();
-}
-*/
 
 // convert pointer to index
 // unset the matching bit
@@ -235,16 +219,7 @@ void pmm_free(void *pointer, size_t block_count)
 	uint64_t index = (uint64_t)pointer / BLOCK_SIZE;
 
 	for (size_t i = 0; i < block_count; i++)
-		bitmap_unset_bit((void *)bitmap.map, index); // TODO dunno if right
+		bitmap_unset_bit((void *)bitmap.map, index + i);
 
 	pmm_info.used_blocks -= block_count;
 }
-
-/* TODO
-// free multiple pages
-void pmm_free_pages(void *pointer, uint64_t page_count)
-{
-	for (uint64_t i = 0; i < page_count; i++)
-		pmm_free(pointer + i);
-}
-*/

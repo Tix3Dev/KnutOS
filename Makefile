@@ -61,7 +61,7 @@ OBJ		= $(C_OBJ) $(AS_OBJ)
 all: $(TARGET)
 
 run: $(ISO_IMAGE)
-	qemu-system-x86_64 -M q35 -m 2G -serial stdio -cdrom $(ISO_IMAGE)
+	qemu-system-x86_64 -M q35 -m 2G -serial stdio -d int -cdrom $(ISO_IMAGE)
 
 limine:
 	make -C third_party/limine
