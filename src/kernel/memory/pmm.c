@@ -96,14 +96,16 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	{
 		current_entry = &pmm_info.memory_map->memmap[i];
 
-		serial_set_color(TERM_PURPLE);
-		debug("Found big enough block of memory to host the bitmap!\n");
-		debug("Bitmap stored between 0x%.8lx and 0x%.8lx\n", current_entry->base, current_entry->base + current_entry->length - 1);
-		serial_set_color(TERM_COLOR_RESET);
+		if (current_entry->type == STIVALE2_MMAP_USABLE)
+			continue;
 
-		if (current_entry->type == STIVALE2_MMAP_USABLE &&
-				current_entry->length >= bitmap.size)
+		if (current_entry->length >= bitmap.size)
 		{
+			serial_set_color(TERM_PURPLE);
+			debug("Found big enough block of memory to host the bitmap!\n");
+			debug("Bitmap stored between 0x%.8lx and 0x%.8lx\n", current_entry->base, current_entry->base + current_entry->length - 1);
+			serial_set_color(TERM_COLOR_RESET);
+
 			bitmap.map				= (uint8_t *)(PM_OFFSET + current_entry->base); 
 			
 			current_entry->base		+= bitmap.size;
@@ -117,7 +119,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	// --- step 5 ---
 
 	// set bitmap to default - all bits used
-	memset((void *)bitmap.map, 0xFF, pmm_info.max_blocks / 8);
+	memset((void *)bitmap.map, 0xFF, bitmap.size);
 
 
 	// --- step 6 ---
@@ -127,8 +129,13 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	{
 		current_entry = &pmm_info.memory_map->memmap[i];
 
+		debug("lol\n");
 		if (current_entry->type == STIVALE2_MMAP_USABLE)
+		{
+			debug("wowwwieee\n");
 			pmm_free((void *)current_entry->base, current_entry->length / BLOCK_SIZE);
+		}
+		debug("meow\n");
 	}
 
 	log(INFO, __FILE__, "PMM initialized\n");
@@ -217,6 +224,7 @@ void *pmm_alloc(size_t block_count)
 void pmm_free(void *pointer, size_t block_count)
 {
 	uint64_t index = (uint64_t)pointer / BLOCK_SIZE;
+	debug("index: 0x%x\n", index);
 
 	for (size_t i = 0; i < block_count; i++)
 		bitmap_unset_bit((void *)bitmap.map, index + i);
