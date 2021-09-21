@@ -129,13 +129,8 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	{
 		current_entry = &pmm_info.memory_map->memmap[i];
 
-		debug("lol\n");
 		if (current_entry->type == STIVALE2_MMAP_USABLE)
-		{
-			debug("wowwwieee\n");
 			pmm_free((void *)current_entry->base, current_entry->length / BLOCK_SIZE);
-		}
-		debug("meow\n");
 	}
 
 	log(INFO, __FILE__, "PMM initialized\n");
@@ -176,8 +171,12 @@ const char *get_memory_map_entry_type(uint32_t type)
 }
 
 // traverse the bitmap -> for each bit and check if bit is free or used
-int pmm_find_first_free_block(void)
+int pmm_find_first_free_block(size_t block_count)
 {
+	// can't find in no memory
+	if (block_count == 0)
+		return -1;
+
 	for (uint32_t i = 0; i < pmm_info.used_blocks / 32; i++)
 	{
 		if (pmm_info.memory_map->memmap[i].base != 0xFFFFFFFF)
@@ -187,11 +186,24 @@ int pmm_find_first_free_block(void)
 				int32_t bit = 1 << j;
 
 				if (!(pmm_info.memory_map->memmap[i].base & bit))
-					return i * 32 + j;
+				{
+					int32_t		start_bit	= i * 32 + bit;
+					uint32_t	free_blocks	= 0;
+
+					for (uint32_t counter = 0; counter <= block_count; counter++) {
+						if (!bitmap_check_bit(&bitmap, start_bit + counter))
+							free_blocks++;
+
+						// found enough free space
+						if (free_blocks == block_count)
+							return i * 32 + j;
+					}
+				}
 			}
 		}
 	}
 
+	// nothing big enough
 	return -1;
 }
 
@@ -205,13 +217,13 @@ void *pmm_alloc(size_t block_count)
 	if (pmm_info.used_blocks <= 0)
 		return 0;
 
-	int index = pmm_find_first_free_block();
+	int index = pmm_find_first_free_block(block_count);
 
 	if (index == -1)
 		return 0;
 
 	for (size_t i = 0; i < block_count; i++)
-		bitmap_set_bit((void *)bitmap.map, index + i);
+		bitmap_set_bit(&bitmap, index + i);
 
 	pmm_info.used_blocks += block_count;
 
@@ -224,10 +236,10 @@ void *pmm_alloc(size_t block_count)
 void pmm_free(void *pointer, size_t block_count)
 {
 	uint64_t index = (uint64_t)pointer / BLOCK_SIZE;
-	debug("index: 0x%x\n", index);
+	debug("pm freed at index: 0x%x\n", index);
 
 	for (size_t i = 0; i < block_count; i++)
-		bitmap_unset_bit((void *)bitmap.map, index + i);
+		bitmap_unset_bit(&bitmap, index + i);
 
 	pmm_info.used_blocks -= block_count;
 }
