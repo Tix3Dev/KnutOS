@@ -133,6 +133,9 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 			pmm_free((void *)current_entry->base, current_entry->length / BLOCK_SIZE);
 	}
 
+	for (size_t i = 0; i < bitmap.size; i++)
+		debug("%x ", bitmap.map[i]);
+
 	log(INFO, __FILE__, "PMM initialized\n");
 }
 
@@ -171,13 +174,13 @@ const char *get_memory_map_entry_type(uint32_t type)
 }
 
 // traverse the bitmap -> for each bit and check if bit is free or used
-int pmm_find_first_free_block(size_t block_count)
+int32_t pmm_find_first_free_block(size_t block_count)
 {
 	// can't find in no memory
 	if (block_count == 0)
 		return -1;
 
-	for (uint32_t i = 0; i < pmm_info.used_blocks / 32; i++)
+	for (uint32_t i = 0; i < pmm_info.max_blocks / 32; i++)
 	{
 		if (pmm_info.memory_map->memmap[i].base != 0xFFFFFFFF)
 		{
@@ -217,7 +220,7 @@ void *pmm_alloc(size_t block_count)
 	if (pmm_info.used_blocks <= 0)
 		return 0;
 
-	int index = pmm_find_first_free_block(block_count);
+	int32_t index = pmm_find_first_free_block(block_count);
 
 	if (index == -1)
 		return 0;
