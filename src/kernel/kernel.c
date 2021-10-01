@@ -50,10 +50,12 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	serial_set_color(TERM_PURPLE);
 
-	uint32_t *pointer1 = (uint32_t *)pmm_alloc(1);
+
+
+	uint64_t *pointer1 = (uint64_t *)pmm_alloc(1);
 	debug("pointer1 allocated at 0x%x\n", pointer1);
 
-	uint32_t *pointer2 = (uint32_t *)pmm_alloc(1);
+	uint64_t *pointer2 = (uint64_t *)pmm_alloc(1);
 	debug("pointer2 allocated at 0x%x\n", pointer2);
 
 	pmm_free(pointer1, 1);
@@ -61,6 +63,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	pmm_free(pointer2, 1);
 	debug("pointer2 freed\n\n");
+
 
 
 	uint64_t *pointer3 = (uint64_t *)pmm_alloc(1);
@@ -82,11 +85,14 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	debug("pointer5 freed\n");
 
 
+
 	uint64_t *pointer6 = (uint64_t *)pmm_alloc(1);
 	debug("pointer6 allocated at 0x%x\n", pointer6);
 
 	pmm_free(pointer6, 1);
 	debug("pointer6 freed\n");
+
+
 
 	serial_set_color(TERM_COLOR_RESET);
 

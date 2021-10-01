@@ -35,7 +35,7 @@ struct PMM_Info_Struct
 
 void pmm_init(struct stivale2_struct *stivale2_struct);
 const char *get_memory_map_entry_type(uint32_t type);
-int32_t pmm_find_first_free_block(size_t block_count);
+void *pmm_find_first_free_block(size_t block_count);
 void *pmm_alloc(size_t block_count);
 void pmm_free(void *pointer, size_t block_count);
 
