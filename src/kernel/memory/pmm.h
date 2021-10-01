@@ -18,10 +18,12 @@
 #ifndef PMM_H
 #define PMM_H
 
-#define BLOCK_SIZE			4096
-#define KB_TO_BLOCKS(kb)	(((kb) * 1024) / BLOCK_SIZE)
-#define BIT_FREE			0
-#define BIT_USED			1
+#define BLOCK_SIZE				4096
+#define MEMORY_OFFSET			0xFFFF800000000000
+
+#define KB_TO_BLOCKS(kb)		(((kb) * 1024) / BLOCK_SIZE)
+#define ALIGN_DOWN(addr, align)	((addr) & ~((align)-1))
+#define ALIGN_UP(addr, align)	(((addr) + (align)-1) & ~((align)-1))
 
 struct PMM_Info_Struct
 {
@@ -33,8 +35,8 @@ struct PMM_Info_Struct
 
 void pmm_init(struct stivale2_struct *stivale2_struct);
 const char *get_memory_map_entry_type(uint32_t type);
-int pmm_find_first_free_block(void);
-void *pmm_alloc(void);
-void pmm_free(void *pointer);
+void *pmm_find_first_free_block(size_t block_count);
+void *pmm_alloc(size_t block_count);
+void pmm_free(void *pointer, size_t block_count);
 
 #endif

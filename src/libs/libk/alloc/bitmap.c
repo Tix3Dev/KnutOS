@@ -16,24 +16,25 @@
 */
 
 #include <stdint.h>
+#include <stddef.h>
 
 #include <boot/stivale2.h>
 #include <libk/alloc/bitmap.h>
 
 // set exactly one bit to 1 in the bitmap
-void bitmap_set_bit(struct stivale2_struct_tag_memmap *bitmap, int bit)
+void bitmap_set_bit(BITMAP_t *bitmap, int bit)
 {
-	bitmap->memmap[bit / 32].base |= (1 << (bit % 32));
+	bitmap->map[bit / 8] |= (1 << (bit % 8));
 }
 
 // set exactly one bit to 0 in the bitmap
-void bitmap_unset_bit(struct stivale2_struct_tag_memmap *bitmap, int bit)
+void bitmap_unset_bit(BITMAP_t *bitmap, int bit)
 {
-	bitmap->memmap[bit / 32].base &= ~(1 << (bit % 32));
+	bitmap->map[bit / 8] &= ~(1 << (bit % 8));
 }
 
 // check the value (either 0 or 1) for exactly one bit in the bitmap
-uint8_t bitmap_check_bit(struct stivale2_struct_tag_memmap *bitmap, int bit)
+uint8_t bitmap_check_bit(BITMAP_t *bitmap, int bit)
 {
-	return bitmap->memmap[bit / 32].base & (1 << (bit % 32));
+	return bitmap->map[bit / 8] & (1 << (bit % 8));
 }

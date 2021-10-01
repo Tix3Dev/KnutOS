@@ -50,37 +50,62 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	serial_set_color(TERM_PURPLE);
 
-	uint32_t *pointer1 = (uint32_t *)pmm_alloc();
-	debug("pointer1 allocated at 0x%x\n", pointer1);
 
-	uint32_t *pointer2 = (uint32_t *)pmm_alloc();
-	debug("pointer2 allocated at 0x%x\n", pointer2);
 
-	pmm_free(pointer1);
+	uint64_t *pointer1 = (uint64_t *)pmm_alloc(1);
+	debug("pointer1 allocated at 0x%llx\n", pointer1);
+
+	uint64_t *pointer2 = (uint64_t *)pmm_alloc(1);
+	debug("pointer2 allocated at 0x%llx\n", pointer2);
+
+	pmm_free(pointer1, 1);
 	debug("pointer1 freed\n");
 
-	pmm_free(pointer2);
+	pmm_free(pointer2, 1);
 	debug("pointer2 freed\n\n");
 
 
-	uint64_t *pointer3 = (uint64_t *)pmm_alloc();
-	debug("pointer3 allocated at 0x%x\n", pointer3);
 
-	uint64_t *pointer4 = (uint64_t *)pmm_alloc();
-	debug("pointer4 allocated at 0x%x\n", pointer4);
+	uint64_t *pointer3 = (uint64_t *)pmm_alloc(1);
+	debug("pointer3 allocated at 0x%llx\n", pointer3);
 
-	pmm_free(pointer3);
-	debug("pointer3 freed\n");
+	uint64_t *pointer4 = (uint64_t *)pmm_alloc(1);
+	debug("pointer4 allocated at 0x%llx\n", pointer4);
 
-	pmm_free(pointer4);
+	uint64_t *pointer5 = (uint64_t *)pmm_alloc(1);
+	debug("pointer5 allocated at 0x%llx\n", pointer5);
+
+	uint64_t *pointer6 = (uint64_t *)pmm_alloc(1);
+	debug("pointer6 allocated at 0x%llx\n", pointer6);
+
+	uint64_t *pointer7 = (uint64_t *)pmm_alloc(1);
+	debug("pointer7 allocated at 0x%llx\n", pointer7);
+
+	// pmm_free(pointer3, 1);
+	debug("pointer3 intentionelly not freed\n");
+
+	pmm_free(pointer4, 1);
 	debug("pointer4 freed\n");
 
-
-	uint64_t *pointer5 = (uint64_t *)pmm_alloc();
-	debug("pointer5 allocated at 0x%x\n", pointer5);
-
-	pmm_free(pointer5);
+	pmm_free(pointer5, 1);
 	debug("pointer5 freed\n");
+
+	pmm_free(pointer6, 1);
+	debug("pointer6 freed\n");
+
+	pmm_free(pointer7, 1);
+	debug("pointer7 freed\n");
+
+
+
+	uint64_t *pointer8 = (uint64_t *)pmm_alloc(1);
+	debug("pointer8 allocated at 0x%llx\n", pointer8);
+
+	pmm_free(pointer8, 1);
+	debug("pointer8 freed\n");
+
+
+>>>>>>> pmm_experimental
 
 	serial_set_color(TERM_COLOR_RESET);
 
