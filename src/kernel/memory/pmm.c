@@ -107,7 +107,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 			debug("Bitmap stored between 0x%.8lx and 0x%.8lx\n", current_entry->base, current_entry->base + current_entry->length - 1);
 			serial_set_color(TERM_COLOR_RESET);
 
-			bitmap.map				= (uint8_t *)(PM_OFFSET + current_entry->base);
+			bitmap.map				= (uint8_t *)(MEMORY_OFFSET + current_entry->base);
 
 			current_entry->base		+= bitmap.size;
 			current_entry->length	-= bitmap.size;
@@ -136,7 +136,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 
 	// --- step 7 ---
-	
+
 	// reserve the null pointer
 	bitmap_set_bit(&bitmap, 0);
 
@@ -188,7 +188,7 @@ void *pmm_find_first_free_block(size_t block_count)
 	if (block_count == 0)
 		return NULL;
 
-	for (size_t counter; counter < block_count; counter++)
+	for (size_t counter = 0; counter < block_count; counter++)
 	{
 		for (size_t i = 0; i < PAGE_TO_BIT(highest_page); i++)
 		{
@@ -208,18 +208,16 @@ void *pmm_find_first_free_block(size_t block_count)
 // -> physical memory allocation for n blocks
 void *pmm_alloc(size_t block_count)
 {
-	// debug("\n\npmm_alloc\n");
-
 	if (pmm_info.used_blocks <= 0)
 		return NULL;
 
-	void *block = pmm_find_first_free_block(block_count);
+	void *pointer = pmm_find_first_free_block(block_count);
 
-	if (block == NULL)
+	if (pointer == NULL)
 		return NULL;
 
 
-	size_t index = (size_t)block;
+	uint64_t index = (uint64_t)pointer / BLOCK_SIZE;
 	debug("alloc index: 0x%x\n", index);
 
 	for (size_t i = 0; i < block_count; i++)
@@ -227,7 +225,7 @@ void *pmm_alloc(size_t block_count)
 
 	pmm_info.used_blocks += block_count;
 
-	return (void *)(uint64_t)(pmm_info.memory_map->memmap[0].base + index * BLOCK_SIZE);
+	return (void *)(uint64_t)(MEMORY_OFFSET + (index * BLOCK_SIZE));
 }
 
 // convert pointer to index
@@ -235,7 +233,7 @@ void *pmm_alloc(size_t block_count)
 // -> physical memory freeing for n blocks
 void pmm_free(void *pointer, size_t block_count)
 {
-	uint64_t index = ((uint64_t)pointer - pmm_info.memory_map->memmap[0].base) / BLOCK_SIZE;
+	uint64_t index = ((uint64_t)pointer - MEMORY_OFFSET) / BLOCK_SIZE;
 
 	debug("free index: 0x%x\n", index);
 

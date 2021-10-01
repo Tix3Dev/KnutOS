@@ -53,10 +53,10 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 
 	uint64_t *pointer1 = (uint64_t *)pmm_alloc(1);
-	debug("pointer1 allocated at 0x%x\n", pointer1);
+	debug("pointer1 allocated at 0x%llx\n", pointer1);
 
 	uint64_t *pointer2 = (uint64_t *)pmm_alloc(1);
-	debug("pointer2 allocated at 0x%x\n", pointer2);
+	debug("pointer2 allocated at 0x%llx\n", pointer2);
 
 	pmm_free(pointer1, 1);
 	debug("pointer1 freed\n");
@@ -67,13 +67,13 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 
 	uint64_t *pointer3 = (uint64_t *)pmm_alloc(1);
-	debug("pointer3 allocated at 0x%x\n", pointer3);
+	debug("pointer3 allocated at 0x%llx\n", pointer3);
 
 	uint64_t *pointer4 = (uint64_t *)pmm_alloc(1);
-	debug("pointer4 allocated at 0x%x\n", pointer4);
+	debug("pointer4 allocated at 0x%llx\n", pointer4);
 
 	uint64_t *pointer5 = (uint64_t *)pmm_alloc(1);
-	debug("pointer5 allocated at 0x%x\n", pointer5);
+	debug("pointer5 allocated at 0x%llx\n", pointer5);
 
 	pmm_free(pointer3, 1);
 	debug("pointer3 freed\n");
@@ -87,7 +87,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 
 	uint64_t *pointer6 = (uint64_t *)pmm_alloc(1);
-	debug("pointer6 allocated at 0x%x\n", pointer6);
+	debug("pointer6 allocated at 0x%llx\n", pointer6);
 
 	pmm_free(pointer6, 1);
 	debug("pointer6 freed\n");

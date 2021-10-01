@@ -19,7 +19,7 @@
 #define PMM_H
 
 #define BLOCK_SIZE				4096
-#define PM_OFFSET				0xFFFF800000000000
+#define MEMORY_OFFSET			0xFFFF800000000000
 
 #define KB_TO_BLOCKS(kb)		(((kb) * 1024) / BLOCK_SIZE)
 #define ALIGN_DOWN(addr, align)	((addr) & ~((align)-1))
