@@ -134,8 +134,14 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 			pmm_free((void *)current_entry->base, current_entry->length / BLOCK_SIZE);
 	}
 
-	// for (size_t i = 0; i < bitmap.size; i++)
-	// 	debug("%x ", bitmap.map[i]);
+
+	// --- step 7 ---
+	
+	// reserve the null pointer
+	bitmap_set_bit(&bitmap, 0);
+
+
+	// --- done ---
 
 	log(INFO, __FILE__, "PMM initialized\n");
 }
@@ -174,7 +180,6 @@ const char *get_memory_map_entry_type(uint32_t type)
 	}
 }
 
-// TODO: multiple blocks actually checking
 // traverse the bitmap -> for each bit and check if bit is free or used
 // return index
 void *pmm_find_first_free_block(size_t block_count)
@@ -183,53 +188,14 @@ void *pmm_find_first_free_block(size_t block_count)
 	if (block_count == 0)
 		return NULL;
 
-	/*
-	    uint8_t first_free_block_found = 0;
-	    int32_t first_index = 0;
-
-	    for (uint32_t i = 0; i < pmm_info.max_blocks / 32; i++)
-	    {
-		if (pmm_info.memory_map->memmap[i].base != 0xFFFFFFFF)
-		{
-			for (int j = 0; j < 32; j++)
-			{
-				int32_t bit = 1 << j;
-
-				if (!(pmm_info.memory_map->memmap[i].base & bit))
-				{
-					int32_t		start_bit	= i * 32 + bit;
-					uint32_t	free_blocks	= 0;
-
-					for (uint32_t counter = 0; counter <= block_count; counter++) {
-						if (!bitmap_check_bit(&bitmap, start_bit + counter))
-						{
-							if (!first_free_block_found)
-							{
-								first_index = i * 32 + j;
-
-								first_free_block_found = 1;
-							}
-
-							free_blocks++;
-						}
-
-						// found enough free space
-						if (free_blocks == block_count)
-							// return i * 32 + j;
-							return first_index;
-					}
-				}
-			}
-		}
-	    }
-	*/
-
-	for (size_t i = 0; i < PAGE_TO_BIT(highest_page); i++)
+	for (size_t counter; counter < block_count; counter++)
 	{
-		if (!bitmap_check_bit(&bitmap, i))
-			return (void *)BIT_TO_PAGE(i);
+		for (size_t i = 0; i < PAGE_TO_BIT(highest_page); i++)
+		{
+			if (!bitmap_check_bit(&bitmap, i))
+				return (void *)BIT_TO_PAGE(i);
+		}
 	}
-
 
 	// nothing big enough
 	return NULL;
@@ -261,12 +227,6 @@ void *pmm_alloc(size_t block_count)
 
 	pmm_info.used_blocks += block_count;
 
-	// debug("\n\n\nmemmap base: 0x%x\n", pmm_info.memory_map->memmap[0].base);
-	// debug("index: 0x%x\n", index);
-	// debug("block size: 0x%x\n\n\n", BLOCK_SIZE);
-
-	// debug("\n");
-
 	return (void *)(uint64_t)(pmm_info.memory_map->memmap[0].base + index * BLOCK_SIZE);
 }
 
@@ -275,13 +235,6 @@ void *pmm_alloc(size_t block_count)
 // -> physical memory freeing for n blocks
 void pmm_free(void *pointer, size_t block_count)
 {
-	// debug("\n\npmm_free\n");
-	// debug("pointer: 0x%x\n", (uint64_t)pointer);
-	// debug("BLOCK_SIZE: 0x%x\n", BLOCK_SIZE);
-	// debug("mem base: 0x%x\n", pmm_info.memory_map->memmap[0].base);
-
-	// debug("pm freed at location: 0x%x\n", pointer);
-
 	uint64_t index = ((uint64_t)pointer - pmm_info.memory_map->memmap[0].base) / BLOCK_SIZE;
 
 	debug("free index: 0x%x\n", index);
@@ -290,6 +243,4 @@ void pmm_free(void *pointer, size_t block_count)
 		bitmap_unset_bit(&bitmap, index + i);
 
 	pmm_info.used_blocks -= block_count;
-
-	// debug("\n");
 }
