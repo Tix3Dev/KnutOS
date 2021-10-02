@@ -105,7 +105,6 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	debug("pointer8 freed\n");
 
 
->>>>>>> pmm_experimental
 
 	serial_set_color(TERM_COLOR_RESET);
 
