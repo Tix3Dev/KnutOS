@@ -139,7 +139,7 @@ void keyboard_init(void)
 	// enable scanning (so that the keyboard will send scan codes)
 	keyboard_send_command(0xF4);
 
-	log(INFO, __FILE__, "Keyboard driver initialized\n");
+	log(INFO, "Keyboard driver initialized\n");
 }
 
 // send a command byte to the keyboard controller

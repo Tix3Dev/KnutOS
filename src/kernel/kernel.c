@@ -39,7 +39,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	debug("%s", small_logo_text);
 	serial_set_color(TERM_COLOR_RESET);
 
-	log(INFO, __FILE__, "Kernel started\n");
+	log(INFO, "Kernel started\n");
 
 	gdt_init();
 	idt_init();

@@ -61,7 +61,7 @@ void framebuffer_init(struct stivale2_struct *stivale2_struct, uint32_t backgrou
 
 	framebuffer_set_background_color(background_color);
 
-	log(INFO, __FILE__, "Framebuffer initialized\n");
+	log(INFO, "Framebuffer initialized\n");
 }
 
 // draw one pixel at coordinate x, y (0, 0 is top left corner) in a certain color

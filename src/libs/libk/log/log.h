@@ -18,12 +18,14 @@
 #ifndef LOG_H
 #define LOG_H
 
+#define log(...) log_impl(__FILE__, __LINE__, __VA_ARGS__);
+
 typedef enum {
 	INFO,
 	WARNING,
 	ERROR
 } STATUS;
 
-void log(STATUS status, char *description, char *fmt, ...);
+void log_impl(char *file, int line_nr, STATUS status, char *fmt, ...);
 
 #endif

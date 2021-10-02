@@ -24,7 +24,7 @@
 const char log_buffer[5120];
 
 // variadic function for format specifiers
-void log(STATUS status, char *description, char *fmt, ...)
+void log_impl(char *description, int line_nr, STATUS status, char *fmt, ...)
 {
 	va_list ptr;
 	va_start(ptr, fmt);
@@ -46,6 +46,6 @@ void log(STATUS status, char *description, char *fmt, ...)
 		debug("[ERROR]   | ");
 	}
 
-	debug("%s ─→ %s", description, (char *)log_buffer);
+	debug("%s:%d ─→ %s", description, line_nr, (char *)log_buffer);
 	serial_set_color(TERM_COLOR_RESET);
 }

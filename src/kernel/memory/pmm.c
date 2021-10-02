@@ -143,7 +143,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 	// --- done ---
 
-	log(INFO, __FILE__, "PMM initialized\n");
+	log(INFO, "PMM initialized\n");
 }
 
 // return matching string for memory map entry type passed

@@ -136,5 +136,5 @@ void gdt_init(void)
 
 	_load_gdt_and_tss_asm(&gdt_pointer);
 
-	log(INFO, __FILE__, "GDT initialized\n");
+	log(INFO, "GDT initialized\n");
 }
