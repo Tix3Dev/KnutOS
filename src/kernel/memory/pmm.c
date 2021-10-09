@@ -72,14 +72,14 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	}
 
 	pmm_info.memory_size	= highest_page;
-	pmm_info.max_blocks		= KB_TO_BLOCKS(pmm_info.memory_size);
-	pmm_info.used_blocks	= pmm_info.max_blocks;
+	pmm_info.max_pages		= KB_TO_PAGES(pmm_info.memory_size);
+	pmm_info.used_pages	= pmm_info.max_pages;
 
 
 	// --- step 3 ---
 
 	// calculate bitmap size
-	size_t bitmap_byte_size = ALIGN_UP(ALIGN_DOWN(highest_page, BLOCK_SIZE) / BLOCK_SIZE / 8, BLOCK_SIZE);
+	size_t bitmap_byte_size = ALIGN_UP(ALIGN_DOWN(highest_page, PAGE_SIZE) / PAGE_SIZE / 8, PAGE_SIZE);
 
 	bitmap.size = bitmap_byte_size;
 
@@ -92,7 +92,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 	// --- step 4 ---
 
-	// search for first large enough block of memory to host the bitmap
+	// search for first large enough page of memory to host the bitmap
 	for (uint64_t i = 0; i < pmm_info.memory_map->entries; i++)
 	{
 		current_entry = &pmm_info.memory_map->memmap[i];
@@ -131,7 +131,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 		current_entry = &pmm_info.memory_map->memmap[i];
 
 		if (current_entry->type == STIVALE2_MMAP_USABLE)
-			pmm_free((void *)current_entry->base, current_entry->length / BLOCK_SIZE);
+			pmm_free((void *)current_entry->base, current_entry->length / PAGE_SIZE);
 	}
 
 
@@ -182,13 +182,13 @@ const char *get_memory_map_entry_type(uint32_t type)
 
 // traverse the bitmap -> for each bit and check if bit is free or used
 // return index
-void *pmm_find_first_free_block(size_t block_count)
+void *pmm_find_first_free_page(size_t page_count)
 {
 	// can't find in no memory
-	if (block_count == 0)
+	if (page_count == 0)
 		return NULL;
 
-	for (size_t counter = 0; counter < block_count; counter++)
+	for (size_t counter = 0; counter < page_count; counter++)
 	{
 		for (size_t i = 0; i < PAGE_TO_BIT(highest_page); i++)
 		{
@@ -202,43 +202,43 @@ void *pmm_find_first_free_block(size_t block_count)
 }
 
 // check if there is still memory left
-// find first free block
+// find first free page
 // mark it as used
 // return address
-// -> physical memory allocation for n blocks
-void *pmm_alloc(size_t block_count)
+// -> physical memory allocation for n pages
+void *pmm_alloc(size_t page_count)
 {
-	if (pmm_info.used_blocks <= 0)
+	if (pmm_info.used_pages <= 0)
 		return NULL;
 
-	void *pointer = pmm_find_first_free_block(block_count);
+	void *pointer = pmm_find_first_free_page(page_count);
 
 	if (pointer == NULL)
 		return NULL;
 
 
-	uint64_t index = (uint64_t)pointer / BLOCK_SIZE;
+	uint64_t index = (uint64_t)pointer / PAGE_SIZE;
 	debug("alloc index: 0x%x\n", index);
 
-	for (size_t i = 0; i < block_count; i++)
+	for (size_t i = 0; i < page_count; i++)
 		bitmap_set_bit(&bitmap, index + i);
 
-	pmm_info.used_blocks += block_count;
+	pmm_info.used_pages += page_count;
 
-	return (void *)(uint64_t)(MEMORY_OFFSET + (index * BLOCK_SIZE));
+	return (void *)(uint64_t)(MEMORY_OFFSET + (index * PAGE_SIZE));
 }
 
 // convert pointer to index
 // unset the matching bit
-// -> physical memory freeing for n blocks
-void pmm_free(void *pointer, size_t block_count)
+// -> physical memory freeing for n pages
+void pmm_free(void *pointer, size_t page_count)
 {
-	uint64_t index = ((uint64_t)pointer - MEMORY_OFFSET) / BLOCK_SIZE;
+	uint64_t index = ((uint64_t)pointer - MEMORY_OFFSET) / PAGE_SIZE;
 
 	debug("free index: 0x%x\n", index);
 
-	for (size_t i = 0; i < block_count; i++)
+	for (size_t i = 0; i < page_count; i++)
 		bitmap_unset_bit(&bitmap, index + i);
 
-	pmm_info.used_blocks -= block_count;
+	pmm_info.used_pages -= page_count;
 }

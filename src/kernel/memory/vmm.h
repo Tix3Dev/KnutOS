@@ -17,21 +17,14 @@
 
 #include <memory/mem.h>
 
-#ifndef PMM_H
-#define PMM_H
+#ifndef VMM_H
+#define VMM_H
 
-struct PMM_Info_Struct
+typedef struct
 {
-	size_t		memory_size;
-	uint32_t	max_pages;
-	uint32_t	used_pages;
-	struct		stivale2_struct_tag_memmap *memory_map;
-};
+	uint32_t *page_directory;
+} VMM_INFO_t;
 
-void pmm_init(struct stivale2_struct *stivale2_struct);
-const char *get_memory_map_entry_type(uint32_t type);
-void *pmm_find_first_free_page(size_t page_count);
-void *pmm_alloc(size_t page_count);
-void pmm_free(void *pointer, size_t page_count);
+void vmm_init(void);
 
 #endif

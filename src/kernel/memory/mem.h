@@ -15,23 +15,17 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <memory/mem.h>
+#ifndef MEM_H
+#define MEM_h
 
-#ifndef PMM_H
-#define PMM_H
+#define MEMORY_OFFSET			0xFFFF800000000000
 
-struct PMM_Info_Struct
-{
-	size_t		memory_size;
-	uint32_t	max_pages;
-	uint32_t	used_pages;
-	struct		stivale2_struct_tag_memmap *memory_map;
-};
+#define PAGE_SIZE				4096
+#define TABLES_PER_DIRECTORY	1024
+#define PAGES_PER_TABLE			1024									// do i need this???
 
-void pmm_init(struct stivale2_struct *stivale2_struct);
-const char *get_memory_map_entry_type(uint32_t type);
-void *pmm_find_first_free_page(size_t page_count);
-void *pmm_alloc(size_t page_count);
-void pmm_free(void *pointer, size_t page_count);
+#define KB_TO_PAGES(kb)			(((kb) * 1024) / PAGE_SIZE)
+#define ALIGN_DOWN(addr, align)	((addr) & ~((align)-1))
+#define ALIGN_UP(addr, align)	(((addr) + (align)-1) & ~((align)-1))
 
 #endif
