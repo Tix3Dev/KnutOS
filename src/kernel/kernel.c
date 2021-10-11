@@ -24,6 +24,7 @@
 #include <gdt/gdt.h>
 #include <interrupts/idt.h>
 #include <memory/pmm.h>
+#include <memory/vmm.h>
 #include <shell/shell_screen.h>
 #include <logo.h>
 #include <libk/debug/debug.h>
@@ -44,6 +45,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	gdt_init();
 	idt_init();
 	pmm_init(stivale2_struct);
+	vmm_init();
 
 
 	// physical memory management test

@@ -20,11 +20,26 @@
 #ifndef VMM_H
 #define VMM_H
 
+// page table entry flags
+#define PTE_PRESENT				1
+#define PTE_READ_WRITE			2
+#define PTE_USER_SUPERVISOR		4
+#define PTE_WRITE_THROUGH		8
+#define PTE_CHACHE_DISABLED		16
+#define PTE_ACCESSED			32
+#define PTE_DIRTY				64
+#define PTE_PAT					128
+#define PTE_GLOBAL				256
+
 typedef struct
 {
-	uint32_t *page_directory;
+	uint64_t *page_directory;
 } VMM_INFO_t;
 
 void vmm_init(void);
+VMM_INFO_t *vmm_create_page_directory(void);
+void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags);
+void vmm_flush_tlb(void *address);
+void vmm_activate_page_directory(VMM_INFO_t *vmm);
 
 #endif
