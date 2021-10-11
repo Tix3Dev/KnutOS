@@ -44,6 +44,7 @@ VMM_INFO_t *vmm_create_page_directory(void)
 	VMM_INFO_t *new_vmm = pmm_alloc(1);
 
 	new_vmm->page_directory = pmm_alloc(1);
+
 	for (int i = 0; i < TABLES_PER_DIRECTORY; i++)
 		new_vmm->page_directory[i] = 0;
 
@@ -78,7 +79,7 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 		page_map_level1 = (uint64_t *)page_map_level2[index2];
 	else
 		page_map_level1[index1] = (uint64_t)pmm_alloc(1);
-	
+
 	page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 
 	vmm_flush_tlb((void *)virtual_address);
