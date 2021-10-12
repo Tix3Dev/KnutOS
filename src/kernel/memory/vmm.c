@@ -21,6 +21,13 @@
 #include <boot/stivale2.h>
 #include <memory/pmm.h>
 #include <memory/vmm.h>
+#include <libk/log/log.h>
+
+
+
+#include <libk/debug/debug.h>
+
+
 
 VMM_INFO_t *root;
 
@@ -36,6 +43,8 @@ void vmm_init(void)
 	// no need to enable paging
 	// (= set bit 31 in cr0)
 	// as limine already handled that
+	
+	log(INFO, "VMM initialized\n");
 }
 
 // set each table in the page directory to not used
@@ -51,6 +60,7 @@ VMM_INFO_t *vmm_create_page_directory(void)
 	return new_vmm;
 }
 
+// map physical memory to virtual memory by using 4 level paging
 void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags)
 {
 	uintptr_t index4 = (virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
@@ -63,26 +73,49 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 	uint64_t *page_map_level2 = NULL;
 	uint64_t *page_map_level1 = NULL;
 
-	if (*page_map_level4 & 1)
-		// old: page_map_level3 = (uint64_t *)page_map_level4[index4];
+	if (page_map_level4[index4] & 1)
+	{
 		page_map_level3 = (uint64_t *)(page_map_level4[index4] & ~(511));
-	else
-		// old: page_map_level3[index3] = (uint64_t)pmm_alloc(1);
-		page_map_level3[index3] = (uint64_t)pmm_alloc(1) | flags;
 
-	if (*page_map_level3 & 1)
-		page_map_level2 = (uint64_t *)page_map_level3[index3];
+		debug("1: heyoo\n");
+	}
 	else
-		page_map_level2[index2] = (uint64_t)pmm_alloc(1);
+	{
+		page_map_level3[index3] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
 
-	if (*page_map_level2 & 1)
-		page_map_level1 = (uint64_t *)page_map_level2[index2];
+		debug("2: heyoo\n");
+	}
+
+	if (page_map_level3[index3] & 1)
+	{
+		page_map_level2 = (uint64_t *)(page_map_level3[index3] & ~(511));
+
+		debug("3: heyoo\n");
+	}
 	else
-		page_map_level1[index1] = (uint64_t)pmm_alloc(1);
+	{
+		page_map_level2[index2] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+
+		debug("4: heyoo\n");
+	}
+
+	if (page_map_level2[index2] & 1)
+	{
+		page_map_level1 = (uint64_t *)(page_map_level2[index2] & ~(511));
+
+		debug("5: heyoo\n");
+	}
+	else
+	{
+		page_map_level1[index1] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+
+		debug("6: heyoo\n");
+	}
 
 	page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 
-	vmm_flush_tlb((void *)virtual_address);
+	// TODO: check this
+	// vmm_flush_tlb((void *)virtual_address);
 }
 
 // invalidate a single page in the translation lookaside buffer
