@@ -20,6 +20,8 @@
 #ifndef VMM_H
 #define VMM_H
 
+#define GB 0x40000000UL
+
 // page table entry flags
 #define PTE_PRESENT				1
 #define PTE_READ_WRITE			2
@@ -36,7 +38,7 @@ typedef struct
 	uint64_t *page_directory;
 } VMM_INFO_t;
 
-void vmm_init(void);
+void vmm_init(struct stivale2_struct *stivale2_struct);
 VMM_INFO_t *vmm_create_page_directory(void);
 void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags);
 void vmm_flush_tlb(void *address);

@@ -32,7 +32,7 @@
 #define ALIGN_UP(addr, align)	(((addr) + (align)-1) & ~((align)-1))
 
 #define TO_VIRTUAL_ADDRESS(physical_address) (HIGHER_HALF_KERNEL_DATA + physical_address)		// convert an actual physical address to a higher half (kernel) data address
-#define TO_PHYSICAL_ADDRESS(physical_address) (HIGHER_HALF_KERNEL_CODE + virtual_address)		// convert an actual physical address to a higher half (kernel) code address
+#define TO_PHYSICAL_ADDRESS(physical_address) (HIGHER_HALF_KERNEL_CODE + physical_address)		// convert an actual physical address to a higher half (kernel) code address
 #define FROM_VIRTUAL_ADDRESS(virtual_address) (virtual_address - HIGHER_HALF_KERNEL_DATA)		// convert a higher half (kernel) data address to an actual physical address
 #define FROM_PHYSICAL_ADDRESS(physical_address) (physical_address - HIGHER_HALF_KERNEL_CODE) 	// convert a higher half (kernel) code address to an actual physical address
 

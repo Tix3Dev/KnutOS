@@ -45,7 +45,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	gdt_init();
 	idt_init();
 	pmm_init(stivale2_struct);
-	vmm_init();
+	vmm_init(stivale2_struct);
 
 
 	// physical memory management test

@@ -19,6 +19,7 @@
 #include <stddef.h>
 
 #include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
 #include <memory/pmm.h>
 #include <memory/vmm.h>
 #include <libk/log/log.h>
@@ -31,12 +32,46 @@
 
 VMM_INFO_t *root;
 
-void vmm_init(void)
+void vmm_init(struct stivale2_struct *stivale2_struct)
 {
+	struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct,
+			STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
 	root = vmm_create_page_directory();
 
-	for (int i = 0; i < PAGE_SIZE * PAGES_PER_TABLE; i += PAGE_SIZE)
+	// for (int i = 0; i < PAGE_SIZE * PAGES_PER_TABLE; i += PAGE_SIZE)
+	// 	vmm_map_page(root, i, i, PTE_PRESENT | PTE_READ_WRITE);
+	
+	// stuff to map
+	// 1. 4 GiB
+	// 2. i + code_addr (to_virt)	| 0xffff800000000000 - 0xff00000000000000
+	// 3. i + data_addr (to_phys)	| PMR
+	// 4. framebuffer TODO TODO TODO
+	
+	// map first 4 GiB
+	for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
 		vmm_map_page(root, i, i, PTE_PRESENT | PTE_READ_WRITE);
+
+	// map higher half kernel address space
+	for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
+		vmm_map_page(root, i, TO_VIRTUAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
+
+	// map protected memory ranges (PMR's)
+	for (uint64_t i = 0; i < 0x80000000; i += PAGE_SIZE)
+		vmm_map_page(root, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
+
+	// stivale2 structs
+	for (uint64_t i = 0; i < memory_map->entries; i++)
+	{
+		struct stivale2_mmap_entry *current_entry = &memory_map->memmap[i];
+
+		if (current_entry->type == STIVALE2_MMAP_USABLE)
+		{
+			for (uint64_t j = 0; j < memory_map->memmap[i].length; j += PAGE_SIZE)
+				vmm_map_page(root, TO_VIRTUAL_ADDRESS(j), j, PTE_PRESENT | PTE_READ_WRITE);
+		}
+	}
+	
 
 	vmm_activate_page_directory(root);
 
@@ -112,10 +147,11 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 		debug("6: heyoo\n");
 	}
 
+	// TODO: GP HERE
 	page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 
 	// TODO: check this
-	// vmm_flush_tlb((void *)virtual_address);
+	vmm_flush_tlb((void *)virtual_address);
 }
 
 // invalidate a single page in the translation lookaside buffer
