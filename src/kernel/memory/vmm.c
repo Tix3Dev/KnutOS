@@ -108,20 +108,28 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 	uint64_t *page_map_level2 = NULL;
 	uint64_t *page_map_level1 = NULL;
 
+	// NOTE: if you are unfamiliar with this syntax
+	// *x = NULL;
+	// x[i] = y
+	// just means
+	// *(x + i) = y
+
 	if (page_map_level4[index4] & 1)
 	{
 		page_map_level3 = (uint64_t *)(page_map_level4[index4] & ~(511));
 
 		debug("1: heyoo\n");
 	}
-	else
+	else // this
 	{
 		page_map_level3[index3] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+
+		page_map_level3 = (uint64_t *)(page_map_level4[index4] & ~(511));
 
 		debug("2: heyoo\n");
 	}
 
-	if (page_map_level3[index3] & 1)
+	if (page_map_level3[index3] & 1) // this
 	{
 		page_map_level2 = (uint64_t *)(page_map_level3[index3] & ~(511));
 
@@ -130,6 +138,8 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 	else
 	{
 		page_map_level2[index2] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+
+		page_map_level2 = (uint64_t *)(page_map_level3[index3] & ~(511));
 
 		debug("4: heyoo\n");
 	}
@@ -140,18 +150,25 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 
 		debug("5: heyoo\n");
 	}
-	else
+	else // this
 	{
 		page_map_level1[index1] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
 
+		page_map_level1 = (uint64_t *)(page_map_level2[index2] & ~(511));
+
 		debug("6: heyoo\n");
 	}
+
+	debug("page_map_level4: 0x%x | page_map_level4[%d]: 0x%x\n", page_map_level4, index4, page_map_level4[index4]);
+	debug("page_map_level3: 0x%x | page_map_level3[%d]: 0x%x\n", page_map_level3, index3, page_map_level3[index3]);
+	debug("page_map_level2: 0x%x | page_map_level2[%d]: 0x%x\n", page_map_level2, index2, page_map_level2[index2]);
+	debug("page_map_level1: 0x%x | page_map_level1[%d]: 0x%x\n", page_map_level1, index1, page_map_level1[index1]); // page_map_level1[index1] causes GP
 
 	// TODO: GP HERE
 	page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 
 	// TODO: check this
-	vmm_flush_tlb((void *)virtual_address);
+	// vmm_flush_tlb((void *)virtual_address);
 }
 
 // invalidate a single page in the translation lookaside buffer
