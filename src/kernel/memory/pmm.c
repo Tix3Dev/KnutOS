@@ -218,7 +218,6 @@ void *pmm_alloc(size_t page_count)
 
 
 	uint64_t index = (uint64_t)pointer / PAGE_SIZE;
-	debug("alloc index: 0x%x\n", index);
 
 	for (size_t i = 0; i < page_count; i++)
 		bitmap_set_bit(&bitmap, index + i);
@@ -237,8 +236,6 @@ void *pmm_alloc(size_t page_count)
 void pmm_free(void *pointer, size_t page_count)
 {
 	uint64_t index = FROM_VIRTUAL_ADDRESS((uint64_t)pointer) / PAGE_SIZE;
-
-	debug("free index: 0x%x\n", index);
 
 	for (size_t i = 0; i < page_count; i++)
 		bitmap_unset_bit(&bitmap, index + i);
