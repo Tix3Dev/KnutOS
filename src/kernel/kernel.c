@@ -42,6 +42,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	log(INFO, "Kernel started\n");
 
+	// TODO: maybe change order (descriptors before mm)
 	gdt_init();
 	idt_init();
 	pmm_init(stivale2_struct);

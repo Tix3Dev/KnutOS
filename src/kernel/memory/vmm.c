@@ -22,13 +22,8 @@
 #include <boot/stivale2_boot.h>
 #include <memory/pmm.h>
 #include <memory/vmm.h>
-#include <libk/log/log.h>
-
-
-
 #include <libk/debug/debug.h>
-
-
+#include <libk/log/log.h>
 
 VMM_INFO_t *root;
 
@@ -39,26 +34,28 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 
 	root = vmm_create_page_directory();
 
-	// for (int i = 0; i < PAGE_SIZE * PAGES_PER_TABLE; i += PAGE_SIZE)
-	// 	vmm_map_page(root, i, i, PTE_PRESENT | PTE_READ_WRITE);
-	
-	// stuff to map
-	// 1. 4 GiB
-	// 2. i + code_addr (to_virt)	| 0xffff800000000000 - 0xff00000000000000
-	// 3. i + data_addr (to_phys)	| PMR
-	// 4. framebuffer TODO TODO TODO
-	
+
+	log(INFO, "Paging - Mapped areas:\n");
+
+	serial_set_color(TERM_PURPLE);
+
 	// map first 4 GiB
 	for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
 		vmm_map_page(root, i, i, PTE_PRESENT | PTE_READ_WRITE);
+
+	debug("1/4: Mapped first 4 GiB of memory");
 
 	// map higher half kernel address space
 	for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
 		vmm_map_page(root, i, TO_VIRTUAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
 
+	debug("2/4: Mapped higher half kernel address space\n");
+
 	// map protected memory ranges (PMR's)
 	for (uint64_t i = 0; i < 0x80000000; i += PAGE_SIZE)
 		vmm_map_page(root, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
+
+	debug("3/4: Mapped protected memory ranges\n");
 
 	// stivale2 structs
 	for (uint64_t i = 0; i < memory_map->entries; i++)
@@ -71,14 +68,18 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 				vmm_map_page(root, TO_VIRTUAL_ADDRESS(j), j, PTE_PRESENT | PTE_READ_WRITE);
 		}
 	}
-	
+
+	debug("4/4: Mapped stivale2 structs\n");
+
+	serial_set_color(TERM_COLOR_RESET);
+
 
 	vmm_activate_page_directory(root);
 
 	// no need to enable paging
 	// (= set bit 31 in cr0)
 	// as limine already handled that
-	
+
 	log(INFO, "VMM initialized\n");
 }
 
@@ -89,8 +90,9 @@ VMM_INFO_t *vmm_create_page_directory(void)
 
 	new_vmm->page_directory = pmm_alloc(1);
 
-	for (int i = 0; i < TABLES_PER_DIRECTORY; i++)
-		new_vmm->page_directory[i] = 0;
+	// not needed since pmm_alloc returns already "clean" page (memset with 0)
+	// for (int i = 0; i < TABLES_PER_DIRECTORY; i++)
+	// 	new_vmm->page_directory[i] = 0;
 
 	return new_vmm;
 }
@@ -115,59 +117,39 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 	// *(x + i) = y
 
 	if (page_map_level4[index4] & 1)
-	{
 		page_map_level3 = (uint64_t *)(page_map_level4[index4] & ~(511));
-
-		debug("1: heyoo\n");
-	}
-	else // this
-	{
-		page_map_level3[index3] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
-
-		page_map_level3 = (uint64_t *)(page_map_level4[index4] & ~(511));
-
-		debug("2: heyoo\n");
-	}
-
-	if (page_map_level3[index3] & 1) // this
-	{
-		page_map_level2 = (uint64_t *)(page_map_level3[index3] & ~(511));
-
-		debug("3: heyoo\n");
-	}
 	else
 	{
-		page_map_level2[index2] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+		// page_map_level3[index3] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+		page_map_level4[index4] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+
+		page_map_level3 = (uint64_t *)(page_map_level4[index4] & ~(511));
+	}
+
+	if (page_map_level3[index3] & 1)
+		page_map_level2 = (uint64_t *)(page_map_level3[index3] & ~(511));
+	else
+	{
+		// page_map_level2[index2] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+		page_map_level3[index3] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
 
 		page_map_level2 = (uint64_t *)(page_map_level3[index3] & ~(511));
-
-		debug("4: heyoo\n");
 	}
 
 	if (page_map_level2[index2] & 1)
-	{
 		page_map_level1 = (uint64_t *)(page_map_level2[index2] & ~(511));
-
-		debug("5: heyoo\n");
-	}
-	else // this
+	else
 	{
-		page_map_level1[index1] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+		// page_map_level1[index1] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+		page_map_level2[index2] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
 
 		page_map_level1 = (uint64_t *)(page_map_level2[index2] & ~(511));
-
-		debug("6: heyoo\n");
 	}
 
-	debug("page_map_level4: 0x%x | page_map_level4[%d]: 0x%x\n", page_map_level4, index4, page_map_level4[index4]);
-	debug("page_map_level3: 0x%x | page_map_level3[%d]: 0x%x\n", page_map_level3, index3, page_map_level3[index3]);
-	debug("page_map_level2: 0x%x | page_map_level2[%d]: 0x%x\n", page_map_level2, index2, page_map_level2[index2]);
-	debug("page_map_level1: 0x%x | page_map_level1[%d]: 0x%x\n", page_map_level1, index1, page_map_level1[index1]); // page_map_level1[index1] causes GP
-
-	// TODO: GP HERE
 	page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 
 	// TODO: check this
+	// doesn't seem to make a difference
 	// vmm_flush_tlb((void *)virtual_address);
 }
 
@@ -180,5 +162,5 @@ void vmm_flush_tlb(void *address)
 // write the page directory address to cr3
 void vmm_activate_page_directory(VMM_INFO_t *vmm)
 {
-	asm volatile("mov %0, %%cr3" : : "r" (vmm->page_directory) : "memory");
+	asm volatile("mov %0, %%cr3" : : "r" (FROM_VIRTUAL_ADDRESS((uint64_t)vmm->page_directory)) : "memory");
 }

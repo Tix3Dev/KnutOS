@@ -47,6 +47,8 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 	// --- step 2 ---
 
+	log(INFO, "Memory map layout:\n");
+
 	size_t top = 0;
 
 	// iterate through memory map entries and print info about them
@@ -55,10 +57,12 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	{
 		current_entry = &pmm_info.memory_map->memmap[i];
 
+
 		serial_set_color(TERM_PURPLE);
 		debug("Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
 			  i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
 		serial_set_color(TERM_COLOR_RESET);
+
 
 		if (current_entry->type != STIVALE2_MMAP_USABLE &&
 				current_entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
@@ -82,6 +86,8 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 	size_t bitmap_byte_size = ALIGN_UP(ALIGN_DOWN(highest_page, PAGE_SIZE) / PAGE_SIZE / 8, PAGE_SIZE);
 
 	bitmap.size = bitmap_byte_size;
+
+	log(INFO, "Memory specifications:\n");
 
 	serial_set_color(TERM_PURPLE);
 	current_entry = &pmm_info.memory_map->memmap[0];
@@ -225,7 +231,7 @@ void *pmm_alloc(size_t page_count)
 	pmm_info.used_pages += page_count;
 
 	memset((void *)(index * PAGE_SIZE), 0, PAGE_SIZE);	// "clean" page that we return by setting it to zero
-														// instead of having random bytes
+	// instead of having random bytes
 
 	return (void *)(uint64_t)(TO_VIRTUAL_ADDRESS(index * PAGE_SIZE));
 }
