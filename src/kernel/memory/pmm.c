@@ -230,8 +230,8 @@ void *pmm_alloc(size_t page_count)
 
 	pmm_info.used_pages += page_count;
 
-	memset((void *)(index * PAGE_SIZE), 0, PAGE_SIZE);	// "clean" page that we return by setting it to zero
-	// instead of having random bytes
+	// "clean" page that we return by setting it to zero instead of having random bytes
+	memset((void *)(index * PAGE_SIZE), 0, PAGE_SIZE);
 
 	return (void *)(uint64_t)(TO_VIRTUAL_ADDRESS(index * PAGE_SIZE));
 }

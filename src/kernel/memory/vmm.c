@@ -148,9 +148,7 @@ void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual
 
 	page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 
-	// TODO: check this
-	// doesn't seem to make a difference
-	// vmm_flush_tlb((void *)virtual_address);
+	vmm_flush_tlb((void *)virtual_address);
 }
 
 // invalidate a single page in the translation lookaside buffer

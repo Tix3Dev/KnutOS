@@ -43,10 +43,10 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	log(INFO, "Kernel started\n");
 
 	// TODO: maybe change order (descriptors before mm)
-	gdt_init();
-	idt_init();
 	pmm_init(stivale2_struct);
 	vmm_init(stivale2_struct);
+	gdt_init();
+	idt_init();
 
 
 	// physical memory management test
@@ -55,6 +55,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 
 
+	// asm volatile("1: jmp 1b");
+	// TODO contine here - maybe i can't just use pmm_alloc like that after vmm anymore
 	uint64_t *pointer1 = (uint64_t *)pmm_alloc(1);
 	debug("pointer1 allocated at 0x%llx\n", pointer1);
 
