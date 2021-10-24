@@ -63,6 +63,9 @@ all: $(TARGET)
 run: $(ISO_IMAGE)
 	qemu-system-x86_64 -M q35 -m 2G -serial stdio -cdrom $(ISO_IMAGE)
 
+debug: $(ISO_IMAGE)
+	qemu-system-x86_64 -M q35 -m 2G -serial stdio -cdrom $(ISO_IMAGE) -s -S
+
 limine:
 	make -C third_party/limine
 
