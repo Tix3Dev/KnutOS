@@ -33,15 +33,12 @@
 #define PTE_PAT					128
 #define PTE_GLOBAL				256
 
-typedef struct
-{
-	uint64_t *page_directory;
-} VMM_INFO_t;
+typedef uint64_t * PAGE_DIR;
 
 void vmm_init(struct stivale2_struct *stivale2_struct);
-VMM_INFO_t *vmm_create_page_directory(void);
-void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags);
+PAGE_DIR vmm_create_page_directory(void);
+void vmm_map_page(PAGE_DIR vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags);
 void vmm_flush_tlb(void *address);
-void vmm_activate_page_directory(VMM_INFO_t *vmm);
+void vmm_activate_page_directory(PAGE_DIR vmm);
 
 #endif

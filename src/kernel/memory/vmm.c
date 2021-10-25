@@ -24,15 +24,16 @@
 #include <memory/vmm.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
+#include <libk/string/string.h>
 
-VMM_INFO_t *root;
+static PAGE_DIR root_page_directory;
 
 void vmm_init(struct stivale2_struct *stivale2_struct)
 {
 	struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct,
 			STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-	root = vmm_create_page_directory();
+	root_page_directory = vmm_create_page_directory();
 
 
 	log(INFO, "Paging - Mapped areas:\n");
@@ -41,19 +42,19 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 
 	// map first 4 GiB
 	for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
-		vmm_map_page(root, i, i, PTE_PRESENT | PTE_READ_WRITE);
+		vmm_map_page(root_page_directory, i, i, PTE_PRESENT | PTE_READ_WRITE);
 
-	debug("1/4: Mapped first 4 GiB of memory");
+	debug("1/4: Mapped first 4 GiB of memory\n");
 
 	// map higher half kernel address space
 	for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
-		vmm_map_page(root, i, TO_VIRTUAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
+		vmm_map_page(root_page_directory, i, TO_VIRTUAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
 
 	debug("2/4: Mapped higher half kernel address space\n");
 
 	// map protected memory ranges (PMR's)
 	for (uint64_t i = 0; i < 0x80000000; i += PAGE_SIZE)
-		vmm_map_page(root, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
+		vmm_map_page(root_page_directory, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
 
 	debug("3/4: Mapped protected memory ranges\n");
 
@@ -65,7 +66,7 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 		if (current_entry->type == STIVALE2_MMAP_USABLE)
 		{
 			for (uint64_t j = 0; j < memory_map->memmap[i].length; j += PAGE_SIZE)
-				vmm_map_page(root, TO_VIRTUAL_ADDRESS(j), j, PTE_PRESENT | PTE_READ_WRITE);
+				vmm_map_page(root_page_directory, TO_VIRTUAL_ADDRESS(j), j, PTE_PRESENT | PTE_READ_WRITE);
 		}
 	}
 
@@ -74,7 +75,7 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 	serial_set_color(TERM_COLOR_RESET);
 
 
-	vmm_activate_page_directory(root);
+	vmm_activate_page_directory(root_page_directory);
 
 	// no need to enable paging
 	// (= set bit 31 in cr0)
@@ -84,28 +85,25 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 }
 
 // set each table in the page directory to not used
-VMM_INFO_t *vmm_create_page_directory(void)
+PAGE_DIR vmm_create_page_directory(void)
 {
-	VMM_INFO_t *new_vmm = pmm_alloc(1);
+	PAGE_DIR new_page_directory = pmm_alloc(1);
 
-	new_vmm->page_directory = pmm_alloc(1);
+	// "clean" the page directory by setting everything to zero
+	memset((void *)FROM_VIRTUAL_ADDRESS((uint64_t)new_page_directory), 0, PAGE_SIZE);
 
-	// not needed since pmm_alloc returns already "clean" page (memset with 0)
-	// for (int i = 0; i < TABLES_PER_DIRECTORY; i++)
-	// 	new_vmm->page_directory[i] = 0;
-
-	return new_vmm;
+	return new_page_directory;
 }
 
 // map physical memory to virtual memory by using 4 level paging
-void vmm_map_page(VMM_INFO_t *vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags)
+void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, uintptr_t virtual_address, int flags)
 {
 	uintptr_t index4 = (virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
 	uintptr_t index3 = (virtual_address & ((uintptr_t)0x1ff << 30)) >> 30;
 	uintptr_t index2 = (virtual_address & ((uintptr_t)0x1ff << 21)) >> 21;
 	uintptr_t index1 = (virtual_address & ((uintptr_t)0x1ff << 12)) >> 12;
 
-	uint64_t *page_map_level4 = vmm->page_directory;
+	uint64_t *page_map_level4 = current_page_directory;
 	uint64_t *page_map_level3 = NULL;
 	uint64_t *page_map_level2 = NULL;
 	uint64_t *page_map_level1 = NULL;
@@ -158,7 +156,7 @@ void vmm_flush_tlb(void *address)
 }
 
 // write the page directory address to cr3
-void vmm_activate_page_directory(VMM_INFO_t *vmm)
+void vmm_activate_page_directory(PAGE_DIR current_page_directory)
 {
-	asm volatile("mov %0, %%cr3" : : "r" (FROM_VIRTUAL_ADDRESS((uint64_t)vmm->page_directory)) : "memory");
+	asm volatile("mov %0, %%cr3" : : "r" (FROM_VIRTUAL_ADDRESS((uint64_t)current_page_directory)) : "memory");
 }
