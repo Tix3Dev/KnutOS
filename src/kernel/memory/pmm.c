@@ -65,7 +65,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 		debug("Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
 			  i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
 		printk(GFX_PURPLE, "Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
-			  i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
+			   i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
 
 		serial_set_color(TERM_COLOR_RESET);
 
