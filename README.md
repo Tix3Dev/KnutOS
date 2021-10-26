@@ -20,6 +20,7 @@
 - TSS
 - IDT & ISR's
 - Physical memory manager
+- Virtual memory manager
 - Serial communication
 - Basic framebuffer
 - Basic keyboard driver with a small shell
