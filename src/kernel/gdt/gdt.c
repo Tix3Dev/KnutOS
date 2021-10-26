@@ -136,5 +136,6 @@ void gdt_init(void)
 
 	_load_gdt_and_tss_asm(&gdt_pointer);
 
-	log(INFO, "GDT initialized\n");
+	serial_log(INFO, "GDT initialized\n");
+	kernel_log(INFO, "GDT initialized\n");
 }

@@ -24,6 +24,7 @@
 #include <libk/alloc/bitmap.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
+#include <libk/stdio/stdio.h>
 #include <libk/string/string.h>
 
 struct	PMM_Info_Struct	pmm_info;
@@ -47,7 +48,8 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 	// --- step 2 ---
 
-	log(INFO, "Memory map layout:\n");
+	serial_log(INFO, "Memory map layout:\n");
+	kernel_log(INFO, "Memory map layout:\n");
 
 	size_t top = 0;
 
@@ -59,8 +61,12 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 
 		serial_set_color(TERM_PURPLE);
+
 		debug("Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
 			  i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
+		printk(GFX_PURPLE, "Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
+			  i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
+
 		serial_set_color(TERM_COLOR_RESET);
 
 
@@ -87,12 +93,19 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 	bitmap.size = bitmap_byte_size;
 
-	log(INFO, "Memory specifications:\n");
+	serial_log(INFO, "Memory specifications:\n");
+	kernel_log(INFO, "Memory specifications:\n");
 
 	serial_set_color(TERM_PURPLE);
+
 	current_entry = &pmm_info.memory_map->memmap[0];
+
 	debug("Total amount of memory: %d kB\n", current_entry->base + current_entry->length - 1);
+	printk(GFX_PURPLE, "Total amount of memory: %d kB\n", current_entry->base + current_entry->length - 1);
+
 	debug("Size of bitmap: %d kB\n", bitmap.size / 1024);
+	printk(GFX_PURPLE, "Size of bitmap: %d kB\n", bitmap.size / 1024);
+
 	serial_set_color(TERM_COLOR_RESET);
 
 
@@ -149,7 +162,8 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
 	// --- done ---
 
-	log(INFO, "PMM initialized\n");
+	serial_log(INFO, "PMM initialized\n");
+	kernel_log(INFO, "PMM initialized\n");
 }
 
 // return matching string for memory map entry type passed

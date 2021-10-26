@@ -109,5 +109,6 @@ void idt_init(void)
 
 	_load_idt_asm(&idt_pointer);
 
-	log(INFO, "IDT initialized\n");
+	serial_log(INFO, "IDT initialized\n");
+	kernel_log(INFO, "IDT initialized\n");
 }

@@ -17,8 +17,11 @@
 
 #include <stdint.h>
 
+// #include <boot/stivale2.h>
 #include <devices/serial/serial.h>
 #include <libk/io/io.h>
+// #include <libk/log/log.h>
+// #include <libk/stdio/stdio.h>
 
 // set COM1 offsets to init value
 void serial_init(void)
@@ -30,6 +33,9 @@ void serial_init(void)
 	io_outb(COM1 + 3, 0x03);
 	io_outb(COM1 + 2, 0xC7);
 	io_outb(COM1 + 4, 0x0B);
+
+	// serial_log(INFO, "Serial initialized\n");
+	// kernel_log(INFO, "Serial initialized\n");
 }
 
 // check if transmission buffer is not empty

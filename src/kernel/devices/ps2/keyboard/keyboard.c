@@ -139,7 +139,8 @@ void keyboard_init(void)
 	// enable scanning (so that the keyboard will send scan codes)
 	keyboard_send_command(0xF4);
 
-	log(INFO, "Keyboard driver initialized\n");
+	serial_log(INFO, "Keyboard driver initialized\n");
+	kernel_log(INFO, "Keyboard driver initialized\n");
 }
 
 // send a command byte to the keyboard controller

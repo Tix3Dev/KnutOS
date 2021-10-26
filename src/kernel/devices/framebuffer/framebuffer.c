@@ -21,7 +21,7 @@
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
 #include <devices/framebuffer/framebuffer.h>
-#include <libk/log/log.h>
+// #include <libk/log/log.h>
 
 #define SSFN_CONSOLEBITMAP_TRUECOLOR	// use the special renderer for 32 bit truecolor packed pixels
 #define SSFN_NOIMPLEMENTATION			// dont' use the normal renderer implementation
@@ -61,7 +61,8 @@ void framebuffer_init(struct stivale2_struct *stivale2_struct, uint32_t backgrou
 
 	framebuffer_set_background_color(background_color);
 
-	log(INFO, "Framebuffer initialized\n");
+	// serial_log(INFO, "Framebuffer initialized\n");
+	// kernel_log(INFO, "Framebuffer initialized\n");
 }
 
 // draw one pixel at coordinate x, y (0, 0 is top left corner) in a certain color

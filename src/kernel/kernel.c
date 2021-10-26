@@ -33,14 +33,19 @@
 
 void kmain(struct stivale2_struct *stivale2_struct)
 {
+	framebuffer_init(stivale2_struct, GFX_BLACK);
 	serial_init();
+
+	serial_log(INFO, "Framebuffer and serial initialized\n");
+	kernel_log(INFO, "Framebuffer and serial initialized\n");
 
 	serial_set_color(TERM_BLUE);
 	debug("Welcome to:\n");
 	debug("%s", small_logo_text);
 	serial_set_color(TERM_COLOR_RESET);
 
-	log(INFO, "Kernel started\n");
+	serial_log(INFO, "Kernel started\n");
+	kernel_log(INFO, "Kernel started\n");
 
 	// i think this order is the best way but not 100% sure
 	pmm_init(stivale2_struct);
@@ -112,26 +117,25 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	serial_set_color(TERM_COLOR_RESET);
 
 
-	framebuffer_init(stivale2_struct, GFX_BLACK);
-	keyboard_init();								// NOTE: is_keyboard_active is still false so no processing
+	keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
-	printk(GFX_BLUE, "\nWelcome to:\n");
-	printk(GFX_BLUE, "%s", big_logo);
+	// printk(GFX_BLUE, "\nWelcome to:\n");
+	// printk(GFX_BLUE, "%s", big_logo);
 
-	// printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
-	printk(GFX_RED,		"█color█ ");
-	printk(GFX_GREEN,	"█color█ ");
-	printk(GFX_YELLOW,	"█color█ ");
-	printk(GFX_BLUE,	"█color█ ");
-	printk(GFX_PURPLE,	"█color█ ");
-	printk(GFX_CYAN,	"█color█ ");
-	printk(GFX_WHITE,	"█color█\n");
+	// // printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
+	// printk(GFX_RED,		"█color█ ");
+	// printk(GFX_GREEN,	"█color█ ");
+	// printk(GFX_YELLOW,	"█color█ ");
+	// printk(GFX_BLUE,	"█color█ ");
+	// printk(GFX_PURPLE,	"█color█ ");
+	// printk(GFX_CYAN,	"█color█ ");
+	// printk(GFX_WHITE,	"█color█\n");
 
 	// TODO: proper timer
 	for (long i = 0; i < 5500000000; i++)	// ~10 seconds
 		asm ("nop");
 
-	shell_screen_init();
+	// shell_screen_init();
 
 	for (;;)
 		asm ("hlt");

@@ -24,6 +24,7 @@
 #include <memory/vmm.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
+#include <libk/stdio/stdio.h>
 #include <libk/string/string.h>
 
 static PAGE_DIR root_page_directory;
@@ -36,7 +37,8 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 	root_page_directory = vmm_create_page_directory();
 
 
-	log(INFO, "Paging - Mapped areas:\n");
+	serial_log(INFO, "Paging - Mapped areas:\n");
+	kernel_log(INFO, "Paging - Mapped areas:\n");
 
 	serial_set_color(TERM_PURPLE);
 
@@ -45,18 +47,21 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 		vmm_map_page(root_page_directory, i, i, PTE_PRESENT | PTE_READ_WRITE);
 
 	debug("1/4: Mapped first 4 GiB of memory\n");
+	printk(GFX_PURPLE, "1/4: Mapped first 4 GiB of memory\n");
 
 	// map higher half kernel address space
 	for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
 		vmm_map_page(root_page_directory, i, TO_VIRTUAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
 
 	debug("2/4: Mapped higher half kernel address space\n");
+	printk(GFX_PURPLE, "2/4: Mapped higher half kernel address space\n");
 
 	// map protected memory ranges (PMR's)
 	for (uint64_t i = 0; i < 0x80000000; i += PAGE_SIZE)
 		vmm_map_page(root_page_directory, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
 
 	debug("3/4: Mapped protected memory ranges\n");
+	printk(GFX_PURPLE, "3/4: Mapped protected memory ranges\n");
 
 	// stivale2 structs
 	for (uint64_t i = 0; i < memory_map->entries; i++)
@@ -71,6 +76,7 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 	}
 
 	debug("4/4: Mapped stivale2 structs\n");
+	printk(GFX_PURPLE, "4/4: Mapped stivale2 structs\n");
 
 	serial_set_color(TERM_COLOR_RESET);
 
@@ -81,7 +87,8 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 	// (= set bit 31 in cr0)
 	// as limine already handled that
 
-	log(INFO, "VMM initialized\n");
+	serial_log(INFO, "VMM initialized\n");
+	kernel_log(INFO, "VMM initialized\n");
 }
 
 // set each table in the page directory to not used
