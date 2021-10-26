@@ -18,7 +18,8 @@
 #ifndef LOG_H
 #define LOG_H
 
-#define log(...) log_impl(__FILE__, __LINE__, __VA_ARGS__);
+#define serial_log(...) serial_log_impl(__FILE__, __LINE__, __VA_ARGS__);
+#define kernel_log(...) kernel_log_impl(__FILE__, __LINE__, __VA_ARGS__);
 
 typedef enum {
 	INFO,
@@ -26,6 +27,7 @@ typedef enum {
 	ERROR
 } STATUS;
 
-void log_impl(char *file, int line_nr, STATUS status, char *fmt, ...);
+void serial_log_impl(char *file, int line_nr, STATUS status, char *fmt, ...);
+void kernel_log_impl(char *file, int line_nr, STATUS status, char *fmt, ...);
 
 #endif

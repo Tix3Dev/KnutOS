@@ -16,15 +16,19 @@
 */
 
 #include <stdarg.h>
+#include <stdint.h>
 
+#include <boot/stivale2.h>
 #include <libk/debug/debug.h>
 #include <libk/kprintf/kprintf.h>
 #include <libk/log/log.h>
+#include <libk/stdio/stdio.h>
 
 const char log_buffer[5120];
 
 // variadic function for format specifiers
-void log_impl(char *description, int line_nr, STATUS status, char *fmt, ...)
+// serial logging - print log message to serial console
+void serial_log_impl(char *description, int line_nr, STATUS status, char *fmt, ...)
 {
 	va_list ptr;
 	va_start(ptr, fmt);
@@ -48,4 +52,20 @@ void log_impl(char *description, int line_nr, STATUS status, char *fmt, ...)
 
 	debug("%s:%d ─→ %s", description, line_nr, (char *)log_buffer);
 	serial_set_color(TERM_COLOR_RESET);
+}
+
+// variadic function for format specifiers
+// kernel logging - print log message to framebuffer
+void kernel_log_impl(char *description, int line_nr, STATUS status, char *fmt, ...)
+{
+	va_list ptr;
+	va_start(ptr, fmt);
+	vsnprintf((char *)&log_buffer, -1, fmt, ptr);
+
+	if (status == INFO)
+		printk(GFX_CYAN, "[INFO]    | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
+	else if (status == WARNING)
+		printk(GFX_YELLOW, "[WARNING] | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
+	else if (status == ERROR)
+		printk(GFX_RED, "[ERROR]   | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
 }
