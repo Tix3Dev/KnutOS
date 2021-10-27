@@ -28,6 +28,17 @@
 #include <libk/string/string.h>
 
 static PAGE_DIR root_page_directory;
+static uint8_t is_la57_enabled = 0;
+
+// get cr4 and return la57 = bit 12
+static uint8_t check_la57(void)
+{
+	uint64_t cr4;
+
+	asm volatile("mov %%cr4, %0" : "=rax"(cr4));
+
+	return (cr4 >> 12) & 1;
+}
 
 void vmm_init(struct stivale2_struct *stivale2_struct)
 {
@@ -35,6 +46,29 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 			STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
 	root_page_directory = vmm_create_page_directory();
+
+
+	serial_log(INFO, "Paging - Multilevel support:\n");
+	kernel_log(INFO, "Paging - Multilevel support:\n");
+
+
+	serial_set_color(TERM_PURPLE);
+
+	// check if la57 bit is enabled for 5-level paging
+	if (check_la57())
+	{
+		is_la57_enabled = 1;
+
+		debug("5-level paging supported!\n");
+		printk(GFX_PURPLE, "5-level paging supported!\n");
+	}
+	else
+	{
+		debug("5-level paging not supported!\n");
+		printk(GFX_PURPLE, "5-level paging not supported!\n");
+	}
+
+	serial_set_color(TERM_COLOR_RESET);
 
 
 	serial_log(INFO, "Paging - Mapped areas:\n");
