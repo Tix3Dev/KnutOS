@@ -18,6 +18,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <boot/boot_screen.h>
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
 #include <devices/ps2/keyboard/keyboard.h>
@@ -119,21 +120,10 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
 	keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
-	// printk(GFX_BLUE, "\nWelcome to:\n");
-	// printk(GFX_BLUE, "%s", big_logo);
-
-	// // printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
-	// printk(GFX_RED,		"█color█ ");
-	// printk(GFX_GREEN,	"█color█ ");
-	// printk(GFX_YELLOW,	"█color█ ");
-	// printk(GFX_BLUE,	"█color█ ");
-	// printk(GFX_PURPLE,	"█color█ ");
-	// printk(GFX_CYAN,	"█color█ ");
-	// printk(GFX_WHITE,	"█color█\n");
 
 	// TODO: proper timer
-	for (long i = 0; i < 5500000000; i++)	// ~10 seconds
-		asm ("nop");
+	// for (long i = 0; i < 5500000000; i++)	// ~10 seconds
+	// 	asm ("nop");
 
 	// shell_screen_init();
 

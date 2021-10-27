@@ -1,7 +1,7 @@
 /*
 	This file is part of an x86_64 hobbyist operating system called KnutOS
 	Everything is openly developed on GitHub: https://github.com/Tix3Dev/KnutOS/
-
+	
 	Copyright (C) 2021  Yves Vollmeier <https://github.com/Tix3Dev>
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,10 +15,11 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LOGO_H
-#define LOGO_H
+#ifndef BOOT_SCREEN_H
+#define BOOT_SCREEN_H
 
-extern const char *small_logo_text;
-extern const char *big_logo;
+void silent_boot_screen(void);
+void verbose_boot_screen(void);
+void switch_boot_screen(void);
 
 #endif
