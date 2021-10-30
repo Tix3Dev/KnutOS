@@ -64,8 +64,8 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 	}
 	else
 	{
-		debug("5-level paging not supported!\n");
-		printk(GFX_PURPLE, "5-level paging not supported!\n");
+		debug("5-level paging not supported! Continuing with 4-level paging.\n");
+		printk(GFX_PURPLE, "5-level paging not supported! Continuing with 4-level paging.\n");
 	}
 
 	serial_set_color(TERM_COLOR_RESET);
@@ -136,6 +136,25 @@ PAGE_DIR vmm_create_page_directory(void)
 	return new_page_directory;
 }
 
+// return a new page directory made with higher (X) page directory
+static PAGE_DIR vmm_get_page_map_level(PAGE_DIR page_map_level_X, uintptr_t index_X, int flags)
+{
+	// NOTE: if you are unfamiliar with this syntax
+	// *x = NULL;
+	// x[i] = y
+	// just means
+	// *(x + i) = y
+
+	if (page_map_level_X[index_X] & 1)
+		return (PAGE_DIR)(page_map_level_X[index_X] & ~(511));
+	else
+	{
+		page_map_level_X[index_X] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+
+		return (PAGE_DIR)(page_map_level_X[index_X] & ~(511));
+	}
+}
+
 // map physical memory to virtual memory by using 4 level paging
 void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, uintptr_t virtual_address, int flags)
 {
@@ -158,20 +177,20 @@ void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, u
 		page_map_level2 = vmm_get_page_map_level(page_map_level3, index3, flags);
 		page_map_level1 = vmm_get_page_map_level(page_map_level2, index2, flags);
 
-		if (page_map_level1[index1] != 1)
-		{
-			serial_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
-					virtual_address, physical_address, index1, page_map_level1
-			); 
-			serial_log(ERROR, "Kernel halted!\n");
+		// if (page_map_level1[index1] != 0)
+		// {
+		// 	serial_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
+		// 			virtual_address, physical_address, index1, page_map_level1
+		// 	); 
+		// 	serial_log(ERROR, "Kernel halted!\n");
 
-			kernel_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
-					virtual_address, physical_address, index1, page_map_level1
-			); 
-			kernel_log(ERROR, "Kernel halted!\n");
+		// 	kernel_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
+		// 			virtual_address, physical_address, index1, page_map_level1
+		// 	); 
+		// 	kernel_log(ERROR, "Kernel halted!\n");
 
-			asm volatile("hlt");
-		}
+		// 	asm volatile("hlt");
+		// }
 
 		page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame	
 	}
@@ -191,44 +210,25 @@ void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, u
 		page_map_level2 = vmm_get_page_map_level(page_map_level3, index3, flags);
 		page_map_level1 = vmm_get_page_map_level(page_map_level2, index2, flags);
 
-		if (page_map_level1[index1] != 1)
-		{
-			serial_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
-					virtual_address, physical_address, index1, page_map_level1
-			); 
-			serial_log(ERROR, "Kernel halted!\n");
+		// if (page_map_level1[index1] != 0)
+		// {
+		// 	serial_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
+		// 			virtual_address, physical_address, index1, page_map_level1
+		// 	); 
+		// 	serial_log(ERROR, "Kernel halted!\n");
 
-			kernel_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
-					virtual_address, physical_address, index1, page_map_level1
-			); 
-			kernel_log(ERROR, "Kernel halted!\n");
+		// 	kernel_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
+		// 			virtual_address, physical_address, index1, page_map_level1
+		// 	); 
+		// 	kernel_log(ERROR, "Kernel halted!\n");
 
-			asm volatile("hlt");
-		}
+		// 	asm volatile("hlt");
+		// }
 
 		page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 	}
 
 	vmm_flush_tlb((void *)virtual_address);
-}
-
-// return a new page directory made with higher (X) page directory
-uint64_t *vmm_get_page_map_level(PAGE_DIR page_map_level_X, uintptr_t index_X, int flags)
-{
-	// NOTE: if you are unfamiliar with this syntax
-	// *x = NULL;
-	// x[i] = y
-	// just means
-	// *(x + i) = y
-
-	if (page_map_level_X[index_X] & 1)
-		return (uint64_t *)(page_map_level_X[index_X] & ~(511));
-	else
-	{
-		page_map_level_X[index_X] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
-
-		return (uint64_t *)(page_map_level_X[index_X] & ~(511));
-	}
 }
 
 // invalidate a single page in the translation lookaside buffer
