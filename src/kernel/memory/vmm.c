@@ -155,7 +155,9 @@ static PAGE_DIR vmm_get_page_map_level(PAGE_DIR page_map_level_X, uintptr_t inde
 	}
 }
 
-// map physical memory to virtual memory by using 4 level paging
+// TODO: do more testing especially for 5-level paging
+
+// map physical memory to virtual memory by using 4-level paging
 void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, uintptr_t virtual_address, int flags)
 {
 	if (is_la57_enabled)	// 5-level paging is enabled
