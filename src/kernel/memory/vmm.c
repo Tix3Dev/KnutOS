@@ -183,18 +183,18 @@ void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, u
 		// {
 		// 	serial_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
 		// 			virtual_address, physical_address, index1, page_map_level1
-		// 	); 
+		// 	);
 		// 	serial_log(ERROR, "Kernel halted!\n");
 
 		// 	kernel_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
 		// 			virtual_address, physical_address, index1, page_map_level1
-		// 	); 
+		// 	);
 		// 	kernel_log(ERROR, "Kernel halted!\n");
 
 		// 	asm volatile("hlt");
 		// }
 
-		page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame	
+		page_map_level1[index1] = physical_address | flags; // level 1 points to the mapped (physical) frame
 	}
 	else			// otherwise use standard 4-level paging
 	{
@@ -216,12 +216,12 @@ void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, u
 		// {
 		// 	serial_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
 		// 			virtual_address, physical_address, index1, page_map_level1
-		// 	); 
+		// 	);
 		// 	serial_log(ERROR, "Kernel halted!\n");
 
 		// 	kernel_log(ERROR, "Virtual page 0x%lX is already mapped to physical page 0x%lX! - page_map_level1[%d]: 0x%lX\n",
 		// 			virtual_address, physical_address, index1, page_map_level1
-		// 	); 
+		// 	);
 		// 	kernel_log(ERROR, "Kernel halted!\n");
 
 		// 	asm volatile("hlt");
