@@ -4,7 +4,7 @@ When contributing to KnutOS, it is important that the changes you wish to make a
 
 For your first pull request, start with something small to get familiar with the project and its development processes.
 
-**NOTE: I would be very glad if someone could help me get the PIT to work :)**
+**NOTE: I would be very glad if someone could help me get the PIT to work or test 5-level paging (as QEMU isn't capable of it) :)**
 
 ## Coding style
 
