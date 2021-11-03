@@ -20,8 +20,8 @@
 - GDT
 - TSS
 - IDT & ISR's
-- Physical memory manager
-- Virtual memory manager
+- Physical memory manager -> Bitmap based
+- Virtual memory manager -> 4- & 5-level paging
 - Serial communication
 - Basic framebuffer
 - Basic keyboard driver with a small shell
