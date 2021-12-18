@@ -233,6 +233,53 @@ void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, u
 	vmm_flush_tlb((void *)virtual_address);
 }
 
+void vmm_unmap_page(PAGE_DIR current_page_directory, uintptr_t virtual_address)
+{
+	if (is_la57_enabled)	// 5-level paging is enabled
+	{
+		uintptr_t index5 = (virtual_address & ((uintptr_t)0x1ff << 48)) >> 48;
+		uintptr_t index4 = (virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
+		uintptr_t index3 = (virtual_address & ((uintptr_t)0x1ff << 30)) >> 30;
+		uintptr_t index2 = (virtual_address & ((uintptr_t)0x1ff << 21)) >> 21;
+		uintptr_t index1 = (virtual_address & ((uintptr_t)0x1ff << 12)) >> 12;
+
+		PAGE_DIR page_map_level5 = current_page_directory;
+		PAGE_DIR page_map_level4 = NULL;
+		PAGE_DIR page_map_level3 = NULL;
+		PAGE_DIR page_map_level2 = NULL;
+		PAGE_DIR page_map_level1 = NULL;
+
+		// flag argument is set to zero because it won't be used
+		page_map_level4 = vmm_get_page_map_level(page_map_level5, index5, 0);
+		page_map_level3 = vmm_get_page_map_level(page_map_level4, index4, 0);
+		page_map_level2 = vmm_get_page_map_level(page_map_level3, index3, 0);
+		page_map_level1 = vmm_get_page_map_level(page_map_level2, index2, 0);
+
+		page_map_level1[index1] = 0;
+	}
+	else			// otherwise use standard 4-level paging
+	{
+		uintptr_t index4 = (virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
+		uintptr_t index3 = (virtual_address & ((uintptr_t)0x1ff << 30)) >> 30;
+		uintptr_t index2 = (virtual_address & ((uintptr_t)0x1ff << 21)) >> 21;
+		uintptr_t index1 = (virtual_address & ((uintptr_t)0x1ff << 12)) >> 12;
+
+		PAGE_DIR page_map_level4 = current_page_directory;
+		PAGE_DIR page_map_level3 = NULL;
+		PAGE_DIR page_map_level2 = NULL;
+		PAGE_DIR page_map_level1 = NULL;
+
+		// flag argument is set to zero because it won't be used
+		page_map_level3 = vmm_get_page_map_level(page_map_level4, index4, 0);
+		page_map_level2 = vmm_get_page_map_level(page_map_level3, index3, 0);
+		page_map_level1 = vmm_get_page_map_level(page_map_level2, index2, 0);
+
+		page_map_level1[index1] = 0;
+	}
+
+	vmm_flush_tlb((void *)virtual_address);
+}
+
 // invalidate a single page in the translation lookaside buffer
 void vmm_flush_tlb(void *address)
 {
