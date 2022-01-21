@@ -48,78 +48,12 @@ void kmain(struct stivale2_struct *stivale2_struct)
 	serial_log(INFO, "Kernel started\n");
 	kernel_log(INFO, "Kernel started\n");
 
-	// i think this order is the best way but not 100% sure
 	pmm_init(stivale2_struct);
 	vmm_init(stivale2_struct);
 	gdt_init();
 	idt_init();
 
-
-	// physical memory management test
-
-	serial_set_color(TERM_PURPLE);
-
-
-
-	uint64_t *pointer1 = (uint64_t *)pmm_alloc(1);
-	debug("pointer1 allocated at 0x%llx\n", pointer1);
-
-	uint64_t *pointer2 = (uint64_t *)pmm_alloc(1);
-	debug("pointer2 allocated at 0x%llx\n", pointer2);
-
-	pmm_free(pointer1, 1);
-	debug("pointer1 freed\n");
-
-	pmm_free(pointer2, 1);
-	debug("pointer2 freed\n\n");
-
-
-
-	uint64_t *pointer3 = (uint64_t *)pmm_alloc(1);
-	debug("pointer3 allocated at 0x%llx\n", pointer3);
-
-	uint64_t *pointer4 = (uint64_t *)pmm_alloc(1);
-	debug("pointer4 allocated at 0x%llx\n", pointer4);
-
-	uint64_t *pointer5 = (uint64_t *)pmm_alloc(1);
-	debug("pointer5 allocated at 0x%llx\n", pointer5);
-
-	uint64_t *pointer6 = (uint64_t *)pmm_alloc(1);
-	debug("pointer6 allocated at 0x%llx\n", pointer6);
-
-	uint64_t *pointer7 = (uint64_t *)pmm_alloc(1);
-	debug("pointer7 allocated at 0x%llx\n", pointer7);
-
-	// pmm_free(pointer3, 1);
-	debug("pointer3 intentionelly not freed\n");
-
-	pmm_free(pointer4, 1);
-	debug("pointer4 freed\n");
-
-	pmm_free(pointer5, 1);
-	debug("pointer5 freed\n");
-
-	pmm_free(pointer6, 1);
-	debug("pointer6 freed\n");
-
-	pmm_free(pointer7, 1);
-	debug("pointer7 freed\n");
-
-
-
-	uint64_t *pointer8 = (uint64_t *)pmm_alloc(1);
-	debug("pointer8 allocated at 0x%llx\n", pointer8);
-
-	pmm_free(pointer8, 1);
-	debug("pointer8 freed\n");
-
-
-
-	serial_set_color(TERM_COLOR_RESET);
-
-
-	keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
-
+	// keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
 	// TODO: proper timer
 	// for (long i = 0; i < 5500000000; i++)	// ~10 seconds
