@@ -25,11 +25,11 @@ const char debug_buffer[5120]; // big buffer so that big_logo from logo.h fits
 // variadic function for format specifiers to print to the serial console
 void debug(char *fmt, ...)
 {
-	va_list ptr;
-	va_start(ptr, fmt);
-	vsnprintf((char *)&debug_buffer, -1, fmt, ptr);
+    va_list ptr;
+    va_start(ptr, fmt);
+    vsnprintf((char *)&debug_buffer, -1, fmt, ptr);
 
-	serial_send_string((char *)debug_buffer);
+    serial_send_string((char *)debug_buffer);
 
-	va_end(ptr);
+    va_end(ptr);
 }

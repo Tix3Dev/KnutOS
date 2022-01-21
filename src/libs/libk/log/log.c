@@ -30,42 +30,42 @@ const char log_buffer[5120];
 // serial logging - print log message to serial console
 void serial_log_impl(char *description, int line_nr, STATUS status, char *fmt, ...)
 {
-	va_list ptr;
-	va_start(ptr, fmt);
-	vsnprintf((char *)&log_buffer, -1, fmt, ptr);
+    va_list ptr;
+    va_start(ptr, fmt);
+    vsnprintf((char *)&log_buffer, -1, fmt, ptr);
 
-	if (status == INFO)
-	{
-		serial_set_color(TERM_CYAN);
-		debug("[INFO]    | ");
-	}
-	else if (status == WARNING)
-	{
-		serial_set_color(TERM_YELLOW);
-		debug("[WARNING] | ");
-	}
-	else if (status == ERROR)
-	{
-		serial_set_color(TERM_RED);
-		debug("[ERROR]   | ");
-	}
+    if (status == INFO)
+    {
+        serial_set_color(TERM_CYAN);
+        debug("[INFO]    | ");
+    }
+    else if (status == WARNING)
+    {
+        serial_set_color(TERM_YELLOW);
+        debug("[WARNING] | ");
+    }
+    else if (status == ERROR)
+    {
+        serial_set_color(TERM_RED);
+        debug("[ERROR]   | ");
+    }
 
-	debug("%s:%d ─→ %s", description, line_nr, (char *)log_buffer);
-	serial_set_color(TERM_COLOR_RESET);
+    debug("%s:%d ─→ %s", description, line_nr, (char *)log_buffer);
+    serial_set_color(TERM_COLOR_RESET);
 }
 
 // variadic function for format specifiers
 // kernel logging - print log message to framebuffer
 void kernel_log_impl(char *description, int line_nr, STATUS status, char *fmt, ...)
 {
-	va_list ptr;
-	va_start(ptr, fmt);
-	vsnprintf((char *)&log_buffer, -1, fmt, ptr);
+    va_list ptr;
+    va_start(ptr, fmt);
+    vsnprintf((char *)&log_buffer, -1, fmt, ptr);
 
-	if (status == INFO)
-		printk(GFX_CYAN, "[INFO]    | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
-	else if (status == WARNING)
-		printk(GFX_YELLOW, "[WARNING] | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
-	else if (status == ERROR)
-		printk(GFX_RED, "[ERROR]   | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
+    if (status == INFO)
+        printk(GFX_CYAN, "[INFO]    | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
+    else if (status == WARNING)
+        printk(GFX_YELLOW, "[WARNING] | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
+    else if (status == ERROR)
+        printk(GFX_RED, "[ERROR]   | %s:%d ─→ %s", description, line_nr, (char *)log_buffer);
 }

@@ -18,6 +18,6 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-
+void mem_alloc_test(void);
 
 #endif

@@ -31,54 +31,54 @@ static int shell_prompt_y_barrier;
 // shell_print_char
 void shell_screen_init(void)
 {
-	framebuffer_reset_screen();
-	shell_prompt();
+    framebuffer_reset_screen();
+    shell_prompt();
 
-	activate_keyboard_processing(*shell_print_char);
+    activate_keyboard_processing(*shell_print_char);
 }
 
 // print basic shell prompt
 void shell_prompt(void)
 {
-	printk(GFX_PURPLE, "\n┌─ KnutOS\n");
-	printk(GFX_PURPLE, "└→ ");
+    printk(GFX_PURPLE, "\n┌─ KnutOS\n");
+    printk(GFX_PURPLE, "└→ ");
 
-	// set x, y barrier to last know cursor position
-	shell_prompt_x_barrier = ssfn_dst.x;
-	shell_prompt_y_barrier = ssfn_dst.y;
+    // set x, y barrier to last know cursor position
+    shell_prompt_x_barrier = ssfn_dst.x;
+    shell_prompt_y_barrier = ssfn_dst.y;
 }
 
 // get informations about what was being pressed
 // and just print if it is a valid ascii_character
 void shell_print_char(KEY_INFO_t key_info)
 {
-	// if it's nothing to print, return
-	if (key_info.ascii_character == '\0')
-		return;
-	// if return is pressed, make a newline and create a new prompt
-	else if (key_info.ascii_character == KEY_RETURN)
-	{
-		// move barrier if screen scolls
-		if (ssfn_dst.y + gfx.glyph_height == gfx.fb_height)
-			shell_prompt_y_barrier += gfx.glyph_height;
+    // if it's nothing to print, return
+    if (key_info.ascii_character == '\0')
+        return;
+    // if return is pressed, make a newline and create a new prompt
+    else if (key_info.ascii_character == KEY_RETURN)
+    {
+        // move barrier if screen scolls
+        if (ssfn_dst.y + gfx.glyph_height == gfx.fb_height)
+            shell_prompt_y_barrier += gfx.glyph_height;
 
-		printk(GFX_BLUE, "\n");
-		shell_prompt();
-	}
-	// if backspace is pressed check for barrier (prompt)
-	else if (key_info.ascii_character == KEY_BACKSPACE)
-	{
-		if (ssfn_dst.x == shell_prompt_x_barrier && ssfn_dst.y == shell_prompt_y_barrier)
-			return;
+        printk(GFX_BLUE, "\n");
+        shell_prompt();
+    }
+    // if backspace is pressed check for barrier (prompt)
+    else if (key_info.ascii_character == KEY_BACKSPACE)
+    {
+        if (ssfn_dst.x == shell_prompt_x_barrier && ssfn_dst.y == shell_prompt_y_barrier)
+            return;
 
-		printk(GFX_BLUE, "\b");
-	}
-	else
-	{
-		// move barrier if screen scrolls
-		if (ssfn_dst.y + gfx.glyph_height == gfx.fb_height && ssfn_dst.x + gfx.glyph_width == gfx.fb_width)
-			shell_prompt_y_barrier -= gfx.glyph_height;
+        printk(GFX_BLUE, "\b");
+    }
+    else
+    {
+        // move barrier if screen scrolls
+        if (ssfn_dst.y + gfx.glyph_height == gfx.fb_height && ssfn_dst.x + gfx.glyph_width == gfx.fb_width)
+            shell_prompt_y_barrier -= gfx.glyph_height;
 
-		printk(GFX_BLUE, "%c", key_info.ascii_character);
-	}
+        printk(GFX_BLUE, "%c", key_info.ascii_character);
+    }
 }

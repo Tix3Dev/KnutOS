@@ -102,4 +102,4 @@ clean:
 	rm -rf $(TARGET) $(OBJ) $(ISO_IMAGE)
 
 format:
-	astyle --mode=c -nA1TfpxgHxbxjxpS $(C_FILES)
+	astyle --mode=c -nA1fpxgHxbxjxpS $(C_FILES)

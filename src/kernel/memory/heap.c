@@ -14,3 +14,29 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+// void mem_alloc_test(void)
+// {
+//     static struct *stivale2_mmap_entry = NULL;
+//     static int mmap_idx = 0;
+//     static int mmap_idx_max = 0;
+// 
+//     void *mmap_alloc(size_t size)
+//     {
+//         size_t entry_sz = stivale2mmap[mmap_idx].length;
+// 
+//         if (entry_sz < size)
+//         {
+//             if (mmap_idx == mmap_idx_max)
+//                 return NULL;
+// 
+//             mmap_idx++;
+//             mmap_alloc(size);
+//         }
+// 
+//         size_t ret = stivale2mmap[mmap_idx].base;
+//         stivale2mmap[mmap_idx].base += size;
+//         stivale2mmap[mmap_idx].length -= size;
+//         return (void *)ret;
+//     }
+// }

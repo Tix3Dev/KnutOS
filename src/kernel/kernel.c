@@ -34,33 +34,33 @@
 
 void kmain(struct stivale2_struct *stivale2_struct)
 {
-	framebuffer_init(stivale2_struct, GFX_BLACK);
-	serial_init();
+    framebuffer_init(stivale2_struct, GFX_BLACK);
+    serial_init();
 
-	serial_log(INFO, "Framebuffer and serial initialized\n");
-	kernel_log(INFO, "Framebuffer and serial initialized\n");
+    serial_log(INFO, "Framebuffer and serial initialized\n");
+    kernel_log(INFO, "Framebuffer and serial initialized\n");
 
-	serial_set_color(TERM_BLUE);
-	debug("Welcome to:\n");
-	debug("%s", small_logo_text);
-	serial_set_color(TERM_COLOR_RESET);
+    serial_set_color(TERM_BLUE);
+    debug("Welcome to:\n");
+    debug("%s", small_logo_text);
+    serial_set_color(TERM_COLOR_RESET);
 
-	serial_log(INFO, "Kernel started\n");
-	kernel_log(INFO, "Kernel started\n");
+    serial_log(INFO, "Kernel started\n");
+    kernel_log(INFO, "Kernel started\n");
 
-	pmm_init(stivale2_struct);
-	vmm_init(stivale2_struct);
-	gdt_init();
-	idt_init();
+    pmm_init(stivale2_struct);
+    vmm_init(stivale2_struct);
+    gdt_init();
+    idt_init();
 
-	// keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
+    // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
-	// TODO: proper timer
+    // TODO: proper timer
 	// for (long i = 0; i < 5500000000; i++)	// ~10 seconds
-	// 	asm ("nop");
+    // 	asm ("nop");
 
-	// shell_screen_init();
+    // shell_screen_init();
 
-	for (;;)
-		asm ("hlt");
+    for (;;)
+        asm ("hlt");
 }

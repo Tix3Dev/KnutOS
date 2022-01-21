@@ -23,27 +23,27 @@
 // show splashscreen aka silent bootscreen
 void silent_boot_screen(void)
 {
-	printk(GFX_BLUE, "\nWelcome to:\n");
-	printk(GFX_BLUE, "%s", big_logo);
+    printk(GFX_BLUE, "\nWelcome to:\n");
+    printk(GFX_BLUE, "%s", big_logo);
 
-	// printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
-	printk(GFX_RED,		"█color█ ");
-	printk(GFX_GREEN,	"█color█ ");
-	printk(GFX_YELLOW,	"█color█ ");
-	printk(GFX_BLUE,	"█color█ ");
-	printk(GFX_PURPLE,	"█color█ ");
-	printk(GFX_CYAN,	"█color█ ");
-	printk(GFX_WHITE,	"█color█\n");
+    // printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
+    printk(GFX_RED,		"█color█ ");
+    printk(GFX_GREEN,	"█color█ ");
+    printk(GFX_YELLOW,	"█color█ ");
+    printk(GFX_BLUE,	"█color█ ");
+    printk(GFX_PURPLE,	"█color█ ");
+    printk(GFX_CYAN,	"█color█ ");
+    printk(GFX_WHITE,	"█color█\n");
 }
 
 // show scrolling text information (like in the serial console)
 void verbose_boot_screen(void)
 {
-	//
+    //
 }
 
 // switch bootscreen by pressing f1
 void switch_boot_screen(void)
 {
-	//
+    //
 }

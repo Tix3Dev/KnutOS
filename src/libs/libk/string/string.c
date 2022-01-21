@@ -21,10 +21,10 @@
 // fill a block of memory with a certain value
 void *memset(void *pointer, uint32_t value, size_t size)
 {
-	uint8_t *buffer_pointer = (uint8_t *)pointer;
+    uint8_t *buffer_pointer = (uint8_t *)pointer;
 
-	for (size_t i = 0; i < size; i++)
-		*buffer_pointer++ = value;
+    for (size_t i = 0; i < size; i++)
+        *buffer_pointer++ = value;
 
-	return pointer;
+    return pointer;
 }

@@ -27,11 +27,11 @@ const char printk_buffer[5120]; // big buffer so that big_logo from logo.h fits
 // variadic function for format specifiers to print to the framebuffer
 void printk(uint32_t foreground_color, char *fmt, ...)
 {
-	va_list ptr;
-	va_start(ptr, fmt);
-	vsnprintf((char *)&printk_buffer, -1, fmt, ptr);
+    va_list ptr;
+    va_start(ptr, fmt);
+    vsnprintf((char *)&printk_buffer, -1, fmt, ptr);
 
-	framebuffer_print_string((char *)printk_buffer, foreground_color);
+    framebuffer_print_string((char *)printk_buffer, foreground_color);
 
-	va_end(ptr);
+    va_end(ptr);
 }
