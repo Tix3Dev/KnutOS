@@ -15,9 +15,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef HEAP_H
-#define HEAP_H
+#ifndef KMALLOC_H
+#define KMALLOC_H
 
-void mem_alloc_test(void);
+
 
 #endif

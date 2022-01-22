@@ -15,28 +15,34 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// void mem_alloc_test(void)
-// {
-//     static struct *stivale2_mmap_entry = NULL;
-//     static int mmap_idx = 0;
-//     static int mmap_idx_max = 0;
-// 
-//     void *mmap_alloc(size_t size)
-//     {
-//         size_t entry_sz = stivale2mmap[mmap_idx].length;
-// 
-//         if (entry_sz < size)
-//         {
-//             if (mmap_idx == mmap_idx_max)
-//                 return NULL;
-// 
-//             mmap_idx++;
-//             mmap_alloc(size);
-//         }
-// 
-//         size_t ret = stivale2mmap[mmap_idx].base;
-//         stivale2mmap[mmap_idx].base += size;
-//         stivale2mmap[mmap_idx].length -= size;
-//         return (void *)ret;
-//     }
-// }
+#include <stddef.h>
+#include <stdbool.h>
+
+#include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
+#include <memory/bump.h>
+
+static int mmap_idx = 0;
+static int mmap_idx_max = 0;
+
+void *mmap_alloc(struct stivale2_struct *stivale2_struct, size_t size)
+{
+    struct stivale2_struct_tag_memmap *stivale2mmap = stivale2_get_tag(stivale2_struct,
+            STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
+	size_t entry_sz = stivale2mmap->memmap[mmap_idx].length;
+
+	if (entry_sz < size)
+	{
+		if (mmap_idx == mmap_idx_max)
+			return NULL;
+
+		mmap_idx++;
+		mmap_alloc(stivale2_struct, size);
+	}
+
+	size_t ret = stivale2mmap->memmap[mmap_idx].base;
+	stivale2mmap->memmap[mmap_idx].base += size;
+	stivale2mmap->memmap[mmap_idx].length -= size;
+	return (void *)ret;
+}
