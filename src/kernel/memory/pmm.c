@@ -70,6 +70,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
         serial_set_color(TERM_COLOR_RESET);
 
 
+	// TODO: potential hazard/bug
         if (current_entry->type != STIVALE2_MMAP_USABLE &&
                 current_entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
                 current_entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
@@ -116,7 +117,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
     {
         current_entry = &pmm_info.memory_map->memmap[i];
 
-        if (current_entry->type == STIVALE2_MMAP_USABLE)
+        if (current_entry->type != STIVALE2_MMAP_USABLE)
             continue;
 
         if (current_entry->length >= bitmap.size)
