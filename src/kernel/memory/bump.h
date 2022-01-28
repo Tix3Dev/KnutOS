@@ -18,6 +18,6 @@
 #ifndef BUMP_H
 #define BUMP_H
 
-
+void *bump_alloc(struct stivale2_struct *stivale2_struct, size_t size);
 
 #endif

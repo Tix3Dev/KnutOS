@@ -32,6 +32,8 @@
 #include <libk/log/log.h>
 #include <libk/stdio/stdio.h>
 
+#include <memory/bump.h>
+
 void kmain(struct stivale2_struct *stivale2_struct)
 {
     framebuffer_init(stivale2_struct, GFX_BLACK);
@@ -53,10 +55,28 @@ void kmain(struct stivale2_struct *stivale2_struct)
     gdt_init();
     idt_init();
 
+    serial_set_color(TERM_PURPLE);
+
+    debug("bump allocator test start\n");
+
+    int *arr = bump_alloc(stivale2_struct, sizeof(int) * 5);
+    debug("asdfkljas;dflkj: %p\n", arr);
+
+    arr[0] = 10;
+    arr[1] = 20;
+    arr[2] = 30;
+    arr[3] = 40;
+    arr[4] = 55;
+    debug("first element of array: %d\n", arr[0]);
+
+    debug("bump allocator test end\n");
+
+    serial_set_color(TERM_COLOR_RESET);
+
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
     // TODO: proper timer
-	// for (long i = 0; i < 5500000000; i++)	// ~10 seconds
+    // for (long i = 0; i < 5500000000; i++)	// ~10 seconds
     // 	asm ("nop");
 
     // shell_screen_init();

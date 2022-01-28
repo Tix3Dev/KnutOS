@@ -77,7 +77,7 @@ void slab_init(void);
 void slab_destroy(slab_cache_t *cache);
 slab_cache_t *slab_create_cache(size_t size);
 void *slab_alloc(size_t size);
-bool slab_free(slab_cache_t *cache, void *ptr);
+bool slab_free(void *ptr);
 
 /* public utility functions */
 void slab_traverse_cache(slab_cache_t *cache);

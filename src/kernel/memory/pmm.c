@@ -70,7 +70,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
         serial_set_color(TERM_COLOR_RESET);
 
 
-	// TODO: potential hazard/bug
+        // TODO: potential hazard/bug
         if (current_entry->type != STIVALE2_MMAP_USABLE &&
                 current_entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
                 current_entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)

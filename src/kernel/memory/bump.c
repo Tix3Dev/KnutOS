@@ -22,27 +22,31 @@
 #include <boot/stivale2_boot.h>
 #include <memory/bump.h>
 
-static int mmap_idx = 0;
-static int mmap_idx_max = 0;
-
-void *mmap_alloc(struct stivale2_struct *stivale2_struct, size_t size)
+void *stivale2_mmap_alloc(struct stivale2_mmap_entry *entry, size_t size)
 {
-    struct stivale2_struct_tag_memmap *stivale2mmap = stivale2_get_tag(stivale2_struct,
+    entry->base += size;
+    entry->length -= size;
+
+    return (void *)entry->base;
+}
+
+void *bump_alloc(struct stivale2_struct *stivale2_struct, size_t size)
+{
+    struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct,
             STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-	size_t entry_sz = stivale2mmap->memmap[mmap_idx].length;
+    struct stivale2_mmap_entry *current_entry;
 
-	if (entry_sz < size)
-	{
-		if (mmap_idx == mmap_idx_max)
-			return NULL;
+    for (uint64_t i = 0; i < memory_map->entries; i++)
+    {
+        current_entry = &memory_map->memmap[i];
 
-		mmap_idx++;
-		mmap_alloc(stivale2_struct, size);
-	}
+        if (current_entry->type != STIVALE2_MMAP_USABLE)
+            continue;
 
-	size_t ret = stivale2mmap->memmap[mmap_idx].base;
-	stivale2mmap->memmap[mmap_idx].base += size;
-	stivale2mmap->memmap[mmap_idx].length -= size;
-	return (void *)ret;
+        if (current_entry->length >= size)
+            return stivale2_mmap_alloc(current_entry, size);
+    }
+
+    return NULL;
 }
