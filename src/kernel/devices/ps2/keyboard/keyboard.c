@@ -2,7 +2,7 @@
 	This file is part of an x86_64 hobbyist operating system called KnutOS
 	Everything is openly developed on GitHub: https://github.com/Tix3Dev/KnutOS/
 
-	Copyright (C) 2021  Yves Vollmeier <https://github.com/Tix3Dev>
+	Copyright (C) 2021-2022  Yves Vollmeier <https://github.com/Tix3Dev>
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
