@@ -43,7 +43,7 @@ We greatly appreciate your contributions, however you must understand that a `[f
 */
 ```
 
-- If you have made a *significant* contribution place your name (`Prename Name <https://github.com/Username/>`) next to the `Contributer(s)` field where it says `foo`. If this filed doesn't exist, please create it.
+- If you have made a *significant* contribution place your name (`Prename Name <https://github.com/Username/>`) next to the `Contributer(s)` field where it says `foo`. If this fieled doesn't exist, please create it.
 Multiple contributers should be separated by commas and a newline may be inserted where the list gets too lengthy (if you have to scroll sideways to see your name).
 If a newline has been inserted please indent it with 1 tab of the length of 4 spaces
 
