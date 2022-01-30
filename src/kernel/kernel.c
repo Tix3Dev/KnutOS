@@ -67,9 +67,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
     arr[2] = 30;
     arr[3] = 40;
     arr[4] = 55;
-    arr[5] = 65;
-    arr[6] = 75;
-    debug("last element of array: %d\n", arr[6]);
+    debug("first element of array: %d\n", arr[4]);
 
     debug("bump allocator test end\n");
 
