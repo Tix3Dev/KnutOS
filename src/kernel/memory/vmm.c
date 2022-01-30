@@ -92,7 +92,7 @@ void vmm_init(struct stivale2_struct *stivale2_struct)
 
     // map protected memory ranges (PMR's)
     for (uint64_t i = 0; i < 0x80000000; i += PAGE_SIZE)
-        vmm_map_page(root_page_directory, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
+        vmm_map_page(root_page_directory, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT);
 
     debug("3/4: Mapped protected memory ranges\n");
     printk(GFX_PURPLE, "3/4: Mapped protected memory ranges\n");
