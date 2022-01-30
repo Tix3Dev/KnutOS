@@ -20,68 +20,21 @@
 #ifndef SLAB_H
 #define SLAB_H
 
-#define OBJECTS_PER_SLAB 5
+#define SLAB_COUNT		10
+#define OBJECTS_PER_SLAB	512
 
-typedef struct slab_cache   slab_cache_t;
-typedef struct slab_state   slab_state_layer_t;
-typedef struct slab	    slab_t;
-typedef struct slab_object  slab_object_t;
-
-// represents an object of a given slab
-struct slab_object
+// an object in the objects array either is a pointer to memory,
+// or NULL which means it's allocated
+typedef struct
 {
-    void *mem;
+    uint32_t	size;
+    bool	is_empty;
+    bool	is_full;
+    void	*objects[OBJECTS_PER_SLAB];
+} slab_t;
 
-    bool is_allocated;
-};
-
-// represents a slab itself
-struct slab
-{
-    slab_object_t objects[OBJECTS_PER_SLAB];
-    struct slab *next;
-};
-
-// represents a slab state; there are three different ones used: free, used and partial
-struct slab_state_layer
-{
-    bool is_full;
-    bool is_empty;
-
-    slab_t *head;
-
-    struct slab_state *prev;
-    struct slab_state *next;
-};
-
-// represents a (slab) cache
-struct slab_cache
-{
-    uint32_t size; // size of every object in this cache
-
-    uint64_t active_slab_count;	// number of slabs which are currently being used i.e. active
-    uint64_t slab_create_count;	// number of slabs which have been created so far
-    uint64_t slab_alloc_count;	// number of slabs which have been allocated so far
-    uint64_t slab_free_count;	// number of slabs which have been freed so far
-    
-    struct slab_cache *prev;
-    struct slab_cache *next;
-
-    struct slab_state_layer *free    __attribute__((aligned(16)));
-    struct slab_state_layer *used    __attribute__((aligned(16)));
-    struct slab_state_layer *partial __attribute__((aligned(16)));
-}; 
-
-/* core functions */
 void slab_init(void);
-void slab_destroy(slab_cache_t *cache);
-slab_cache_t *slab_create_cache(size_t size);
 void *slab_alloc(size_t size);
-bool slab_free(void *ptr);
-
-/* public utility functions */
-void slab_traverse_cache(slab_cache_t *cache);
-void slab_print_slabs(slab_state_layer_t *type);
-void slab_print_caches(void);
+void slab_free(void *ptr, size_t size);
 
 #endif
