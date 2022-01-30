@@ -27,10 +27,10 @@
 #include <libk/stdio/stdio.h>
 #include <libk/string/string.h>
 
-struct	PMM_Info_Struct	pmm_info;
-BITMAP_t				bitmap;
+struct PMM_Info_Struct pmm_info;
+BITMAP_t bitmap;
 
-size_t	highest_page;
+size_t highest_page;
 
 // setup the bitmap
 void pmm_init(struct stivale2_struct *stivale2_struct)
@@ -39,9 +39,9 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
     // set basic values
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct,
-            STIVALE2_STRUCT_TAG_MEMMAP_ID);
+	STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-    pmm_info.memory_map		= memory_map;
+    pmm_info.memory_map = memory_map;
 
     struct stivale2_mmap_entry *current_entry;
 
@@ -63,17 +63,17 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
         serial_set_color(TERM_PURPLE);
 
         debug("Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
-              i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
+	    i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
         printk(GFX_PURPLE, "Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
-               i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
+	    i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
 
         serial_set_color(TERM_COLOR_RESET);
 
 
         // TODO: potential hazard/bug
         if (current_entry->type != STIVALE2_MMAP_USABLE &&
-                current_entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
-                current_entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
+	    current_entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
+	    current_entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
             continue;
 
         top = current_entry->base + current_entry->length;
@@ -82,9 +82,9 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
             highest_page = top;
     }
 
-    pmm_info.memory_size	= highest_page;
-    pmm_info.max_pages		= KB_TO_PAGES(pmm_info.memory_size);
-    pmm_info.used_pages	= pmm_info.max_pages;
+    pmm_info.memory_size    = highest_page;
+    pmm_info.max_pages	    = KB_TO_PAGES(pmm_info.memory_size);
+    pmm_info.used_pages	    = pmm_info.max_pages;
 
 
     // --- step 3 ---
@@ -127,10 +127,10 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
             debug("Bitmap stored between 0x%.8lx and 0x%.8lx\n", current_entry->base, current_entry->base + current_entry->length - 1);
             serial_set_color(TERM_COLOR_RESET);
 
-            bitmap.map				= (uint8_t *)(TO_VIRTUAL_ADDRESS(current_entry->base));
+            bitmap.map		    = (uint8_t *)(TO_VIRTUAL_ADDRESS(current_entry->base));
 
-            current_entry->base		+= bitmap.size;
-            current_entry->length	-= bitmap.size;
+            current_entry->base	    += bitmap.size;
+            current_entry->length   -= bitmap.size;
 
             break;
         }

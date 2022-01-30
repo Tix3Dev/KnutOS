@@ -88,12 +88,12 @@ uint64_t isr_handler(uint64_t rsp)
         serial_set_color(TERM_COLOR_RESET);
 
         framebuffer_reset_screen();
-        printk(GFX_RED, 	"\n────────────────────────\n");
-        printk(GFX_RED, 	"⚠ EXCEPTION OCCURRED! ⚠\n\n");
-        printk(GFX_RED, 	"⤷ ISR-No. %d: %s\n", cpu->isr_number, exceptions[cpu->isr_number]);
-        printk(GFX_RED, 	"⤷ Error code: 0x%.16llx\n\n\n", cpu->error_code);
-        printk(GFX_CYAN,	"ℹ Register dump:\n\n");
-        printk(GFX_CYAN,	"⤷ rax: 0x%.16llx, rbx:    0x%.16llx, rcx: 0x%.16llx, rdx: 0x%.16llx\n"
+        printk(GFX_RED,	    "\n────────────────────────\n");
+        printk(GFX_RED,	    "⚠ EXCEPTION OCCURRED! ⚠\n\n");
+        printk(GFX_RED,	    "⤷ ISR-No. %d: %s\n", cpu->isr_number, exceptions[cpu->isr_number]);
+        printk(GFX_RED,	    "⤷ Error code: 0x%.16llx\n\n\n", cpu->error_code);
+        printk(GFX_CYAN,    "ℹ Register dump:\n\n");
+        printk(GFX_CYAN,    "⤷ rax: 0x%.16llx, rbx:    0x%.16llx, rcx: 0x%.16llx, rdx: 0x%.16llx\n"
                "⤷ rsi: 0x%.16llx, rdi:    0x%.16llx, rbp: 0x%.16llx, r8 : 0x%.16llx\n"
                "⤷ r9 : 0x%.16llx, r10:    0x%.16llx, r11: 0x%.16llx, r12: 0x%.16llx\n"
                "⤷ r13: 0x%.16llx, r14:    0x%.16llx, r15: 0x%.16llx, ss : 0x%.16llx\n"

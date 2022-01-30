@@ -25,15 +25,15 @@ static uint8_t stack[4096];
 static struct stivale2_tag la57_tag =
 {
     .identifier	= STIVALE2_HEADER_TAG_5LV_PAGING_ID,
-    .next		= 0
+    .next	= 0
 };
 
 static struct stivale2_header_tag_framebuffer framebuffer_hdr_tag =
 {
     .tag =
     {
-        .identifier	= STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
-        .next		= (uintptr_t)&la57_tag
+        .identifier = STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
+        .next	    = (uintptr_t)&la57_tag
     },
     // bootloader automatically finds best values
     .framebuffer_width	= 0,
@@ -44,10 +44,10 @@ static struct stivale2_header_tag_framebuffer framebuffer_hdr_tag =
 __attribute__((section(".stivale2hdr"), used))
 static struct stivale2_header stivale_hdr =
 {
-    .entry_point	= 0,
-    .stack			= (uintptr_t)stack + sizeof(stack),
-    .flags			= (1 << 1) | (1 << 2),
-    .tags			= (uintptr_t)&framebuffer_hdr_tag
+    .entry_point    = 0,
+    .stack	    = (uintptr_t)stack + sizeof(stack),
+    .flags	    = (1 << 1) | (1 << 2),
+    .tags	    = (uintptr_t)&framebuffer_hdr_tag
 };
 
 void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id)

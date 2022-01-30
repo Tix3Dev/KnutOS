@@ -32,99 +32,99 @@ static void (*final_handler)(KEY_INFO_t);
 
 static uint32_t standard_keycodes[] =
 {
-//	key					scancode
-    KEY_UNKNOWN,		//0x0
-    KEY_ESCAPE,			//0x1
-    KEY_1,				//0x2
-    KEY_2,				//0x3
-    KEY_3,				//0x4
-    KEY_4,				//0x5
-    KEY_5,				//0x6
-    KEY_6,				//0x7
-    KEY_7,				//0x8
-    KEY_8,				//0x9
-    KEY_9,				//0xa
-    KEY_0,				//0xb
-    KEY_MINUS,			//0xc
-    KEY_EQUAL,			//0xd
-    KEY_BACKSPACE,		//0xe
-    KEY_TAB,			//0xf
-    KEY_Q,				//0x10
-    KEY_W,				//0x11
-    KEY_E,				//0x12
-    KEY_R,				//0x13
-    KEY_T,				//0x14
-    KEY_Y,				//0x15
-    KEY_U,				//0x16
-    KEY_I,				//0x17
-    KEY_O,				//0x18
-    KEY_P,				//0x19
+//  key			scancode
+    KEY_UNKNOWN,	//0x0
+    KEY_ESCAPE,		//0x1
+    KEY_1,		//0x2
+    KEY_2,		//0x3
+    KEY_3,		//0x4
+    KEY_4,		//0x5
+    KEY_5,		//0x6
+    KEY_6,		//0x7
+    KEY_7,		//0x8
+    KEY_8,		//0x9
+    KEY_9,		//0xa
+    KEY_0,		//0xb
+    KEY_MINUS,		//0xc
+    KEY_EQUAL,		//0xd
+    KEY_BACKSPACE,	//0xe
+    KEY_TAB,		//0xf
+    KEY_Q,		//0x10
+    KEY_W,		//0x11
+    KEY_E,		//0x12
+    KEY_R,		//0x13
+    KEY_T,		//0x14
+    KEY_Y,		//0x15
+    KEY_U,		//0x16
+    KEY_I,		//0x17
+    KEY_O,		//0x18
+    KEY_P,		//0x19
     KEY_LEFTBRACKET,	//0x1a
     KEY_RIGHTBRACKET,	//0x1b
-    KEY_RETURN,			//0x1c
-    KEY_LCTRL,			//0x1d
-    KEY_A,				//0x1e
-    KEY_S,				//0x1f
-    KEY_D,				//0x20
-    KEY_F,				//0x21
-    KEY_G,				//0x22
-    KEY_H,				//0x23
-    KEY_J,				//0x24
-    KEY_K,				//0x25
-    KEY_L,				//0x26
-    KEY_SEMICOLON,		//0x27
-    KEY_QUOTE,			//0x28
-    KEY_GRAVE,			//0x29
-    KEY_LSHIFT,			//0x2a
-    KEY_BACKSLASH,		//0x2b
-    KEY_Z,				//0x2c
-    KEY_X,				//0x2d
-    KEY_C,				//0x2e
-    KEY_V,				//0x2f
-    KEY_B,				//0x30
-    KEY_N,				//0x31
-    KEY_M,				//0x32
-    KEY_COMMA,			//0x33
-    KEY_DOT,			//0x34
-    KEY_SLASH,			//0x35
-    KEY_RSHIFT,			//0x36
+    KEY_RETURN,		//0x1c
+    KEY_LCTRL,		//0x1d
+    KEY_A,		//0x1e
+    KEY_S,		//0x1f
+    KEY_D,		//0x20
+    KEY_F,		//0x21
+    KEY_G,		//0x22
+    KEY_H,		//0x23
+    KEY_J,		//0x24
+    KEY_K,		//0x25
+    KEY_L,		//0x26
+    KEY_SEMICOLON,	//0x27
+    KEY_QUOTE,		//0x28
+    KEY_GRAVE,		//0x29
+    KEY_LSHIFT,		//0x2a
+    KEY_BACKSLASH,	//0x2b
+    KEY_Z,		//0x2c
+    KEY_X,		//0x2d
+    KEY_C,		//0x2e
+    KEY_V,		//0x2f
+    KEY_B,		//0x30
+    KEY_N,		//0x31
+    KEY_M,		//0x32
+    KEY_COMMA,		//0x33
+    KEY_DOT,		//0x34
+    KEY_SLASH,		//0x35
+    KEY_RSHIFT,		//0x36
     KEY_KP_ASTERISK,	//0x37
-    KEY_RALT,			//0x38
-    KEY_SPACE,			//0x39
-    KEY_CAPSLOCK,		//0x3a
-    KEY_F1,				//0x3b
-    KEY_F2,				//0x3c
-    KEY_F3,				//0x3d
-    KEY_F4,				//0x3e
-    KEY_F5,				//0x3f
-    KEY_F6,				//0x40
-    KEY_F7,				//0x41
-    KEY_F8,				//0x42
-    KEY_F9,				//0x43
-    KEY_F10,			//0x44
-    KEY_KP_NUMLOCK,		//0x45
-    KEY_SCROLLLOCK,		//0x46
-    KEY_HOME,			//0x47
-    KEY_KP_8,			//0x48
-    KEY_PAGEUP,			//0x49
-    KEY_KP_2,			//0x50
-    KEY_KP_3,			//0x51
-    KEY_KP_0,			//0x52
-    KEY_KP_DECIMAL,		//0x53
-    KEY_UNKNOWN,		//0x54
-    KEY_UNKNOWN,		//0x55
-    KEY_UNKNOWN,		//0x56
-    KEY_F11,			//0x57
-    KEY_F12				//0x58
+    KEY_RALT,		//0x38
+    KEY_SPACE,		//0x39
+    KEY_CAPSLOCK,	//0x3a
+    KEY_F1,		//0x3b
+    KEY_F2,		//0x3c
+    KEY_F3,		//0x3d
+    KEY_F4,		//0x3e
+    KEY_F5,		//0x3f
+    KEY_F6,		//0x40
+    KEY_F7,		//0x41
+    KEY_F8,		//0x42
+    KEY_F9,		//0x43
+    KEY_F10,		//0x44
+    KEY_KP_NUMLOCK,	//0x45
+    KEY_SCROLLLOCK,	//0x46
+    KEY_HOME,		//0x47
+    KEY_KP_8,		//0x48
+    KEY_PAGEUP,		//0x49
+    KEY_KP_2,		//0x50
+    KEY_KP_3,		//0x51
+    KEY_KP_0,		//0x52
+    KEY_KP_DECIMAL,	//0x53
+    KEY_UNKNOWN,	//0x54
+    KEY_UNKNOWN,	//0x55
+    KEY_UNKNOWN,	//0x56
+    KEY_F11,		//0x57
+    KEY_F12		//0x58
 };
 
-static uint8_t ctrl			= 0;
-static uint8_t alt			= 0;
-static uint8_t shift		= 0;
+static uint8_t ctrl	    = 0;
+static uint8_t alt	    = 0;
+static uint8_t shift	    = 0;
 
-static uint8_t capslock		= 0;
-static uint8_t numlock		= 0;
-static uint8_t scrolllock	= 0;
+static uint8_t capslock	    = 0;
+static uint8_t numlock	    = 0;
+static uint8_t scrolllock   = 0;
 
 // initialize the keyboard
 void keyboard_init(void)
@@ -163,7 +163,7 @@ void keyboard_irq_handler(void)
 
     KEY_INFO_t key_info;
 
-    key_info.keycode			= KEY_UNKNOWN;
+    key_info.keycode		= KEY_UNKNOWN;
     key_info.ascii_character	= '\0';
 
     // check for breakcode
@@ -184,7 +184,7 @@ void keyboard_irq_handler(void)
     {
         uint32_t key = standard_keycodes[scancode];
 
-        key_info.keycode			= key;
+        key_info.keycode = key;
 
         if (key == KEY_LCTRL || key == KEY_RCTRL)
             ctrl = 1;
@@ -331,9 +331,9 @@ char keycode_to_ascii(KEYCODE_t keycode)
 // -> set a barrier
 void activate_keyboard_processing(void *handler)
 {
-    final_handler		= handler;
+    final_handler = handler;
 
-    is_keyboard_active	= 1;
+    is_keyboard_active = 1;
 }
 
 // to undo activate_keyboard_processing (otherwise no change because 0 is default state)

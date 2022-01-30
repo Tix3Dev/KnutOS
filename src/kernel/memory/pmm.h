@@ -22,10 +22,10 @@
 
 struct PMM_Info_Struct
 {
-	size_t		memory_size;
-	uint32_t	max_pages;
-	uint32_t	used_pages;
-	struct		stivale2_struct_tag_memmap *memory_map;
+    size_t	memory_size;
+    uint32_t	max_pages;
+    uint32_t	used_pages;
+    struct	stivale2_struct_tag_memmap *memory_map;
 };
 
 void pmm_init(struct stivale2_struct *stivale2_struct);

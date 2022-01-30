@@ -23,11 +23,11 @@
 // show splashscreen aka silent bootscreen
 void silent_boot_screen(void)
 {
-    printk(GFX_BLUE, "\nWelcome to:\n");
-    printk(GFX_BLUE, "%s", big_logo);
+    printk(GFX_BLUE,	"\nWelcome to:\n");
+    printk(GFX_BLUE,	"%s", big_logo);
 
     // printk(GFX_BLACK,	"█color█ "); /* same color as background so no need to show it */
-    printk(GFX_RED,		"█color█ ");
+    printk(GFX_RED,	"█color█ ");
     printk(GFX_GREEN,	"█color█ ");
     printk(GFX_YELLOW,	"█color█ ");
     printk(GFX_BLUE,	"█color█ ");

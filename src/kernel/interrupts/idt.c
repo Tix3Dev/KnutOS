@@ -22,24 +22,24 @@
 #include <libk/io/io.h>
 #include <libk/log/log.h>
 
-extern void			_load_idt_asm(struct IDT_Pointer *ptr);
-extern uintptr_t	_isr_names_asm[];
+extern void	    _load_idt_asm(struct IDT_Pointer *ptr);
+extern uintptr_t    _isr_names_asm[];
 
 static struct IDT_Descriptor	idt[256];
-static struct IDT_Pointer		idt_pointer;
+static struct IDT_Pointer	idt_pointer;
 
 // set the arguments for a IDT entry
 void create_descriptor(uint8_t index, uint8_t type_and_attributes)
 {
     uint64_t offset = _isr_names_asm[index];
 
-    idt[index].offset_15_0			= offset & 0xFFFF;
-    idt[index].selector				= 0x08;
-    idt[index].ist					= 0;
-    idt[index].type_and_attributes	= type_and_attributes;
-    idt[index].offset_31_16			= (offset >> 16) & 0xFFFF;
-    idt[index].offset_63_32			= (offset >> 32) & 0xFFFFFFFF;
-    idt[index].zero					= 0;
+    idt[index].offset_15_0	    = offset & 0xFFFF;
+    idt[index].selector		    = 0x08;
+    idt[index].ist		    = 0;
+    idt[index].type_and_attributes  = type_and_attributes;
+    idt[index].offset_31_16	    = (offset >> 16) & 0xFFFF;
+    idt[index].offset_63_32	    = (offset >> 32) & 0xFFFFFFFF;
+    idt[index].zero		    = 0;
 }
 
 // create descriptors, remap the PIC and load IDT
@@ -104,8 +104,8 @@ void idt_init(void)
     pic_set_mask(1);
 
     // load IDT into idtr register
-    idt_pointer.limit	= sizeof(idt) - 1;
-    idt_pointer.base	= (uint64_t)&idt;
+    idt_pointer.limit = sizeof(idt) - 1;
+    idt_pointer.base = (uint64_t)&idt;
 
     _load_idt_asm(&idt_pointer);
 

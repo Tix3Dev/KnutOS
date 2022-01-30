@@ -24,7 +24,7 @@
 // #include <libk/log/log.h>
 
 #define SSFN_CONSOLEBITMAP_TRUECOLOR	// use the special renderer for 32 bit truecolor packed pixels
-#define SSFN_NOIMPLEMENTATION			// dont' use the normal renderer implementation
+#define SSFN_NOIMPLEMENTATION		// dont' use the normal renderer implementation
 #include <libk/ssfn.h>
 
 // this name follows the SSFN rule: _binary_(filename)_start
@@ -43,26 +43,26 @@ void framebuffer_init(struct stivale2_struct *stivale2_struct, uint32_t backgrou
     struct stivale2_struct_tag_framebuffer *framebuffer_info = stivale2_get_tag(stivale2_struct,
             STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
 
-    gfx.fb_addr			= framebuffer_info->framebuffer_addr;
-    gfx.fb_width		= framebuffer_info->framebuffer_width;
-    gfx.fb_height		= framebuffer_info->framebuffer_height;
-    gfx.fb_pitch		= framebuffer_info->framebuffer_pitch;
-    gfx.fb_bpp			= framebuffer_info->framebuffer_bpp;
-    gfx.glyph_width		= 8;
+    gfx.fb_addr		= framebuffer_info->framebuffer_addr;
+    gfx.fb_width	= framebuffer_info->framebuffer_width;
+    gfx.fb_height	= framebuffer_info->framebuffer_height;
+    gfx.fb_pitch	= framebuffer_info->framebuffer_pitch;
+    gfx.fb_bpp		= framebuffer_info->framebuffer_bpp;
+    gfx.glyph_width	= 8;
     gfx.glyph_height	= 16;
 
-    ssfn_src		= (ssfn_font_t *)&_binary_sfn_fonts_unifont_sfn_start;
-    ssfn_dst.ptr	= (uint8_t *)gfx.fb_addr;
-    ssfn_dst.w		= gfx.fb_width;
-    ssfn_dst.h		= gfx.fb_height;
-    ssfn_dst.p		= gfx.fb_pitch;
-    ssfn_dst.x		= 0;
-    ssfn_dst.y		= 0;
+    ssfn_src	    = (ssfn_font_t *)&_binary_sfn_fonts_unifont_sfn_start;
+    ssfn_dst.ptr    = (uint8_t *)gfx.fb_addr;
+    ssfn_dst.w	    = gfx.fb_width;
+    ssfn_dst.h	    = gfx.fb_height;
+    ssfn_dst.p	    = gfx.fb_pitch;
+    ssfn_dst.x	    = 0;
+    ssfn_dst.y	    = 0;
 
     framebuffer_set_background_color(background_color);
 
-    // serial_log(INFO, "Framebuffer initialized\n");
-    // kernel_log(INFO, "Framebuffer initialized\n");
+    // serial_log(INFO,	"Framebuffer initialized\n");
+    // kernel_log(INFO,	"Framebuffer initialized\n");
 }
 
 // draw one pixel at coordinate x, y (0, 0 is top left corner) in a certain color

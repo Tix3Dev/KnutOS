@@ -21,17 +21,17 @@ global _isr_handler_asm
 global _isr_names_asm
 
 _isr_handler_asm:
-	cld						; c code following the sysV ABI requires DF to be clear on function entry
-	pusha64					; push all
-	
-	mov 	rdi, rsp		; pass the stack pointer as an argument to the c function
-	call	isr_handler		; call the c function
-	mov		rsp, rax		; get the new stack pointer returned
-
-	popa64					; pop all
-	add		rsp, 16			; pop error code and int number
-
-	iretq					; return
+    cld			; c code following the sysV ABI requires DF to be clear on function entry
+    pusha64		; push all
+    
+    mov	    rdi, rsp    ; pass the stack pointer as an argument to the c function
+    call    isr_handler ; call the c function
+    mov	    rsp, rax    ; get the new stack pointer returned
+    
+    popa64		; pop all
+    add	    rsp, 16	; pop error code and int number
+    
+    iretq		; return
 
 %macro ISR_NAME 1
 dq _ISR%1
@@ -39,15 +39,15 @@ dq _ISR%1
 
 %macro ISR_STUB_ERR 1
 _ISR%1:
-	push %1
-	jmp _isr_handler_asm
+    push %1
+    jmp _isr_handler_asm
 %endmacro
 
 %macro ISR_STUB_NO_ERR 1
 _ISR%1:
-	push 0
-	push %1
-	jmp _isr_handler_asm
+    push 0
+    push %1
+    jmp _isr_handler_asm
 %endmacro
 
 
@@ -134,7 +134,7 @@ _isr_names_asm:
     ISR_NAME 29
     ISR_NAME 30
     ISR_NAME 31
-
+    
     ISR_NAME 32
     ISR_NAME 33
     ISR_NAME 34

@@ -18,13 +18,13 @@
 #ifndef BITMAP_H
 #define BITMAP_H
 
-#define BIT_TO_PAGE(bit)	((size_t)bit * 0x1000)
-#define PAGE_TO_BIT(page)	((size_t)page / 0x1000)
+#define BIT_TO_PAGE(bit)    ((size_t)bit * 0x1000)
+#define PAGE_TO_BIT(page)   ((size_t)page / 0x1000)
 
 typedef struct
 {
-	uint8_t	*map;
-	size_t	size;
+    uint8_t	*map;
+    size_t	size;
 } BITMAP_t;
 
 void bitmap_set_bit(BITMAP_t *bitmap, int bit);

@@ -23,17 +23,17 @@
 #define GB 0x40000000UL
 
 // page table entry flags
-#define PTE_PRESENT				1
-#define PTE_READ_WRITE			2
-#define PTE_USER_SUPERVISOR		4
-#define PTE_WRITE_THROUGH		8
-#define PTE_CHACHE_DISABLED		16
-#define PTE_ACCESSED			32
-#define PTE_DIRTY				64
-#define PTE_PAT					128
-#define PTE_GLOBAL				256
+#define PTE_PRESENT	    1
+#define PTE_READ_WRITE	    2
+#define PTE_USER_SUPERVISOR 4
+#define PTE_WRITE_THROUGH   8
+#define PTE_CHACHE_DISABLED 16
+#define PTE_ACCESSED	    32
+#define PTE_DIRTY	    64
+#define PTE_PAT		    128
+#define PTE_GLOBAL	    256
 
-typedef uint64_t * PAGE_DIR;
+typedef uint64_t *PAGE_DIR;
 
 void vmm_init(void);
 PAGE_DIR vmm_create_page_directory(void);
