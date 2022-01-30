@@ -35,7 +35,7 @@
 
 typedef uint64_t * PAGE_DIR;
 
-void vmm_init(struct stivale2_struct *stivale2_struct);
+void vmm_init(void);
 PAGE_DIR vmm_create_page_directory(void);
 void vmm_map_page(PAGE_DIR vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags);
 void vmm_unmap_page(PAGE_DIR current_page_directory, uintptr_t virtual_address);

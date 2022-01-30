@@ -51,7 +51,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
     kernel_log(INFO, "Kernel started\n");
 
     pmm_init(stivale2_struct);
-    vmm_init(stivale2_struct);
+    vmm_init();
     gdt_init();
     idt_init();
 
