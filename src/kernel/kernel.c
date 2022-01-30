@@ -60,14 +60,16 @@ void kmain(struct stivale2_struct *stivale2_struct)
     debug("bump allocator test start\n");
 
     int *arr = bump_alloc(stivale2_struct, sizeof(int) * 5);
-    debug("asdfkljas;dflkj: %p\n", arr);
+    debug("arr ptr: %p\n", arr);
 
     arr[0] = 10;
     arr[1] = 20;
     arr[2] = 30;
     arr[3] = 40;
     arr[4] = 55;
-    debug("first element of array: %d\n", arr[0]);
+    arr[5] = 65;
+    arr[6] = 75;
+    debug("last element of array: %d\n", arr[6]);
 
     debug("bump allocator test end\n");
 
