@@ -20,6 +20,7 @@
 
 #include <memory/bump.h>
 #include <memory/slab.h>
+#include <libk/math.h>
 
 static slab_t slabs[SLAB_COUNT];
 
