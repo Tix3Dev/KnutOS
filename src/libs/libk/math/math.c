@@ -15,10 +15,38 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stdint.h>
+
+// calculate the power of a number using a given base and exponent
+// note that the result will always we 0, if the exponent is negative
+// algorithm used: https://en.wikipedia.org/wiki/Exponentiation_by_squaring
 uint32_t pow(int32_t base, int32_t exponent)
 {
     if (exponent == 0)
-	return 1;
+        return 1;
 
+    if (exponent < 0)
+    {
+        base = 1 / base;
+        exponent = -exponent;
+    }
 
+    int32_t temp = 1;
+
+    while (exponent > 1)
+    {
+        if (exponent % 2 == 0)
+        {
+            base = base * base;
+            exponent = exponent / 2;
+        }
+        else
+        {
+            temp = base * temp;
+            base = base * base;
+            exponent = (exponent - 1) / 2;
+        }
+    }
+
+    return base * temp;
 }

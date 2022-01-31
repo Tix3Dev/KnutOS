@@ -18,6 +18,6 @@
 #ifndef MATH_H
 #define MATH_H
 
-
+uint32_t pow(int32_t base, int32_t exponent);
 
 #endif
