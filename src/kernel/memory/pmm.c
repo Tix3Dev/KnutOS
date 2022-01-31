@@ -39,7 +39,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
 
     // set basic values
     struct stivale2_struct_tag_memmap *memory_map = stivale2_get_tag(stivale2_struct,
-	STIVALE2_STRUCT_TAG_MEMMAP_ID);
+            STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
     pmm_info.memory_map = memory_map;
 
@@ -63,17 +63,17 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
         serial_set_color(TERM_PURPLE);
 
         debug("Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
-	    i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
+              i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
         printk(GFX_PURPLE, "Memory map entry No. %.16d: Base: 0x%.16llx | Length: 0x%.16llx | Type: %s\n",
-	    i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
+               i, current_entry->base, current_entry->length, get_memory_map_entry_type(current_entry->type));
 
         serial_set_color(TERM_COLOR_RESET);
 
 
         // TODO: potential hazard/bug
         if (current_entry->type != STIVALE2_MMAP_USABLE &&
-	    current_entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
-	    current_entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
+                current_entry->type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE &&
+                current_entry->type != STIVALE2_MMAP_KERNEL_AND_MODULES)
             continue;
 
         top = current_entry->base + current_entry->length;
