@@ -25,6 +25,7 @@
 #include <gdt/gdt.h>
 #include <interrupts/idt.h>
 #include <memory/pmm.h>
+#include <memory/slab.h>
 #include <memory/vmm.h>
 #include <shell/shell_screen.h>
 #include <logo.h>
@@ -52,6 +53,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
     vmm_init();
     gdt_init();
     idt_init();
+
+    slab_init(stivale2_struct);
 
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 

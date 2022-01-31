@@ -15,12 +15,15 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
 #include <memory/bump.h>
 #include <memory/slab.h>
-#include <libk/math.h>
+#include <libk/math/math.h>
 
 static slab_t slabs[SLAB_COUNT];
 
@@ -36,7 +39,6 @@ void slab_init(struct stivale2_struct *stivale2_struct)
     for (int32_t i = 0; i < SLAB_COUNT; i++)
     {
 	slabs[i].size = pow(2, i + 1);
-	slabs[i].is_empty = true;
 	slabs[i].is_full = false;
 
 	int32_t objects_per_slab = pow(2, SLAB_COUNT) / pow(2, i + 1);

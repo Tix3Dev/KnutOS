@@ -27,13 +27,12 @@
 // or NULL which means it's allocated
 typedef struct
 {
-    uint32_t	size;
-    bool	is_empty;
-    bool	is_full;
-    void	*objects[OBJECTS_PER_SLAB];
+    size_t  size;
+    bool    is_full;
+    void    *objects[OBJECTS_PER_SLAB];
 } slab_t;
 
-void slab_init(void);
+void slab_init(struct stivale2_struct *stivale2_struct);
 void *slab_alloc(size_t size);
 void slab_free(void *ptr, size_t size);
 
