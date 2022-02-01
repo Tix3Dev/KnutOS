@@ -49,7 +49,32 @@ void slab_init(struct stivale2_struct *stivale2_struct)
 
 void *slab_alloc(size_t size)
 {
-    // if is_full create new default cache
+    // TODO: if is_full create new default cache
+
+    void *return_value = NULL;
+
+    for (int32_t i = 0; i < SLAB_COUNT; i++)
+    {
+	if (slabs[i].size != size)
+	    continue;
+
+	if (slabs[i].is_full)
+	    return return_value;
+
+	int32_t free_object_index = find_free_object(i);
+
+	if (free_object_index == -1)
+	    slabs[i].is_full = true;
+	else
+	{
+	    return_value = slabs[i].objects[free_object_index];
+	    slabs[i].objects[free_object_index] = NULL;
+	}
+
+	return return_value;
+    }
+
+    return return_value;
 }
 
 void slab_free(void *ptr, size_t size)
@@ -61,7 +86,13 @@ void slab_free(void *ptr, size_t size)
 
 static int32_t find_free_object(int32_t slab_index)
 {
-    //
+    int32_t objects_per_slab = pow(2, SLAB_COUNT) / pow(2, slab_index + 1);
+
+    for (int32_t i = 0; i < objects_per_slab; i++)
+	if (slabs[slab_index].objects[i] != NULL)
+	    return i;
+
+    return -1;
 }
 
 static int32_t find_allocated_object(int32_t slab_index)
