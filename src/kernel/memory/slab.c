@@ -25,16 +25,25 @@
 #include <memory/slab.h>
 #include <libk/math/math.h>
 
+/* Explanation of the method used here for slab allocations:
+    Instead of a linked list which would normally be used, this allocator
+    is based on an array. It holds 10 slabs. The smallest size is 2^1
+    and the biggest is 2^9.
+    Each slab contains an array of objects.
+    Each object is either
+    free - holding an address of free memory
+    or
+    used - holding NULL.
 
+    Now, when allocating memory, we search for a free object in the slab
+    of the machting size (parameter). If we find one, we set it to used
+    and return it's pointer. So, that it's memory can't be used anymore.
 
-#include <libk/debug/debug.h>
-
-
-
-// TODO: write short explanation of principle used here
-// TODO: write comments for functions
-
-
+    UNTIL we free the memory (by passing it's pointer) in slab_free.
+    For that we just search for a used object and then set it to the
+    passed pointer. The memory which the pointer points to, can now be
+    overwritten i.e. used again once somebody allocates memory again.
+*/
 
 static slab_t slabs[SLAB_COUNT];
 
@@ -45,6 +54,8 @@ static int32_t find_allocated_object(int32_t slab_index);
 
 /* core functions */
 
+// create array of slabs, which all are of different sizes
+// ranging from 2 to 512 but only power of 2
 void slab_init(struct stivale2_struct *stivale2_struct)
 {
     for (int32_t i = 0; i < SLAB_COUNT; i++)
@@ -61,6 +72,8 @@ void slab_init(struct stivale2_struct *stivale2_struct)
     }
 }
 
+// search for a free object in the matching slab according to the
+// size parameter and allocate it by setting it's value to NULL
 void *slab_alloc(size_t size)
 {
     void *return_value = NULL;
@@ -89,6 +102,8 @@ void *slab_alloc(size_t size)
     return return_value;
 }
 
+// search for a slab of matching size according to the ptr paramater
+// free it by setting it's value to the ptr which was previously checked
 void slab_free(void *ptr)
 {
     if (!ptr)
@@ -124,6 +139,8 @@ void slab_free(void *ptr)
 
 /* utility functions */
 
+// find an object in the matching slab, i.e. by searching for
+// non-NULL values
 static int32_t find_free_object(int32_t slab_index)
 {
     int32_t objects_per_slab = MAX_SLAB_SIZE / pow(2, slab_index + 1);
@@ -135,6 +152,8 @@ static int32_t find_free_object(int32_t slab_index)
     return -1;
 }
 
+// find an object in the matching slab, i.e. by searching for
+// NULL values
 static int32_t find_allocated_object(int32_t slab_index)
 {
     int32_t objects_per_slab = MAX_SLAB_SIZE / pow(2, slab_index + 1);

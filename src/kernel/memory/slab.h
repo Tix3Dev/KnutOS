@@ -26,8 +26,8 @@
 #define MAX_SLAB_SIZE		1024	// until pow(2, SLAB_COUNT)
 #define MAX_OBJECTS_PER_SLAB	512	// smallest slab possible is 2 -> MAX_SLAB_SIZE / 2
 
-// an object in the objects array either is a pointer to memory,
-// or NULL which means it's allocated
+// an object in the objects array either is a pointer to
+// free memory, or NULL which means it's allocated
 typedef struct
 {
     addr_range_t    address_range;
