@@ -14,3 +14,27 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+// #include <stddef.h>
+// #include <stdint.h>
+// 
+// #include <memory/mem.h>
+// #include <memory/pmm.h>
+// #include <memory/slab.h>
+// 
+// void *kmalloc(size_t size)
+// {
+//     if (size >= PAGE_SIZE)
+//     {
+// 	// pmm_alloc(page_count)
+//     }
+//     else
+//     {
+// 	// slab_alloc(bytes)
+//     }
+// }
+// 
+// void kfree(void *ptr)
+// {
+//     // TODO: would have to change pmm_free because it needs a size as parameter
+// }
