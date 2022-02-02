@@ -123,15 +123,11 @@ void slab_free(void *ptr)
 	    {
 		// yes, ptr is an object of the slab
 
-		debug("slab_free | found size: %d\n", slabs[i].size);
-
 		int32_t allocated_object_index = find_allocated_object(i);
 		if (allocated_object_index == -1)
 		    return;
 
 		slabs[i].objects[allocated_object_index] = ptr;
-
-		debug("slab_free successfully freed object\n");
 	    }
 	}
     }
