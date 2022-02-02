@@ -25,6 +25,12 @@
 #include <memory/slab.h>
 #include <libk/math/math.h>
 
+
+
+#include <libk/debug/debug.h>
+
+
+
 static slab_t slabs[SLAB_COUNT];
 
 /* utility functions */
@@ -41,16 +47,17 @@ void slab_init(struct stivale2_struct *stivale2_struct)
 	slabs[i].size = pow(2, i + 1);
 	slabs[i].is_full = false;
 
-	int32_t objects_per_slab = pow(2, SLAB_COUNT) / pow(2, i + 1);
+	int32_t objects_per_slab = MAX_SLAB_SIZE / pow(2, i + 1);
 	for (int j = 0; j < objects_per_slab; j++)
 	    slabs[i].objects[j] = bump_alloc(stivale2_struct, slabs[i].size);
+
+	slabs[i].address_range.start = slabs[i].objects[0];
+	slabs[i].address_range.end = slabs[i].objects[0] + 1024 - slabs[i].size;
     }
 }
 
 void *slab_alloc(size_t size)
 {
-    // TODO: if is_full create new default cache
-
     void *return_value = NULL;
 
     for (int32_t i = 0; i < SLAB_COUNT; i++)
@@ -77,16 +84,36 @@ void *slab_alloc(size_t size)
     return return_value;
 }
 
-void slab_free(void *ptr, size_t size)
+void slab_free(void *ptr)
 {
-    //
+    if (!ptr)
+	return;
+
+    void *ptr_without_base;
+
+    for (int32_t i = 0; i < SLAB_COUNT; i++)
+    {
+	ptr_without_base = ptr - slabs[i].address_range.start + (void *)slabs[i].size;
+
+	if (ptr >= slabs[i].address_range.start && ptr <= slabs[i].address_range.end)
+	{
+	    // yes, ptr is in the range of a slab
+
+	    if ((size_t)ptr_without_base % slabs[i].size == 0)
+	    {
+		// yes, ptr is an object of the slab
+
+		debug("slab_free | found size: %d\n", slabs[i].size);
+	    }
+	}
+    }
 }
 
 /* utility functions */
 
 static int32_t find_free_object(int32_t slab_index)
 {
-    int32_t objects_per_slab = pow(2, SLAB_COUNT) / pow(2, slab_index + 1);
+    int32_t objects_per_slab = MAX_SLAB_SIZE / pow(2, slab_index + 1);
 
     for (int32_t i = 0; i < objects_per_slab; i++)
 	if (slabs[slab_index].objects[i] != NULL)

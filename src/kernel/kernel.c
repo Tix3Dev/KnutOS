@@ -56,6 +56,26 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     slab_init(stivale2_struct);
 
+    serial_set_color(TERM_PURPLE);
+
+    debug("slab allocator test start\n");
+
+    void *ptr1 = slab_alloc(2);
+    slab_free(ptr1);
+
+    void *ptr2 = slab_alloc(16);
+    slab_free(ptr2);
+
+    void *ptr3 = slab_alloc(64);
+    slab_free(ptr3);
+
+    void *ptr4 = slab_alloc(512);
+    slab_free(ptr4);
+
+    debug("slab allocator test end\n");
+
+    serial_set_color(TERM_COLOR_RESET);
+
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
     // TODO: proper timer
