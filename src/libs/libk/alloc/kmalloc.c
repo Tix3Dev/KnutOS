@@ -17,11 +17,11 @@
 
 // #include <stddef.h>
 // #include <stdint.h>
-// 
+//
 // #include <memory/mem.h>
 // #include <memory/pmm.h>
 // #include <memory/slab.h>
-// 
+//
 // void *kmalloc(size_t size)
 // {
 //     if (size >= PAGE_SIZE)
@@ -33,7 +33,7 @@
 // 	// slab_alloc(bytes)
 //     }
 // }
-// 
+//
 // void kfree(void *ptr)
 // {
 //     // TODO: would have to change pmm_free because it needs a size as parameter
