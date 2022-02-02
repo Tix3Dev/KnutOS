@@ -70,7 +70,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
     slab_free(ptr3);
 
     void *ptr4 = slab_alloc(512);
-    slab_free(ptr4);
+    slab_free(ptr4 + 21);
 
     debug("slab allocator test end\n");
 

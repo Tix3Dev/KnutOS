@@ -31,6 +31,11 @@
 
 
 
+// TODO: write short explanation of principle used here
+// TODO: write comments for functions
+
+
+
 static slab_t slabs[SLAB_COUNT];
 
 /* utility functions */
@@ -104,6 +109,14 @@ void slab_free(void *ptr)
 		// yes, ptr is an object of the slab
 
 		debug("slab_free | found size: %d\n", slabs[i].size);
+
+		int32_t allocated_object_index = find_allocated_object(i);
+		if (allocated_object_index == -1)
+		    return;
+
+		slabs[i].objects[allocated_object_index] = ptr;
+
+		debug("slab_free successfully freed object\n");
 	    }
 	}
     }
@@ -124,5 +137,11 @@ static int32_t find_free_object(int32_t slab_index)
 
 static int32_t find_allocated_object(int32_t slab_index)
 {
-    //
+    int32_t objects_per_slab = MAX_SLAB_SIZE / pow(2, slab_index + 1);
+
+    for (int32_t i = 0; i < objects_per_slab; i++)
+	if (slabs[slab_index].objects[i] == NULL)
+	    return i;
+
+    return -1;
 }
