@@ -1,15 +1,15 @@
 /*
 	BSD 3-Clause License
-
+	
 	Copyright (c) 2022, V01D
 	All rights reserved.
-
+	
 	https://github.com/V01D-NULL/3ds-firmware/blob/main/src/arm11/core/mm/slab.c
 */
 
 /*
 	The first version was developed by Yves Vollmeier and Tim Thompson (in collaboration)
-       	and the code can be seen here:
+	and the code can be seen here:
 	https://github.com/V01D-NULL/slab_allocator
 	This version was first developed by Tim Thompson and modified by
 	Yves Vollmeier. Copyright header at the top is just for sanity.
