@@ -56,28 +56,6 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     slab_init(stivale2_struct);
 
-    // serial_set_color(TERM_PURPLE);
-
-    // framebuffer_set_background_color(GFX_WHITE);
-    // framebuffer_draw_line(0, 0, 0, 0, GFX_BLACK);	    // passed
-    // framebuffer_draw_line(0, 0, 0, 100, GFX_BLACK);	    // passed
-    // framebuffer_draw_line(0, 0, 100, 0, GFX_RED);	    // passed
-    // framebuffer_draw_line(0, 0, 100, 100, GFX_GREEN);    // passed
-    // framebuffer_draw_line(0, 100, 0, 100, GFX_BLUE);	    // passed
-    // framebuffer_draw_line(0, 100, 100, 0, GFX_PURPLE);   // passed
-    // framebuffer_draw_line(0, 100, 100, 100, GFX_CYAN);   // passed
-    // framebuffer_draw_line(100, 0, 0, 100, GFX_BLACK);    // passed
-    // framebuffer_draw_line(100, 0, 100, 0, GFX_RED);	    // passed
-    // framebuffer_draw_line(100, 0, 100, 100, GFX_GREEN);  // passed
-    // framebuffer_draw_line(100, 100, 0, 0, GFX_YELLOW);   // passed
-    // framebuffer_draw_line(100, 100, 100, 100, GFX_CYAN); // passed
-    // framebuffer_draw_line(100, 0, 0, 0, GFX_BLACK);	    // passed
-    // framebuffer_draw_line(0, 100, 0, 0, GFX_YELLOW);	    // passed
-    // framebuffer_draw_line(100, 100, 0, 100, GFX_BLUE);   // passed
-    // framebuffer_draw_line(100, 100, 100, 0, GFX_PURPLE); // passed
-
-    // serial_set_color(TERM_COLOR_RESET);
-
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
     // TODO: proper timer
