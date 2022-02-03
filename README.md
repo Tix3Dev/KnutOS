@@ -9,9 +9,19 @@
 ## Screenshots
 
 <img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS%20silent%20boot.png"> </a>
+*⤷ Silent boot*
+
 <img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS%20verbose%20boot.png"> </a>
+*⤷ Verbose boot*
+
 <img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS%20shell.png"> </a>
+*⤷ Shell*
+
 <img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS%20interrupt%20screen.png"> </a>
+*⤷ Interrupt screen*
+
+<img src="https://github.com/Tix3Dev/KnutOS/blob/main/screenshots/KnutOS%20serial%20communication.png"> </a>
+*⤷ Local terminal showing serial communication*
 
 ## Features
 
