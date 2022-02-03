@@ -13,6 +13,17 @@
 	GNU General Public License for more details.
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+	Contributor(s): Tim Thompson <https://github.com/V01D-NULL>
+*/
+
+/*
+	The first version was developed by Yves Vollmeier and Tim Thompson and the
+	code can be seen here:
+	https://github.com/V01D-NULL/slab_allocator
+	The second version was mainly developed by Tim Thompson and modified by
+	Yves Vollmeier and the code can be seen here:
+	https://github.com/V01D-NULL/3ds-firmware/blob/main/src/arm11/core/mm/slab.c
 */
 
 #include <stddef.h>
