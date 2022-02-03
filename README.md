@@ -28,6 +28,16 @@
 - Basic keyboard driver with a small shell
 - Basic kernel libraries
 
+## Future Features
+
+- C standard library port
+- ELF loader
+- IPC support
+- SMP
+- Double buffering
+- Compositor
+- GUI library
+
 ## Dependencies
 
 **NOTE: Depending on your Linux Distribution the package names might be different (supposing you are using Linux)**
