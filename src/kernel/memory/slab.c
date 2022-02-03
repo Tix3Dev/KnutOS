@@ -34,6 +34,7 @@
 #include <boot/stivale2_boot.h>
 #include <memory/bump.h>
 #include <memory/slab.h>
+#include <libk/log/log.h>
 #include <libk/math/math.h>
 
 /*  Explanation of the method used here for slab allocations:
@@ -82,6 +83,9 @@ void slab_init(struct stivale2_struct *stivale2_struct)
         slabs[i].address_range.start = slabs[i].objects[0];
         slabs[i].address_range.end = slabs[i].objects[0] + 1024 - slabs[i].size;
     }
+
+    serial_log(INFO, "Slab allocator initialized\n");
+    kernel_log(INFO, "Slab allocator initialized\n");
 }
 
 // search for a free object in the matching slab according to the
