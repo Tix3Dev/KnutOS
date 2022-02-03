@@ -108,47 +108,48 @@ void framebuffer_draw_line(int x_start_pos, int y_start_pos, int x_end_pos, int 
 
     if (x_start_pos == x_end_pos)
     {
-	if (y_start_pos < y_end_pos)
-	    for (int y = y_start_pos; y <= y_end_pos; y++)
-		framebuffer_draw_pixel(x_start_pos, y, color);
-	else
-	    for (int y = y_end_pos; y <= y_start_pos; y++)
-		framebuffer_draw_pixel(x_start_pos, y, color);
+        if (y_start_pos < y_end_pos)
+            for (int y = y_start_pos; y <= y_end_pos; y++)
+                framebuffer_draw_pixel(x_start_pos, y, color);
+        else
+            for (int y = y_end_pos; y <= y_start_pos; y++)
+                framebuffer_draw_pixel(x_start_pos, y, color);
 
         return;
     }
+
     if (y_start_pos == y_end_pos)
     {
-	if (x_start_pos < x_end_pos)
-	    for (int x = x_start_pos; x <= x_end_pos; x++)
-		framebuffer_draw_pixel(x, y_start_pos, color);
-	else
-	    for (int x = x_end_pos; x <= x_start_pos; x++)
-		framebuffer_draw_pixel(x, y_start_pos, color);
+        if (x_start_pos < x_end_pos)
+            for (int x = x_start_pos; x <= x_end_pos; x++)
+                framebuffer_draw_pixel(x, y_start_pos, color);
+        else
+            for (int x = x_end_pos; x <= x_start_pos; x++)
+                framebuffer_draw_pixel(x, y_start_pos, color);
 
         return;
     }
 
     if (x_start_pos < x_end_pos)
     {
-	dx = x_end_pos - x_start_pos;
-	sx = 1;
+        dx = x_end_pos - x_start_pos;
+        sx = 1;
     }
     else
     {
-	dx = x_start_pos - x_end_pos;
-	sx = -1;
+        dx = x_start_pos - x_end_pos;
+        sx = -1;
     }
 
     if (y_start_pos < y_end_pos)
     {
-	dy = -(y_end_pos - y_start_pos);
-	sy = 1;
+        dy = -(y_end_pos - y_start_pos);
+        sy = 1;
     }
     else
     {
-	dy = -(y_start_pos - y_end_pos);
-	sy = -1;
+        dy = -(y_start_pos - y_end_pos);
+        sy = -1;
     }
 
     error1 = dx + dy;
@@ -157,21 +158,21 @@ void framebuffer_draw_line(int x_start_pos, int y_start_pos, int x_end_pos, int 
 
     while (x_start_pos != x_end_pos && y_start_pos != y_end_pos)
     {
-	error2 = 2 * error1;
+        error2 = 2 * error1;
 
-	if (error2 >= dy)
-	{
-	    error1 += dy;
-	    x_start_pos += sx;
-	}
+        if (error2 >= dy)
+        {
+            error1 += dy;
+            x_start_pos += sx;
+        }
 
-	if (error2 <= dx)
-	{
-	    error1 += dx;
-	    y_start_pos += sy;
-	}
+        if (error2 <= dx)
+        {
+            error1 += dx;
+            y_start_pos += sy;
+        }
 
-	framebuffer_draw_pixel(x_start_pos, y_start_pos, color);
+        framebuffer_draw_pixel(x_start_pos, y_start_pos, color);
     }
 }
 
