@@ -22,6 +22,7 @@
 - IDT & ISR's
 - Physical memory manager -> Bitmap based
 - Virtual memory manager -> 4- & 5-level paging
+- Slab allocator
 - Serial communication
 - Basic framebuffer
 - Basic keyboard driver with a small shell
