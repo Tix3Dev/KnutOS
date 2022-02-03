@@ -1,29 +1,18 @@
 /*
-	This file is part of an x86_64 hobbyist operating system called KnutOS
-	Everything is openly developed on GitHub: https://github.com/Tix3Dev/KnutOS/
+	BSD 3-Clause License
 
-	Copyright (C) 2021-2022  Yves Vollmeier <https://github.com/Tix3Dev>
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	Copyright (c) 2022, V01D
+	All rights reserved.
 
-	Contributor(s): Tim Thompson <https://github.com/V01D-NULL>
+	https://github.com/V01D-NULL/3ds-firmware/blob/main/src/arm11/core/mm/slab.c
 */
 
 /*
-	The first version was developed by Yves Vollmeier and Tim Thompson and the
-	code can be seen here:
+	The first version was developed by Yves Vollmeier and Tim Thompson (in collaboration)
+       	and the code can be seen here:
 	https://github.com/V01D-NULL/slab_allocator
-	The second version was mainly developed by Tim Thompson and modified by
-	Yves Vollmeier and the code can be seen here:
-	https://github.com/V01D-NULL/3ds-firmware/blob/main/src/arm11/core/mm/slab.c
+	This version was first developed by Tim Thompson and modified by
+	Yves Vollmeier. Copyright header at the top is just for sanity.
 */
 
 #include <stddef.h>
