@@ -96,31 +96,82 @@ void framebuffer_reset_screen(void)
 }
 
 // draw a line to the framebuffer with start coordinates and end coordinates
+// making use of bresenham's line algorithm
 void framebuffer_draw_line(int x_start_pos, int y_start_pos, int x_end_pos, int y_end_pos, uint32_t color)
 {
-    int dx = x_end_pos - x_start_pos;
-    int dy = y_end_pos - y_start_pos;
+    int dx;
+    int dy;
+    int sx;
+    int sy;
+    int error1;
+    int error2;
 
-    int x = x_start_pos;
-    int y = y_start_pos;
-
-    int p = 2 * dy - dx;
-
-    while (x < x_end_pos)
+    if (x_start_pos == x_end_pos)
     {
-        if (p >= 0)
-        {
-            framebuffer_draw_pixel(x, y, color);
-            y += 1;
-            p = p + 2 * dy - 2 * dx;
-        }
-        else
-        {
-            framebuffer_draw_pixel(x, y, color);
-            p = p + 2 * dy;
-        }
+	if (y_start_pos < y_end_pos)
+	    for (int y = y_start_pos; y <= y_end_pos; y++)
+		framebuffer_draw_pixel(x_start_pos, y, color);
+	else
+	    for (int y = y_end_pos; y <= y_start_pos; y++)
+		framebuffer_draw_pixel(x_start_pos, y, color);
 
-        x += 1;
+        return;
+    }
+    if (y_start_pos == y_end_pos)
+    {
+	if (x_start_pos < x_end_pos)
+	    for (int x = x_start_pos; x <= x_end_pos; x++)
+		framebuffer_draw_pixel(x, y_start_pos, color);
+	else
+	    for (int x = x_end_pos; x <= x_start_pos; x++)
+		framebuffer_draw_pixel(x, y_start_pos, color);
+
+        return;
+    }
+
+    if (x_start_pos < x_end_pos)
+    {
+	dx = x_end_pos - x_start_pos;
+	sx = 1;
+    }
+    else
+    {
+	dx = x_start_pos - x_end_pos;
+	sx = -1;
+    }
+
+    if (y_start_pos < y_end_pos)
+    {
+	dy = -(y_end_pos - y_start_pos);
+	sy = 1;
+    }
+    else
+    {
+	dy = -(y_start_pos - y_end_pos);
+	sy = -1;
+    }
+
+    error1 = dx + dy;
+
+    framebuffer_draw_pixel(x_start_pos, y_start_pos, color);
+
+    while (x_start_pos != x_end_pos && y_start_pos != y_end_pos)
+    {
+	error2 = 2 * error1;
+
+	if (error2 >= dy)
+	{
+	    error1 += dy;
+	    x_start_pos += sx;
+	}
+
+	if (error2 <= dx)
+	{
+	    error1 += dx;
+	    y_start_pos += sy;
+	}
+
+	framebuffer_draw_pixel(x_start_pos, y_start_pos, color);
     }
 }
 
