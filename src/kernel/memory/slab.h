@@ -37,7 +37,7 @@ typedef struct
     void    *objects[MAX_OBJECTS_PER_SLAB];
 } slab_t;
 
-void slab_init(struct stivale2_struct *stivale2_struct);
+void slab_init(void);
 void *slab_alloc(size_t size);
 void slab_free(void *ptr);
 

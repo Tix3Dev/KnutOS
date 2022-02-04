@@ -54,7 +54,7 @@ void kmain(struct stivale2_struct *stivale2_struct)
     gdt_init();
     idt_init();
 
-    slab_init(stivale2_struct);
+    slab_init();
 
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 

@@ -21,10 +21,13 @@
 
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
-#include <memory/bump.h>
+#include <memory/mem.h>
+#include <memory/pmm.h>
 #include <memory/slab.h>
+#include <libk/debug/debug.h>
 #include <libk/log/log.h>
 #include <libk/math/math.h>
+#include <libk/stdio/stdio.h>
 
 /*  Explanation of the method used here for slab allocations:
     Instead of a linked list which would normally be used, this allocator
@@ -57,7 +60,12 @@ static int32_t find_allocated_object(int32_t slab_index);
 
 // create array of slabs, which all are of different sizes
 // ranging from 2 to 512 but only power of 2
-void slab_init(struct stivale2_struct *stivale2_struct)
+
+void *internal_mem_ptr = NULL;
+size_t internal_mem_len = 0;
+uint32_t page_alloc_count = 0;
+
+void slab_init(void)
 {
     for (int32_t i = 0; i < SLAB_COUNT; i++)
     {
@@ -67,11 +75,38 @@ void slab_init(struct stivale2_struct *stivale2_struct)
         int32_t objects_per_slab = MAX_SLAB_SIZE / pow(2, i + 1);
 
         for (int j = 0; j < objects_per_slab; j++)
-            slabs[i].objects[j] = bump_alloc(stivale2_struct, slabs[i].size);
+	{
+	    if (!internal_mem_ptr || internal_mem_ptr == (void *)internal_mem_len)
+	    {
+		internal_mem_ptr = pmm_alloc(1);
+		internal_mem_len = (size_t)internal_mem_ptr + PAGE_SIZE;
+
+		page_alloc_count++;
+	    }
+
+	    slabs[i].objects[j] = internal_mem_ptr;
+	    internal_mem_ptr += slabs[i].size;
+	}
 
         slabs[i].address_range.start = slabs[i].objects[0];
         slabs[i].address_range.end = slabs[i].objects[0] + 1024 - slabs[i].size;
     }
+
+    serial_log(INFO, "Slab allocator statistics:\n");
+    kernel_log(INFO, "Slab allocator statistics:\n");
+
+    serial_set_color(TERM_PURPLE);
+
+    debug("Slabs created: %d\n", SLAB_COUNT);
+    printk(GFX_PURPLE, "Slabs created: %d\n", SLAB_COUNT);
+
+    debug("Smallest slab: 2 bytes | Biggest slab: %d bytes\n", MAX_SLAB_SIZE);
+    printk(GFX_PURPLE, "Smallest slab: 2 bytes | Biggest slab: %d bytes\n", MAX_SLAB_SIZE);
+
+    debug("Memory used to create slabs: %d bytes = %d pages\n", page_alloc_count * PAGE_SIZE, page_alloc_count);
+    printk(GFX_PURPLE, "Memory used to create slabs: %d bytes = %d pages\n", page_alloc_count * PAGE_SIZE, page_alloc_count);
+
+    serial_set_color(TERM_COLOR_RESET);
 
     serial_log(INFO, "Slab allocator initialized\n");
     kernel_log(INFO, "Slab allocator initialized\n");
