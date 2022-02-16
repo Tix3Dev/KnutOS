@@ -15,26 +15,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <boot/stivale2.h>
+#ifndef SDT_H
+#define SDT_H
 
-void acpi_init(struct stivale2_struct *stivale2_struct)
-{
-    struct stivale2_struct_tag_rsdp *rsdp_structure = stivale2_get_tag(stivale2_struct,
-	    STIVALE2_STRUCT_TAG_RSDP_ID);
 
-    // init RSDP
-    //	-> verify checksum (all entries sum up to zero)
-    //	-> set global RSDP struct which can be used later
 
-    // find MADT using acpi_find_table("APIC") (if not found panic, if return is null)
-    // initialize MADT -> after that return it's return value, which is a MADT-struct
-}
-
-void acpi_find_table(const char *identifier)
-{
-    // convert RSDP to RSDT
-    
-    // traverse RSDT struct which should hold different tables, that are SDT or smth
-    // return table if sdt->signature == identifier and if verified SDT checksum (all
-    // entries sum up to zero)
-}
+#endif
