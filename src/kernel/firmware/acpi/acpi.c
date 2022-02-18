@@ -60,15 +60,17 @@ int acpi_verify_checksum(uint64_t address, const char *signature)
     uint8_t *ptr = (uint8_t *)address;
     uint8_t current_byte;
 
+    uint8_t length = *(ptr + 1);
+
     serial_log(INFO, "Verifying %s checksum:\n", signature);
     kernel_log(INFO, "Verifying %s checksum:\n", signature);
 
     serial_set_color(TERM_PURPLE);
 
-    debug("20 first bytes are being checked: ");
-    printk(GFX_PURPLE, "20 first bytes are being checked: ");
+    debug("First %d bytes are being checked: ", length);
+    printk(GFX_PURPLE, "First %d bytes are being checked: ", length);
 
-    for (uint8_t i = 0; i < *(ptr + 1); i++)
+    for (uint8_t i = 0; i < length; i++)
     {
 	current_byte = ptr[i];
 	debug("%x ", current_byte);
