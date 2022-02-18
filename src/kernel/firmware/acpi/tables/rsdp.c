@@ -35,9 +35,19 @@ void rsdp_init(uint64_t rsdp_address)
 
     serial_set_color(TERM_PURPLE);
 
-    debug("ACPI Revision number: %d\n", rsdp.revision);
-    if (rsdp.revision >= 2)
+    // debug("ACPI Revision number: %d\n", rsdp.revision);
+    if (rsdp.revision >= 2) // if revision is 2, then acpi version is 2.0 or above
+    {
 	has_xsdt_var = true;
+
+	serial_log(INFO, "ACPI Version 2.0 or above is used\n");
+	kernel_log(INFO, "ACPI Version 2.0 or above is used\n");
+    }
+    else // if revision is 0, then acpi version is 1.0
+    {
+	serial_log(INFO, "ACPI Version 1.0 is used\n");
+	kernel_log(INFO, "ACPI Version 1.0 is used\n");
+    }
 
     serial_set_color(TERM_COLOR_RESET);
 }
@@ -74,8 +84,8 @@ void rsdp_verify_checksum(uint64_t rsdp_address)
 
     if ((checksum & 0xFF) == 0x00)
     {
-	serial_log(INFO, "RSDP checksum is verified.\n");
-	kernel_log(INFO, "RSDP checksum is verified.\n");
+	serial_log(INFO, "RSDP checksum is verified\n");
+	kernel_log(INFO, "RSDP checksum is verified\n");
     }
     else
     {
