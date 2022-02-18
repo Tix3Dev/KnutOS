@@ -28,3 +28,23 @@ void *memset(void *pointer, uint32_t value, size_t size)
 
     return pointer;
 }
+
+// compares the first n bytes of memory area string1 and memory are string2
+// return value is
+// < 0 when string1 is less than string2
+// > 0 when string1 is greater than string2
+// = 0 when string1 is equal to string2
+// return value is based of fist non-matching character (e.g. abc aBc -> b/B)
+int memcmp(const void *string1, const void *string2, size_t n)
+{
+    const unsigned char *str1 = string1;
+    const unsigned char *str2 = string2;
+
+    for (size_t i = 0; i < n; i++, str1++, str2++)
+    {
+	if (*str1 != *str2)
+	    return (*str1 - *str2);
+    }
+
+    return 0;
+}

@@ -19,5 +19,6 @@
 #define STRING_H
 
 void *memset(uint32_t *pointer, uint32_t value, size_t size);
+int memcmp(const void *string1, const void *string2, size_t n);
 
 #endif
