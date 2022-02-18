@@ -15,6 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stdbool.h>
+
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
 #include <firmware/acpi/tables/rsdp.h>
@@ -23,19 +25,21 @@
 #include <libk/stdio/stdio.h>
 
 static rsdp_structure_t rsdp;
+static bool has_xsdt_var = false;
 
-// TODO: update this
 void rsdp_init(uint64_t rsdp_address)
 {
     rsdp_verify_checksum(rsdp_address);
     
     rsdp = *(rsdp_structure_t *)rsdp_address;
 
-    debug("revision: %d\n", rsdp.revision);
+    serial_set_color(TERM_PURPLE);
+
+    debug("ACPI Revision number: %d\n", rsdp.revision);
     if (rsdp.revision >= 2)
-	debug("revision number 2\n");
-    else
-	debug("revision number 1\n");
+	has_xsdt_var = true;
+
+    serial_set_color(TERM_COLOR_RESET);
 }
 
 // sum up the first 20 bytes of RSDP (starting with rsdp_address)
@@ -84,4 +88,14 @@ void rsdp_verify_checksum(uint64_t rsdp_address)
 	for (;;)
 	    asm ("hlt");
     }
+}
+
+rsdp_structure_t get_rsdp_structure(void)
+{
+    return rsdp;
+}
+
+bool has_xsdt(void)
+{
+    return has_xsdt_var;
 }

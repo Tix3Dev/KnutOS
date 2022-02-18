@@ -15,6 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stdbool.h>
+
 #ifndef RSDP_H
 #define RSDP_H
 
@@ -37,5 +39,7 @@ typedef struct
 
 void rsdp_init(uint64_t rsdp_address);
 void rsdp_verify_checksum(uint64_t rsdp_address);
+rsdp_structure_t get_rsdp_structure(void);
+bool has_xsdt(void);
 
 #endif

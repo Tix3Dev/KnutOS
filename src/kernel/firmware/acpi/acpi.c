@@ -15,11 +15,16 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stddef.h>
+
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
 #include <firmware/acpi/tables/rsdp.h>
 #include <firmware/acpi/acpi.h>
+#include <libk/debug/debug.h>
 #include <libk/log/log.h>
+#include <libk/stdio/stdio.h>
+#include <libk/string/string.h>
 
 void acpi_init(struct stivale2_struct *stivale2_struct)
 {
@@ -28,9 +33,8 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 
     rsdp_init(rsdp_tag->rsdp);
 
-    // TODO: update this
-    if (acpi_check_header(<address by rsdp_init>, "RSDT") == 0)
-	// acpi is available
+    if (acpi_check_header(get_rsdp_structure().rsdt_address, "RSDT") == 0)
+	debug("hello\n");
 
     // init RSDP
     //	-> verify checksum (all entries sum up to zero)
@@ -45,8 +49,8 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 
 int acpi_check_header(uint64_t address, const char *signature)
 {
-    // TODO: maybe address->signature???
-    if (memcmp(address, signature, 4) == 0 && acpi_verify_checksum(address, signature))
+    if (memcmp((void *)address, signature, 4) == 0 &&
+	    acpi_verify_checksum(address, signature) == 0)
 	return 0;
 
     return 1;
@@ -66,7 +70,7 @@ int acpi_verify_checksum(uint64_t address, const char *signature)
     debug("20 first bytes are being checked: ");
     printk(GFX_PURPLE, "20 first bytes are being checked: ");
 
-    for (uint8_t i = 0; i < 20; i++)
+    for (uint8_t i = 0; i < *(ptr + 1); i++)
     {
 	current_byte = ptr[i];
 	debug("%x ", current_byte);
@@ -80,24 +84,28 @@ int acpi_verify_checksum(uint64_t address, const char *signature)
 
     serial_set_color(TERM_COLOR_RESET);
 
-    if ((checksum & 0xFF) == 0x00)
+    checksum = checksum & 0xFF;
+
+    if (checksum == 0)
     {
 	serial_log(INFO, "%s checksum is verified.\n", signature);
 	kernel_log(INFO, "%s checksum is verified.\n", signature);
 
-	return 1;
+	return 0;
     }
     else
     {
-	serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", checksum & 0xFF);
-	kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", checksum & 0xFF);
+	serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
+	kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
 
-	return 0;
+	return 1;
     }
 }
 
 void acpi_find_table(const char *identifier)
 {
+    // NOTE: make use of has_xsdt for length!!!
+
     // convert RSDP to RSDT
     
     // traverse RSDT struct which should hold different tables, that are SDT or smth

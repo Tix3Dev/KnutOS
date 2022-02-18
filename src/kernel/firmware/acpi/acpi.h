@@ -20,6 +20,8 @@
 
 
 void acpi_init(struct stivale2_struct *stivale2_struct);
+int acpi_check_header(uint64_t address, const char *signature);
+int acpi_verify_checksum(uint64_t address, const char *signature);
 void acpi_find_table(const char *identifier);
 
 #endif
