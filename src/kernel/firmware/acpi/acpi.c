@@ -106,8 +106,6 @@ void acpi_find_table(const char *identifier)
 {
     // NOTE: make use of has_xsdt for length!!!
 
-    // convert RSDP to RSDT
-    
     // traverse RSDT struct which should hold different tables, that are SDT or smth
     // return table if sdt->signature == identifier and if verified SDT checksum (all
     // entries sum up to zero)
