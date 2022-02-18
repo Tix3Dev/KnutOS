@@ -24,13 +24,22 @@
 
 static rsdp_structure_t rsdp;
 
+// TODO: update this
 void rsdp_init(uint64_t rsdp_address)
 {
     rsdp_verify_checksum(rsdp_address);
     
     rsdp = *(rsdp_structure_t *)rsdp_address;
+
+    debug("revision: %d\n", rsdp.revision);
+    if (rsdp.revision >= 2)
+	debug("revision number 2\n");
+    else
+	debug("revision number 1\n");
 }
 
+// sum up the first 20 bytes of RSDP (starting with rsdp_address)
+// and check if this number is equal to zero
 void rsdp_verify_checksum(uint64_t rsdp_address)
 {
     uint8_t checksum = 0;
