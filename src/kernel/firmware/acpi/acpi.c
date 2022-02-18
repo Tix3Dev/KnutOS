@@ -36,9 +36,7 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
     if (acpi_check_header(get_rsdp_structure().rsdt_address, "RSDT") == 0)
 	debug("hello\n");
 
-    // init RSDP
-    //	-> verify checksum (all entries sum up to zero)
-    //	-> set global RSDP struct which can be used later
+    // do something
 
     // find MADT using acpi_find_table("APIC") (if not found panic, if return is null)
     // initialize MADT -> after that return it's return value, which is a MADT-struct
