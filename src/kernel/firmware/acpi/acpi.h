@@ -19,5 +19,7 @@
 #define ACPI_H
 
 
+void acpi_init(struct stivale2_struct *stivale2_struct);
+void acpi_find_table(const char *identifier);
 
 #endif

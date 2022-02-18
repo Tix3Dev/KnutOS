@@ -16,11 +16,17 @@
 */
 
 #include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
+#include <firmware/acpi/tables/rsdp.h>
+#include <firmware/acpi/acpi.h>
+#include <libk/log/log.h>
 
 void acpi_init(struct stivale2_struct *stivale2_struct)
 {
-    struct stivale2_struct_tag_rsdp *rsdp_structure = stivale2_get_tag(stivale2_struct,
+    struct stivale2_struct_tag_rsdp *rsdp_tag = stivale2_get_tag(stivale2_struct,
 	    STIVALE2_STRUCT_TAG_RSDP_ID);
+
+    rsdp_init(rsdp_tag->rsdp);
 
     // init RSDP
     //	-> verify checksum (all entries sum up to zero)
@@ -28,6 +34,9 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 
     // find MADT using acpi_find_table("APIC") (if not found panic, if return is null)
     // initialize MADT -> after that return it's return value, which is a MADT-struct
+    
+    serial_log(INFO, "ACPI initialized\n");
+    kernel_log(INFO, "ACPI initialized\n");
 }
 
 void acpi_find_table(const char *identifier)
