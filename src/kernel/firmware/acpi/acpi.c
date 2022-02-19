@@ -26,6 +26,8 @@
 #include <libk/stdio/stdio.h>
 #include <libk/string/string.h>
 
+static rsdt_structure rsdt;
+
 void acpi_init(struct stivale2_struct *stivale2_struct)
 {
     struct stivale2_struct_tag_rsdp *rsdp_tag = stivale2_get_tag(stivale2_struct,
@@ -33,10 +35,25 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 
     rsdp_init(rsdp_tag->rsdp);
 
-    if (acpi_check_header(get_rsdp_structure().rsdt_address, "RSDT") == 0)
-	debug("hello\n");
+    // having a RSDT is equivalent to having ACPI supported
+    if (acpi_check_header(get_rsdp_structure().rsdt_address, "RSDT") != 0)
+    {
+	serial_log(ERROR, "No ACPI was found on this computer!\n");
+	kernel_log(ERROR, "No ACPI was found on this computer!\n");
 
-    // do something
+
+	serial_log(ERROR, "Kernel halted!\n");
+	kernel_log(ERROR, "Kernel halted!\n");
+
+	for (;;)
+	    asm ("hlt");
+    }
+
+    rsdt = (rsdt_structure *)rsdt_address;
+
+    // NOTE: now we are ready to search for any table contained within RSDT!
+
+
 
     // find MADT using acpi_find_table("APIC") (if not found panic, if return is null)
     // initialize MADT -> after that return it's return value, which is a MADT-struct
