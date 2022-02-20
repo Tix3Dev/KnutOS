@@ -52,6 +52,8 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 
     rsdt = *(rsdt_structure *)(uintptr_t)get_rsdp_structure().rsdt_address;
 
+
+
     // NOTE: now we are ready to search for any table contained within RSDT!
 
 
@@ -127,4 +129,11 @@ void acpi_find_table(const char *identifier)
     // traverse RSDT struct which should hold different tables, that are SDT or smth
     // return table if sdt->signature == identifier and if verified SDT checksum (all
     // entries sum up to zero)
+
+    size_t entries = (rsdt.header.length - sizeof(rsdt.header)) / (has_xsdt() ? 8 : 4);
+
+    for (size_t i = 0; i < entries; i++)
+    {
+	//
+    }
 }
