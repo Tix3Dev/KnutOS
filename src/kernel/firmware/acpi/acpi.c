@@ -68,20 +68,20 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 int acpi_check_sdt_header(sdt_header_t *sdt_header, const char *signature)
 {
     if (memcmp(sdt_header->signature, signature, 4) == 0 &&
-	    acpi_verify_sdt_header_checksum(sdt_header) == 0)
+	    acpi_verify_sdt_header_checksum(sdt_header, signature) == 0)
 	return 0;
 
     return 1;
 }
 
-int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header)
+int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header, const char *signature)
 {
     uint8_t checksum = 0;
     uint8_t *ptr = (uint8_t *)sdt_header;
     uint8_t current_byte;
 
-    serial_log(INFO, "Verifying %s checksum:\n", sdt_header->signature);
-    kernel_log(INFO, "Verifying %s checksum:\n", sdt_header->signature);
+    serial_log(INFO, "Verifying %s checksum:\n", signature);
+    kernel_log(INFO, "Verifying %s checksum:\n", signature);
 
     serial_set_color(TERM_PURPLE);
 
@@ -106,15 +106,15 @@ int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header)
 
     if (checksum == 0)
     {
-	serial_log(INFO, "%s checksum is verified.\n", sdt_header->signature);
-	kernel_log(INFO, "%s checksum is verified.\n", sdt_header->signature);
+	serial_log(INFO, "%s checksum is verified.\n", signature);
+	kernel_log(INFO, "%s checksum is verified.\n", signature);
 
 	return 0;
     }
     else
     {
-	serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", sdt_header->signature, checksum);
-	kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", sdt_header->signature, checksum);
+	serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
+	kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
 
 	return 1;
     }
