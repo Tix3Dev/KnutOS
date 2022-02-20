@@ -20,6 +20,7 @@
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
 #include <firmware/acpi/tables/rsdp.h>
+#include <firmware/acpi/tables/rsdt.h>
 #include <firmware/acpi/acpi.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
@@ -49,7 +50,7 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 	    asm ("hlt");
     }
 
-    rsdt = (rsdt_structure *)rsdt_address;
+    rsdt = *(rsdt_structure *)(uintptr_t)get_rsdp_structure().rsdt_address;
 
     // NOTE: now we are ready to search for any table contained within RSDT!
 
