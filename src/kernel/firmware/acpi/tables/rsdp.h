@@ -39,7 +39,7 @@ typedef struct __attribute__((__packed__))
 
 void rsdp_init(uint64_t rsdp_address);
 void rsdp_verify_checksum(uint64_t rsdp_address);
-rsdp_structure_t get_rsdp_structure(void);
+rsdp_structure_t *get_rsdp_structure(void);
 bool has_xsdt(void);
 
 #endif

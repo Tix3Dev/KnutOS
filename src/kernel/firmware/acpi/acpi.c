@@ -27,7 +27,7 @@
 #include <libk/stdio/stdio.h>
 #include <libk/string/string.h>
 
-static rsdt_structure rsdt;
+static rsdt_structure *rsdt;
 
 void acpi_init(struct stivale2_struct *stivale2_struct)
 {
@@ -37,7 +37,7 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
     rsdp_init(rsdp_tag->rsdp);
 
     // having a RSDT is equivalent to having ACPI supported
-    if (acpi_check_header(get_rsdp_structure().rsdt_address, "RSDT") != 0)
+    if (acpi_check_header(get_rsdp_structure()->rsdt_address, "RSDT") != 0)
     {
 	serial_log(ERROR, "No ACPI was found on this computer!\n");
 	kernel_log(ERROR, "No ACPI was found on this computer!\n");
@@ -50,7 +50,7 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 	    asm ("hlt");
     }
 
-    rsdt = *(rsdt_structure *)(uintptr_t)get_rsdp_structure().rsdt_address;
+    rsdt = (rsdt_structure *)(uintptr_t)get_rsdp_structure()->rsdt_address;
 
 
 
@@ -130,7 +130,7 @@ void acpi_find_table(const char *identifier)
     // return table if sdt->signature == identifier and if verified SDT checksum (all
     // entries sum up to zero)
 
-    size_t entries = (rsdt.header.length - sizeof(rsdt.header)) / (has_xsdt() ? 8 : 4);
+    size_t entries = (rsdt->header.length - sizeof(rsdt->header)) / (has_xsdt() ? 8 : 4);
 
     for (size_t i = 0; i < entries; i++)
     {

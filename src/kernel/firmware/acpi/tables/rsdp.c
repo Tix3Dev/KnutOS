@@ -24,7 +24,7 @@
 #include <libk/log/log.h>
 #include <libk/stdio/stdio.h>
 
-static rsdp_structure_t rsdp;
+static rsdp_structure_t *rsdp;
 static bool has_xsdt_var = false;
 
 // verify only the first 20 bytes of RSDP, setting global struct and checking ACPI version
@@ -32,12 +32,12 @@ void rsdp_init(uint64_t rsdp_address)
 {
     rsdp_verify_checksum(rsdp_address);
     
-    rsdp = *(rsdp_structure_t *)rsdp_address;
+    rsdp = (rsdp_structure_t *)rsdp_address;
 
     serial_set_color(TERM_PURPLE);
 
-    // debug("ACPI Revision number: %d\n", rsdp.revision);
-    if (rsdp.revision >= 2) // if revision is 2, then acpi version is 2.0 or above
+    // debug("ACPI Revision number: %d\n", rsdp->revision);
+    if (rsdp->revision >= 2) // if revision is 2, then acpi version is 2.0 or above
     {
 	has_xsdt_var = true;
 
@@ -101,7 +101,7 @@ void rsdp_verify_checksum(uint64_t rsdp_address)
     }
 }
 
-rsdp_structure_t get_rsdp_structure(void)
+rsdp_structure_t *get_rsdp_structure(void)
 {
     return rsdp;
 }
