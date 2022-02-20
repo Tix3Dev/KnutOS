@@ -101,11 +101,14 @@ void rsdp_verify_checksum(uint64_t rsdp_address)
     }
 }
 
+// return the RSDP structure
 rsdp_structure_t *get_rsdp_structure(void)
 {
     return rsdp;
 }
 
+// return whether the Extended Root System Description Table is available or not
+// (otherwise we just use the Root System Description Table)
 bool has_xsdt(void)
 {
     return has_xsdt_var;

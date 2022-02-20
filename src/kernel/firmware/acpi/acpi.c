@@ -65,6 +65,8 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
     kernel_log(INFO, "ACPI initialized\n");
 }
 
+// check if the signature of the SDT header matches the parameter (signature) and
+// verify it's checksum
 int acpi_check_sdt_header(sdt_header_t *sdt_header, const char *signature)
 {
     if (memcmp(sdt_header->signature, signature, 4) == 0 &&
@@ -74,6 +76,7 @@ int acpi_check_sdt_header(sdt_header_t *sdt_header, const char *signature)
     return 1;
 }
 
+// check if the sum of all bytes in a SDT header is equal to zero
 int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header, const char *signature)
 {
     uint8_t checksum = 0;
