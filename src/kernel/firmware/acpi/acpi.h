@@ -15,13 +15,15 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <firmware/acpi/tables/sdth.h>
+
 #ifndef ACPI_H
 #define ACPI_H
 
 
 void acpi_init(struct stivale2_struct *stivale2_struct);
-int acpi_check_header(uint64_t address, const char *signature);
-int acpi_verify_checksum(uint64_t address, const char *signature);
-void acpi_find_table(const char *identifier);
+int acpi_check_sdt_header(sdt_header_t *sdt_header, const char *signature);
+int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header);
+sdt_header_t *acpi_find_sdt_table(const char *signature);
 
 #endif

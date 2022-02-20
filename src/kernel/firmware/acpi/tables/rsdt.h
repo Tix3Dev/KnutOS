@@ -22,8 +22,8 @@
 
 typedef struct
 {
-    sdt_header header;
+    sdt_header_t header;
     uint32_t entries[];
-} rsdt_structure;
+} rsdt_structure_t;
 
 #endif

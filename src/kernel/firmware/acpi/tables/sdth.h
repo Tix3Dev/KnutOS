@@ -29,6 +29,6 @@ typedef struct __attribute__((__packed__))
     uint32_t	oem_revision;
     char	creator_id[4];
     uint32_t	creator_revision;
-} sdt_header;
+} sdt_header_t;
 
 #endif

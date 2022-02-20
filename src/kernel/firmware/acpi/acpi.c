@@ -21,13 +21,14 @@
 #include <boot/stivale2_boot.h>
 #include <firmware/acpi/tables/rsdp.h>
 #include <firmware/acpi/tables/rsdt.h>
+#include <firmware/acpi/tables/sdth.h>
 #include <firmware/acpi/acpi.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
 #include <libk/stdio/stdio.h>
 #include <libk/string/string.h>
 
-static rsdt_structure *rsdt;
+static rsdt_structure_t *rsdt;
 
 void acpi_init(struct stivale2_struct *stivale2_struct)
 {
@@ -36,8 +37,10 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 
     rsdp_init(rsdp_tag->rsdp);
 
+    rsdt = (rsdt_structure_t *)(uintptr_t)get_rsdp_structure()->rsdt_address;
+
     // having a RSDT is equivalent to having ACPI supported
-    if (acpi_check_header(get_rsdp_structure()->rsdt_address, "RSDT") != 0)
+    if (acpi_check_sdt_header(&rsdt->header, "RSDT") != 0)
     {
 	serial_log(ERROR, "No ACPI was found on this computer!\n");
 	kernel_log(ERROR, "No ACPI was found on this computer!\n");
@@ -50,13 +53,10 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 	    asm ("hlt");
     }
 
-    rsdt = (rsdt_structure *)(uintptr_t)get_rsdp_structure()->rsdt_address;
-
-
-
-    // NOTE: now we are ready to search for any table contained within RSDT!
-
-
+    // TODO: maybe this shouldn't be part of acpi_init
+    // TODO: continue here
+    if (acpi_find_sdt_table("APIC") != NULL)
+	debug("we found MADT table!!!!!\n");
 
     // find MADT using acpi_find_table("APIC") (if not found panic, if return is null)
     // initialize MADT -> after that return it's return value, which is a MADT-struct
@@ -65,32 +65,30 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
     kernel_log(INFO, "ACPI initialized\n");
 }
 
-int acpi_check_header(uint64_t address, const char *signature)
+int acpi_check_sdt_header(sdt_header_t *sdt_header, const char *signature)
 {
-    if (memcmp((void *)address, signature, 4) == 0 &&
-	    acpi_verify_checksum(address, signature) == 0)
+    if (memcmp(sdt_header->signature, signature, 4) == 0 &&
+	    acpi_verify_sdt_header_checksum(sdt_header) == 0)
 	return 0;
 
     return 1;
 }
 
-int acpi_verify_checksum(uint64_t address, const char *signature)
+int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header)
 {
     uint8_t checksum = 0;
-    uint8_t *ptr = (uint8_t *)address;
+    uint8_t *ptr = (uint8_t *)sdt_header;
     uint8_t current_byte;
 
-    uint8_t length = *(ptr + 1);
-
-    serial_log(INFO, "Verifying %s checksum:\n", signature);
-    kernel_log(INFO, "Verifying %s checksum:\n", signature);
+    serial_log(INFO, "Verifying %s checksum:\n", sdt_header->signature);
+    kernel_log(INFO, "Verifying %s checksum:\n", sdt_header->signature);
 
     serial_set_color(TERM_PURPLE);
 
-    debug("First %d bytes are being checked: ", length);
-    printk(GFX_PURPLE, "First %d bytes are being checked: ", length);
+    debug("First %d bytes are being checked: ", sdt_header->length);
+    printk(GFX_PURPLE, "First %d bytes are being checked: ", sdt_header->length);
 
-    for (uint8_t i = 0; i < length; i++)
+    for (uint8_t i = 0; i < sdt_header->length; i++)
     {
 	current_byte = ptr[i];
 	debug("%x ", current_byte);
@@ -108,32 +106,36 @@ int acpi_verify_checksum(uint64_t address, const char *signature)
 
     if (checksum == 0)
     {
-	serial_log(INFO, "%s checksum is verified.\n", signature);
-	kernel_log(INFO, "%s checksum is verified.\n", signature);
+	serial_log(INFO, "%s checksum is verified.\n", sdt_header->signature);
+	kernel_log(INFO, "%s checksum is verified.\n", sdt_header->signature);
 
 	return 0;
     }
     else
     {
-	serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
-	kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
+	serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", sdt_header->signature, checksum);
+	kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", sdt_header->signature, checksum);
 
 	return 1;
     }
 }
 
-void acpi_find_table(const char *identifier)
+// traverse RSDT to find table according to identifier
+sdt_header_t *acpi_find_sdt_table(const char *signature)
 {
-    // NOTE: make use of has_xsdt for length!!!
+    size_t entry_count = (rsdt->header.length - sizeof(rsdt->header)) / (has_xsdt() ? 8 : 4);
+    sdt_header_t *current_entry;
 
-    // traverse RSDT struct which should hold different tables, that are SDT or smth
-    // return table if sdt->signature == identifier and if verified SDT checksum (all
-    // entries sum up to zero)
-
-    size_t entries = (rsdt->header.length - sizeof(rsdt->header)) / (has_xsdt() ? 8 : 4);
-
-    for (size_t i = 0; i < entries; i++)
+    for (size_t i = 0; i < entry_count; i++)
     {
-	//
+	current_entry = (sdt_header_t *)(uintptr_t)rsdt->entries[i];	
+
+	if (acpi_check_sdt_header(current_entry, signature) == 0)
+	    return current_entry;
     }
+
+    serial_log(ERROR, "Could not find SDT with signature '%s'!\n", signature);
+    kernel_log(ERROR, "Could not find SDT with signature '%s'!\n", signature);
+
+    return NULL;
 }
