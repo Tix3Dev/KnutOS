@@ -23,6 +23,7 @@
 #include <firmware/acpi/tables/rsdt.h>
 #include <firmware/acpi/tables/sdth.h>
 #include <firmware/acpi/acpi.h>
+#include <memory/mem.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
 #include <libk/stdio/stdio.h>
@@ -53,14 +54,9 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 	    asm ("hlt");
     }
 
-    // TODO: maybe this shouldn't be part of acpi_init
-    // TODO: continue here
     if (acpi_find_sdt_table("APIC") != NULL)
 	debug("we found MADT table!!!!!\n");
 
-    // find MADT using acpi_find_table("APIC") (if not found panic, if return is null)
-    // initialize MADT -> after that return it's return value, which is a MADT-struct
-    
     serial_log(INFO, "ACPI initialized\n");
     kernel_log(INFO, "ACPI initialized\n");
 }
@@ -134,7 +130,7 @@ sdt_header_t *acpi_find_sdt_table(const char *signature)
 	current_entry = (sdt_header_t *)(uintptr_t)rsdt->entries[i];	
 
 	if (acpi_check_sdt_header(current_entry, signature) == 0)
-	    return current_entry;
+	    return (sdt_header_t *)TO_VIRTUAL_ADDRESS((uintptr_t)current_entry);
     }
 
     serial_log(ERROR, "Could not find SDT with signature '%s'!\n", signature);
