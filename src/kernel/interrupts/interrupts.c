@@ -62,7 +62,7 @@ static const char *exceptions[] =
 
 uint64_t isr_handler(uint64_t rsp)
 {
-    struct CPU_State *cpu = (struct CPU_State *)rsp;
+    interrupt_cpu_state_t *cpu = (interrupt_cpu_state_t*)rsp;
 
     // handle exceptions
     if (cpu->isr_number <= 31)
