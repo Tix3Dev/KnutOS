@@ -1,9 +1,9 @@
 /*
 	BSD 3-Clause License
-	
+
 	Copyright (c) 2022, V01D
 	All rights reserved.
-	
+
 	https://github.com/V01D-NULL/3ds-firmware/blob/main/src/arm11/core/mm/slab.c
 */
 
@@ -75,18 +75,18 @@ void slab_init(void)
         int32_t objects_per_slab = MAX_SLAB_SIZE / pow(2, i + 1);
 
         for (int j = 0; j < objects_per_slab; j++)
-	{
-	    if (!internal_mem_ptr || internal_mem_ptr == (void *)internal_mem_len)
-	    {
-		internal_mem_ptr = pmm_alloc(1);
-		internal_mem_len = (size_t)internal_mem_ptr + PAGE_SIZE;
+        {
+            if (!internal_mem_ptr || internal_mem_ptr == (void *)internal_mem_len)
+            {
+                internal_mem_ptr = pmm_alloc(1);
+                internal_mem_len = (size_t)internal_mem_ptr + PAGE_SIZE;
 
-		page_alloc_count++;
-	    }
+                page_alloc_count++;
+            }
 
-	    slabs[i].objects[j] = internal_mem_ptr;
-	    internal_mem_ptr += slabs[i].size;
-	}
+            slabs[i].objects[j] = internal_mem_ptr;
+            internal_mem_ptr += slabs[i].size;
+        }
 
         slabs[i].address_range.start = slabs[i].objects[0];
         slabs[i].address_range.end = slabs[i].objects[0] + 1024 - slabs[i].size;

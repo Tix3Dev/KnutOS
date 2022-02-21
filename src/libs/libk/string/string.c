@@ -42,8 +42,8 @@ int memcmp(const void *string1, const void *string2, size_t n)
 
     for (size_t i = 0; i < n; i++, str1++, str2++)
     {
-	if (*str1 != *str2)
-	    return (*str1 - *str2);
+        if (*str1 != *str2)
+            return (*str1 - *str2);
     }
 
     return 0;

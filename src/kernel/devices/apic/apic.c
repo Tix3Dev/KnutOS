@@ -22,20 +22,21 @@
 
 void apic_test(void)
 {
-    cpuid_registers_t *regs = &(cpuid_registers_t) {
-	.leaf = 1,
-	.subleaf = 0,
-	
-	.eax = 0,
-	.ebx = 0,
-	.ecx = 0,
-	.edx = 0
+    cpuid_registers_t *regs = &(cpuid_registers_t)
+    {
+        .leaf = 1,
+        .subleaf = 0,
+
+        .eax = 0,
+        .ebx = 0,
+        .ecx = 0,
+        .edx = 0
     };
 
     cpuid(regs);
 
     if (regs->edx & APIC_CPUID_BIT)
-	debug("apic is supported\n");
+        debug("apic is supported\n");
     else
-	debug("apic isn't supported\n");
+        debug("apic isn't supported\n");
 }

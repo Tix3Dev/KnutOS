@@ -35,7 +35,7 @@ static rsdt_structure_t *rsdt;
 void acpi_init(struct stivale2_struct *stivale2_struct)
 {
     struct stivale2_struct_tag_rsdp *rsdp_tag = stivale2_get_tag(stivale2_struct,
-	    STIVALE2_STRUCT_TAG_RSDP_ID);
+            STIVALE2_STRUCT_TAG_RSDP_ID);
 
     rsdp_init(rsdp_tag->rsdp);
 
@@ -44,19 +44,19 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
     // having a RSDT is equivalent to having ACPI supported
     if (acpi_check_sdt_header(&rsdt->header, "RSDT") != 0)
     {
-	serial_log(ERROR, "No ACPI was found on this computer!\n");
-	kernel_log(ERROR, "No ACPI was found on this computer!\n");
+        serial_log(ERROR, "No ACPI was found on this computer!\n");
+        kernel_log(ERROR, "No ACPI was found on this computer!\n");
 
 
-	serial_log(ERROR, "Kernel halted!\n");
-	kernel_log(ERROR, "Kernel halted!\n");
+        serial_log(ERROR, "Kernel halted!\n");
+        kernel_log(ERROR, "Kernel halted!\n");
 
-	for (;;)
-	    asm ("hlt");
+        for (;;)
+            asm ("hlt");
     }
 
     if (acpi_find_sdt_table("APIC") != NULL)
-	debug("we found MADT table!!!!!\n");
+        debug("we found MADT table!!!!!\n");
 
     serial_log(INFO, "ACPI initialized\n");
     kernel_log(INFO, "ACPI initialized\n");
@@ -67,8 +67,8 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
 int acpi_check_sdt_header(sdt_header_t *sdt_header, const char *signature)
 {
     if (memcmp(sdt_header->signature, signature, 4) == 0 &&
-	    acpi_verify_sdt_header_checksum(sdt_header, signature) == 0)
-	return 0;
+            acpi_verify_sdt_header_checksum(sdt_header, signature) == 0)
+        return 0;
 
     return 1;
 }
@@ -90,11 +90,11 @@ int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header, const char *signat
 
     for (uint8_t i = 0; i < sdt_header->length; i++)
     {
-	current_byte = ptr[i];
-	debug("%x ", current_byte);
-	printk(GFX_PURPLE, "%x ", current_byte);
-	
-	checksum += current_byte;
+        current_byte = ptr[i];
+        debug("%x ", current_byte);
+        printk(GFX_PURPLE, "%x ", current_byte);
+
+        checksum += current_byte;
     }
 
     debug("\n");
@@ -106,17 +106,17 @@ int acpi_verify_sdt_header_checksum(sdt_header_t *sdt_header, const char *signat
 
     if (checksum == 0)
     {
-	serial_log(INFO, "%s checksum is verified.\n", signature);
-	kernel_log(INFO, "%s checksum is verified.\n", signature);
+        serial_log(INFO, "%s checksum is verified.\n", signature);
+        kernel_log(INFO, "%s checksum is verified.\n", signature);
 
-	return 0;
+        return 0;
     }
     else
     {
-	serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
-	kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
+        serial_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
+        kernel_log(ERROR, "%s checksum isn't 0! Checksum: 0x%x\n", signature, checksum);
 
-	return 1;
+        return 1;
     }
 }
 
@@ -128,10 +128,10 @@ sdt_header_t *acpi_find_sdt_table(const char *signature)
 
     for (size_t i = 0; i < entry_count; i++)
     {
-	current_entry = (sdt_header_t *)(uintptr_t)rsdt->entries[i];	
+        current_entry = (sdt_header_t *)(uintptr_t)rsdt->entries[i];
 
-	if (acpi_check_sdt_header(current_entry, signature) == 0)
-	    return (sdt_header_t *)phys_to_higher_half_data((uintptr_t)current_entry);
+        if (acpi_check_sdt_header(current_entry, signature) == 0)
+            return (sdt_header_t *)phys_to_higher_half_data((uintptr_t)current_entry);
     }
 
     serial_log(ERROR, "Could not find SDT with signature '%s'!\n", signature);
