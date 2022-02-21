@@ -15,6 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stdint.h>
+
 #ifndef CPU_H
 #define CPU_H
 
@@ -45,5 +47,37 @@ typedef struct
     uint64_t rsp;
     uint64_t ss;
 } interrupt_cpu_state_t;
+
+typedef struct
+{
+    uint32_t leaf;
+    uint32_t subleaf;
+
+    uint32_t eax;
+    uint32_t ebx;
+    uint32_t ecx;
+    uint32_t edx;
+} cpuid_registers_t;
+
+// https://github.com/qword-os/qword/blob/2e7899093d597dc55d8ed0d101f5c0509293d62f/src/sys/cpu.h#L67
+// leaf is equivalent to a CPU function (same for subleaf, just 'sub-function')
+static inline int cpuid(cpuid_registers_t *registers)
+{
+    uint32_t cpuid_max;
+
+    asm volatile("cpuid"
+	    : "=a" (cpuid_max)
+	    : "a" (registers->leaf & 0x80000000)
+	    : "rbx", "rcx", "rdx");
+
+    if (registers->leaf > cpuid_max)
+	return 0;
+
+    asm volatile("cpuid"
+	    : "=a" (registers->eax), "=b" (registers->ebx), "=c" (registers->ecx), "=d" (registers->edx)
+	    : "a" (registers->leaf), "c" (registers->subleaf));
+
+    return 1;
+}
 
 #endif

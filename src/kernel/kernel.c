@@ -21,6 +21,7 @@
 #include <boot/boot_screen.h>
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
+#include <devices/apic/apic.h>
 #include <devices/ps2/keyboard/keyboard.h>
 #include <firmware/acpi/acpi.h>
 #include <gdt/gdt.h>
@@ -58,6 +59,10 @@ void kmain(struct stivale2_struct *stivale2_struct)
     slab_init();
 
     acpi_init(stivale2_struct);
+
+
+    apic_test();
+
 
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 

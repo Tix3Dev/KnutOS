@@ -14,3 +14,28 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+#include <devices/cpu/cpu.h>
+#include <libk/debug/debug.h>
+
+#define APIC_CPUID_BIT (1 << 9)
+
+void apic_test(void)
+{
+    cpuid_registers_t *regs = &(cpuid_registers_t) {
+	.leaf = 1,
+	.subleaf = 0,
+	
+	.eax = 0,
+	.ebx = 0,
+	.ecx = 0,
+	.edx = 0
+    };
+
+    cpuid(regs);
+
+    if (regs->edx & APIC_CPUID_BIT)
+	debug("apic is supported\n");
+    else
+	debug("apic isn't supported\n");
+}
