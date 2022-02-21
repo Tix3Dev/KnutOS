@@ -28,18 +28,8 @@
 #include <libk/string/string.h>
 
 static PAGE_DIR root_page_directory;
-static uint8_t is_la57_enabled = 0;
 
-// get cr4 and return la57 = bit 12
-static uint8_t check_la57(void)
-{
-    uint64_t cr4;
-
-    asm volatile("mov %%cr4, %0" : "=rax"(cr4));
-
-    return (cr4 >> 12) & 1;
-}
-
+// create and activate page directory + map important memory areas
 void vmm_init(void)
 {
     root_page_directory = vmm_create_page_directory();
@@ -52,10 +42,8 @@ void vmm_init(void)
     serial_set_color(TERM_PURPLE);
 
     // check if la57 bit is enabled for 5-level paging
-    if (check_la57())
+    if (is_la57_enabled())
     {
-        is_la57_enabled = 1;
-
         debug("5-level paging supported!\n");
         printk(GFX_PURPLE, "5-level paging supported!\n");
     }
@@ -82,14 +70,14 @@ void vmm_init(void)
 
     // map higher half kernel address space
     for (uint64_t i = 0; i < 4 * GB; i += PAGE_SIZE)
-        vmm_map_page(root_page_directory, i, TO_VIRTUAL_ADDRESS(i), PTE_PRESENT | PTE_READ_WRITE);
+        vmm_map_page(root_page_directory, i, phys_to_higher_half_data(i), PTE_PRESENT | PTE_READ_WRITE);
 
     debug("2/3: Mapped higher half kernel address space\n");
     printk(GFX_PURPLE, "2/3: Mapped higher half kernel address space\n");
 
     // map protected memory ranges (PMR's) - keep them read only for safety
     for (uint64_t i = 0; i < 0x80000000; i += PAGE_SIZE)
-        vmm_map_page(root_page_directory, i, TO_PHYSICAL_ADDRESS(i), PTE_PRESENT);
+        vmm_map_page(root_page_directory, i, phys_to_higher_half_code(i), PTE_PRESENT);
 
     debug("3/3: Mapped protected memory ranges\n");
     printk(GFX_PURPLE, "3/3: Mapped protected memory ranges\n");
@@ -113,7 +101,7 @@ PAGE_DIR vmm_create_page_directory(void)
     PAGE_DIR new_page_directory = pmm_alloc(1);
 
     // "clean" the page directory by setting everything to zero
-    memset((void *)FROM_VIRTUAL_ADDRESS((uint64_t)new_page_directory), 0, PAGE_SIZE);
+    memset((void *)higher_half_data_to_phys((uint64_t)new_page_directory), 0, PAGE_SIZE);
 
     return new_page_directory;
 }
@@ -131,7 +119,7 @@ static PAGE_DIR vmm_get_page_map_level(PAGE_DIR page_map_level_X, uintptr_t inde
         return (PAGE_DIR)(page_map_level_X[index_X] & ~(511));
     else
     {
-        page_map_level_X[index_X] = FROM_VIRTUAL_ADDRESS((uint64_t)pmm_alloc(1)) | flags;
+        page_map_level_X[index_X] = higher_half_data_to_phys((uint64_t)pmm_alloc(1)) | flags;
 
         return (PAGE_DIR)(page_map_level_X[index_X] & ~(511));
     }
@@ -142,7 +130,7 @@ static PAGE_DIR vmm_get_page_map_level(PAGE_DIR page_map_level_X, uintptr_t inde
 // map physical memory to virtual memory by using 4-level paging
 void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, uintptr_t virtual_address, int flags)
 {
-    if (is_la57_enabled)	// 5-level paging is enabled
+    if (is_la57_enabled())	// 5-level paging is enabled
     {
         uintptr_t index5 = (virtual_address & ((uintptr_t)0x1ff << 48)) >> 48;
         uintptr_t index4 = (virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
@@ -217,7 +205,7 @@ void vmm_map_page(PAGE_DIR current_page_directory, uintptr_t physical_address, u
 
 void vmm_unmap_page(PAGE_DIR current_page_directory, uintptr_t virtual_address)
 {
-    if (is_la57_enabled)	// 5-level paging is enabled
+    if (is_la57_enabled())	// 5-level paging is enabled
     {
         uintptr_t index5 = (virtual_address & ((uintptr_t)0x1ff << 48)) >> 48;
         uintptr_t index4 = (virtual_address & ((uintptr_t)0x1ff << 39)) >> 39;
@@ -271,5 +259,5 @@ void vmm_flush_tlb(void *address)
 // write the page directory address to cr3
 void vmm_activate_page_directory(PAGE_DIR current_page_directory)
 {
-    asm volatile("mov %0, %%cr3" : : "r" (FROM_VIRTUAL_ADDRESS((uint64_t)current_page_directory)) : "memory");
+    asm volatile("mov %0, %%cr3" : : "r" (higher_half_data_to_phys((uint64_t)current_page_directory)) : "memory");
 }

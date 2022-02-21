@@ -127,7 +127,7 @@ void pmm_init(struct stivale2_struct *stivale2_struct)
             debug("Bitmap stored between 0x%.8lx and 0x%.8lx\n", current_entry->base, current_entry->base + current_entry->length - 1);
             serial_set_color(TERM_COLOR_RESET);
 
-            bitmap.map		    = (uint8_t *)(TO_VIRTUAL_ADDRESS(current_entry->base));
+            bitmap.map		    = (uint8_t *)(phys_to_higher_half_data(current_entry->base));
 
             current_entry->base	    += bitmap.size;
             current_entry->length   -= bitmap.size;
@@ -245,7 +245,7 @@ void *pmm_alloc(size_t page_count)
 
     pmm_info.used_pages += page_count;
 
-    return (void *)(uint64_t)(TO_VIRTUAL_ADDRESS(index * PAGE_SIZE));
+    return (void *)(uint64_t)(phys_to_higher_half_data(index * PAGE_SIZE));
 }
 
 // convert pointer to index
@@ -253,7 +253,7 @@ void *pmm_alloc(size_t page_count)
 // -> physical memory freeing for n pages
 void pmm_free(void *pointer, size_t page_count)
 {
-    uint64_t index = FROM_VIRTUAL_ADDRESS((uint64_t)pointer) / PAGE_SIZE;
+    uint64_t index = higher_half_data_to_phys((uint64_t)pointer) / PAGE_SIZE;
 
     for (size_t i = 0; i < page_count; i++)
         bitmap_unset_bit(&bitmap, index + i);

@@ -35,6 +35,7 @@
 
 typedef uint64_t *PAGE_DIR;
 
+bool is_la57_enabled(void);
 void vmm_init(void);
 PAGE_DIR vmm_create_page_directory(void);
 void vmm_map_page(PAGE_DIR vmm, uintptr_t physical_address, uintptr_t virtual_address, int flags);

@@ -31,6 +31,7 @@
 
 static rsdt_structure_t *rsdt;
 
+// TODO: write description when fully done (at least when MADT and APIC are done)
 void acpi_init(struct stivale2_struct *stivale2_struct)
 {
     struct stivale2_struct_tag_rsdp *rsdp_tag = stivale2_get_tag(stivale2_struct,
@@ -130,7 +131,7 @@ sdt_header_t *acpi_find_sdt_table(const char *signature)
 	current_entry = (sdt_header_t *)(uintptr_t)rsdt->entries[i];	
 
 	if (acpi_check_sdt_header(current_entry, signature) == 0)
-	    return (sdt_header_t *)TO_VIRTUAL_ADDRESS((uintptr_t)current_entry);
+	    return (sdt_header_t *)phys_to_higher_half_data((uintptr_t)current_entry);
     }
 
     serial_log(ERROR, "Could not find SDT with signature '%s'!\n", signature);
