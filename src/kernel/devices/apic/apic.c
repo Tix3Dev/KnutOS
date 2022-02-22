@@ -18,13 +18,11 @@
 #include <devices/cpu/cpu.h>
 #include <libk/debug/debug.h>
 
-#define APIC_CPUID_BIT (1 << 9)
-
 void apic_test(void)
 {
     cpuid_registers_t *regs = &(cpuid_registers_t)
     {
-        .leaf = 1,
+        .leaf = CPUID_GET_FEATURES,
         .subleaf = 0,
 
         .eax = 0,
@@ -35,7 +33,7 @@ void apic_test(void)
 
     cpuid(regs);
 
-    if (regs->edx & APIC_CPUID_BIT)
+    if (regs->edx & CPUID_FEAT_EDX_APIC)
         debug("apic is supported\n");
     else
         debug("apic isn't supported\n");

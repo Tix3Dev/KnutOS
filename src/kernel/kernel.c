@@ -22,6 +22,7 @@
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
 #include <devices/apic/apic.h>
+#include <devices/cpu/cpu.h>
 #include <devices/ps2/keyboard/keyboard.h>
 #include <firmware/acpi/acpi.h>
 #include <gdt/gdt.h>
@@ -58,12 +59,14 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     slab_init();
 
+    char *vendor_string = cpu_get_vendor_string();
+    serial_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
+    kernel_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
+
     acpi_init(stivale2_struct);
 
-
     apic_test();
-
-
+ 
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
     // TODO: proper timer
