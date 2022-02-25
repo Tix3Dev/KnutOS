@@ -33,6 +33,7 @@
 - Physical memory manager -> Bitmap based
 - Virtual memory manager -> 4- & 5-level paging
 - Slab allocator
+- ACPI table parsing
 - Serial communication
 - Basic framebuffer
 - Basic keyboard driver with a small shell
@@ -40,6 +41,7 @@
 
 ## Future Features
 
+- ACPI Parser (custom or ACPICA)
 - C standard library port
 - ELF loader
 - IPC support
