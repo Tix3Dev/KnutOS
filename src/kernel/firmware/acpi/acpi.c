@@ -19,6 +19,7 @@
 
 #include <boot/stivale2.h>
 #include <boot/stivale2_boot.h>
+#include <firmware/acpi/tables/madt.h>
 #include <firmware/acpi/tables/rsdp.h>
 #include <firmware/acpi/tables/rsdt.h>
 #include <firmware/acpi/tables/sdth.h>
@@ -55,8 +56,7 @@ void acpi_init(struct stivale2_struct *stivale2_struct)
             asm ("hlt");
     }
 
-    if (acpi_find_sdt_table("APIC") != NULL)
-        debug("we found MADT table!!!!!\n");
+    madt_init();
 
     serial_log(INFO, "ACPI initialized\n");
     kernel_log(INFO, "ACPI initialized\n");
