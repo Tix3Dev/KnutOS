@@ -14,3 +14,32 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+#include <stddef.h>
+
+#include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
+#include <firmware/acpi/tables/madt.h>
+#include <firmware/acpi/acpi.h>
+#include <libk/debug/debug.h>
+#include <libk/log/log.h>
+
+madt_structure_t *madt;
+
+void madt_init(void)
+{
+    madt = (madt_structure_t *)(uintptr_t)acpi_find_sdt_table("APIC");
+
+    if (madt == NULL)
+    {
+        serial_log(ERROR, "No MADT was found on this computer!\n");
+        kernel_log(ERROR, "No MADT was found on this computer!\n");
+
+
+        serial_log(ERROR, "Kernel halted!\n");
+        kernel_log(ERROR, "Kernel halted!\n");
+
+        for (;;)
+            asm ("hlt");
+    }
+}
