@@ -56,7 +56,7 @@ bool apic_is_available(void)
     cpuid(regs);
 
     if (regs->edx & CPUID_FEAT_EDX_APIC)
-	return true;
+        return true;
 
     return false;
 }
