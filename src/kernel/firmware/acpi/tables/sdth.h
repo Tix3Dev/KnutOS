@@ -18,7 +18,7 @@
 #ifndef SDTH_H
 #define SDTH_H
 
-typedef struct __attribute__((__packed__)) 
+typedef struct __attribute__((__packed__))
 {
     char	signature[4];
     uint32_t	length;

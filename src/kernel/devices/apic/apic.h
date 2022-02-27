@@ -15,9 +15,12 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stdbool.h>
+
 #ifndef APIC_H
 #define APIC_H
 
-void apic_test(void);
+void apic_init(void);
+bool apic_is_available(void);
 
 #endif

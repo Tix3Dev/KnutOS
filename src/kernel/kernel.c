@@ -65,8 +65,8 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     acpi_init(stivale2_struct);
 
-    apic_test();
- 
+    apic_init();
+
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
     // TODO: proper timer

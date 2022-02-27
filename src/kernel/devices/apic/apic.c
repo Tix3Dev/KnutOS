@@ -15,10 +15,32 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <devices/apic/apic.h>
 #include <devices/cpu/cpu.h>
 #include <libk/debug/debug.h>
+#include <libk/log/log.h>
 
-void apic_test(void)
+void apic_init(void)
+{
+    if (!apic_is_available())
+    {
+        serial_log(ERROR, "No APIC was found on this computer!\n");
+        kernel_log(ERROR, "No APIC was found on this computer!\n");
+
+
+        serial_log(ERROR, "Kernel halted!\n");
+        kernel_log(ERROR, "Kernel halted!\n");
+
+        for (;;)
+            asm ("hlt");
+    }
+
+    // remap pic 8259
+    // mask all (maybe this could be a pic function)
+    // -> maybe even combine both into one function, mhmm
+}
+
+bool apic_is_available(void)
 {
     cpuid_registers_t *regs = &(cpuid_registers_t)
     {
@@ -34,7 +56,18 @@ void apic_test(void)
     cpuid(regs);
 
     if (regs->edx & CPUID_FEAT_EDX_APIC)
-        debug("apic is supported\n");
-    else
-        debug("apic isn't supported\n");
+	return true;
+
+    return false;
+}
+
+void apic_enable(void)
+{
+    //
+}
+
+void apic_signal_EOI(void)
+{
+    // write to register with offset 0xB0 with the value 0
+    // for that i am probably going to need a write function
 }
