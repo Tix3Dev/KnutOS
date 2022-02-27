@@ -20,7 +20,7 @@
 #ifndef RSDT_H
 #define RSDT_H
 
-typedef struct
+typedef struct __attribute__((__packed__)) 
 {
     sdt_header_t header;
     uint32_t entries[];
