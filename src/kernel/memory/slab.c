@@ -4,7 +4,7 @@
 	Copyright (c) 2022, V01D
 	All rights reserved.
 
-	https://github.com/V01D-NULL/3ds-firmware/blob/main/src/arm11/core/mm/slab.c
+	https://github.com/V01D-NULL/MoonOS/blob/c82b2a4d179077dfc0f7210902abd879f80377df/kernel/mm/slab.c
 */
 
 /*
