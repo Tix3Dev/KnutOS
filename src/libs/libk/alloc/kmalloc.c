@@ -15,26 +15,71 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// #include <stddef.h>
-// #include <stdint.h>
-//
-// #include <memory/mem.h>
-// #include <memory/pmm.h>
-// #include <memory/slab.h>
-//
-// void *kmalloc(size_t size)
-// {
-//     if (size >= PAGE_SIZE)
-//     {
-// 	// pmm_alloc(page_count)
-//     }
-//     else
-//     {
-// 	// slab_alloc(bytes)
-//     }
-// }
-//
-// void kfree(void *ptr)
-// {
-//     // TODO: would have to change pmm_free because it needs a size as parameter
-// }
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#include <boot/stivale2.h>
+#include <boot/stivale2_boot.h>
+#include <memory/mem.h>
+#include <memory/pmm.h>
+#include <memory/slab.h>
+#include <libk/alloc/kmalloc.h>
+
+#include <libk/debug/debug.h>
+
+size_t next_pow_of_two(size_t num);
+
+void *kmalloc(size_t size)
+{
+    // debug("kmalloc(%d) rounded to %d - ", size, next_pow_of_two);
+
+    void *ptr = NULL;
+    size_t new_size = next_pow_of_two(size);
+
+    if (new_size >= PAGE_SIZE)
+    {
+	debug("kmalloc(%d) rounded to %d - big alloc", size, new_size);
+	ptr = pmm_alloc((new_size / PAGE_SIZE) + 1);
+    }
+    else
+    {
+	new_size = next_pow_of_two(size + sizeof(kmalloc_metadata_t));
+	debug("kmalloc(%d) rounded to %d - small alloc", size, new_size);
+	ptr = slab_alloc(new_size);
+    }
+
+    if (!ptr)
+	return NULL;
+
+    ptr = phys_to_higher_half_data((uintptr_t)ptr);
+
+    kmalloc_metadata_t *metadata = ptr;
+    metadata->size = new_size;
+
+    if (new_size >= PAGE_SIZE)
+	ptr += PAGE_SIZE;
+    else
+	ptr += sizeof(kmalloc_metadata_t);
+
+    return ptr;
+}
+
+void kfree(void *ptr)
+{
+    if (!ptr)
+	return;
+}
+
+size_t next_pow_of_two(size_t num)
+{
+    // TODO: might want to make this more efficient
+    // x <<= 1 is at least better than x *= 2
+    // note the result for 0 and 1 is
+    // note after this size will be page aligned
+    size_t result = 2;
+    while (result < num)
+	result <<= 1;
+
+    return result;
+}

@@ -59,7 +59,7 @@ static int32_t find_allocated_object(int32_t slab_index);
 /* core functions */
 
 // create array of slabs, which all are of different sizes
-// ranging from 2 to 512 but only power of 2
+// ranging from 2 to 2048 but only power of 2
 
 void *internal_mem_ptr = NULL;
 size_t internal_mem_len = 0;

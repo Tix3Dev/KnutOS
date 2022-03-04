@@ -22,9 +22,9 @@
 #ifndef SLAB_H
 #define SLAB_H
 
-#define SLAB_COUNT		10	// how many slab_t's there will be
-#define MAX_SLAB_SIZE		1024	// until pow(2, SLAB_COUNT)
-#define MAX_OBJECTS_PER_SLAB	512	// smallest slab possible is 2 -> MAX_SLAB_SIZE / 2
+#define SLAB_COUNT		11	// how many slab_t's there will be
+#define MAX_SLAB_SIZE		2048	// until pow(2, SLAB_COUNT)
+#define MAX_OBJECTS_PER_SLAB	1024	// smallest slab possible is 2 -> MAX_SLAB_SIZE / 2
 
 // an object in the objects array either is a pointer to
 // free memory, or NULL which means it's allocated

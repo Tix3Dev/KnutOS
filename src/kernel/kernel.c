@@ -36,6 +36,13 @@
 #include <libk/log/log.h>
 #include <libk/stdio/stdio.h>
 
+
+
+
+#include <libk/alloc/kmalloc.h>
+
+
+
 void kmain(struct stivale2_struct *stivale2_struct)
 {
     framebuffer_init(stivale2_struct, GFX_BLACK);
@@ -66,6 +73,16 @@ void kmain(struct stivale2_struct *stivale2_struct)
     acpi_init(stivale2_struct);
 
     apic_init();
+
+    for (int i = 0; i < 20; i++)
+	kmalloc(i);
+    
+    kmalloc(2048);
+    kmalloc(2050);
+
+    kmalloc(4096);
+    kmalloc(4099);
+    kmalloc(5000);
 
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 

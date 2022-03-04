@@ -32,6 +32,8 @@
 #define ALIGN_DOWN(addr, align)	    ((addr) & ~((align)-1))
 #define ALIGN_UP(addr, align)	    (((addr) + (align)-1) & ~((align)-1))
 
+#define IS_PAGE_ALIGNED(num)	    ((num % PAGE_SIZE) == 0)
+
 // get cr4 and return la57 = bit 12
 static inline bool is_la57_enabled(void)
 {
