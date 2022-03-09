@@ -31,8 +31,8 @@
 
 /*  Explanation of the method used here for slab allocations:
     Instead of a linked list which would normally be used, this allocator
-    is based on an array. It holds 10 slabs. The smallest size is 2^1
-    and the biggest is 2^9.
+    is based on an array. It holds 11 slabs. The smallest size is 2^1
+    and the biggest is 2^11.
     Each slab contains an array of objects.
     Each object is either
     free - holding an address of free memory
