@@ -74,26 +74,6 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     apic_init();
 
-    // for (int i = 0; i < 20; i++)
-    //     kmalloc(i);
-    // 
-    // kmalloc(2048);
-    // kmalloc(2050);
-
-    // kmalloc(4096);
-    // kmalloc(4099);
-    // kmalloc(5000);
-    
-    void *ptr0 = kmalloc(3);
-    void *ptr1 = kmalloc(34);
-    void *ptr2 = kmalloc(2500);
-    void *ptr3 = kmalloc(5000);
-
-    kfree(ptr0);
-    kfree(ptr1);
-    kfree(ptr2);
-    kfree(ptr3);
-
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
     // TODO: proper timer
