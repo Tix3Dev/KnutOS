@@ -26,49 +26,4 @@ typedef struct
 void *kmalloc(size_t size);
 void kfree(void *ptr);
 
-void *kmalloc(size_t size)
-{
-    void *ptr = NULL;
-
-    size_t new_size = next_pow_of_two(size);
-
-    if (new_size >= PAGE_SIZE)
-    {
-	ptr = pmm_alloc((new_size / PAGE_SIZE) + 1);
-	ptr = (size_t)phys_to_higher_half_data((uintptr_t)ptr);
-
-	kmalloc_metadata_t *metadata = ptr;
-	metadata->size = new_size;
-
-	ptr += PAGE_SIZE;
-    }
-    else
-    {
-	// slab
-    }
-
-    return ptr;
-
-}
-
-void kfree(void *ptr)
-{
-    if (!ptr)
-	return;
-
-    if ((ptr & 0xFFFF) == 0) // check this
-    { // check all this
-	kmalloc_metadata_t *metadata = ptr - PAGE_SIZE;
-	metadata = (kmalloc_metadata_t)higher_half_data_to_phys((uintptr_t)metadata);
-
-	pmm_free(metadata, (metadata->size / 4096) + 1);
-	
-	return;
-    }
-    else
-    {
-	// slab
-    }
-}
-
 #endif

@@ -30,52 +30,91 @@
 
 size_t next_pow_of_two(size_t num);
 
+// use pmm_alloc (page based) for big size parameters
+// use slab_alloc (byte based) for small size parameters
 void *kmalloc(size_t size)
 {
-    // debug("kmalloc(%d) rounded to %d - ", size, next_pow_of_two);
-
     void *ptr = NULL;
+
     size_t new_size = next_pow_of_two(size);
 
     if (new_size >= PAGE_SIZE)
     {
-	debug("kmalloc(%d) rounded to %d - big alloc", size, new_size);
+	debug("kmalloc(%d) rounded to %d (+ metadata %d) - big alloc\n", size, new_size, PAGE_SIZE);
+
 	ptr = pmm_alloc((new_size / PAGE_SIZE) + 1);
+
+	kmalloc_metadata_t *metadata = ptr;
+	metadata->size = new_size;
+
+	ptr += PAGE_SIZE;
+
+	debug("(big alloc) alloc size: %d\n", metadata->size);
     }
     else
     {
+	debug("kmalloc(%d) rounded to %d (+ metadata %d) - small alloc\n", size, new_size, sizeof(kmalloc_metadata_t));
+
 	new_size = next_pow_of_two(size + sizeof(kmalloc_metadata_t));
-	debug("kmalloc(%d) rounded to %d - small alloc", size, new_size);
+
 	ptr = slab_alloc(new_size);
-    }
 
-    if (!ptr)
-	return NULL;
+	kmalloc_metadata_t *metadata = ptr;
+	metadata->size = new_size;
 
-    ptr = phys_to_higher_half_data((uintptr_t)ptr);
-
-    kmalloc_metadata_t *metadata = ptr;
-    metadata->size = new_size;
-
-    if (new_size >= PAGE_SIZE)
-	ptr += PAGE_SIZE;
-    else
 	ptr += sizeof(kmalloc_metadata_t);
 
+	debug("(small alloc) alloc size: %d\n", metadata->size);
+    }
+
+    debug("allocated memory at: 0x%.16llx\n", ptr);
+
     return ptr;
+
 }
 
+// find out if the pointers belongs to a pmm_alloc or a slab_alloc
+// use pmm_free / slab_alloc accordingly
 void kfree(void *ptr)
 {
     if (!ptr)
 	return;
+
+    // using AND 0xFFF will return whether the last three digits (in hex) are zero
+    // if yes big alloc has been used
+    // OUTDATED: if no small alloc has been used and we need to toggle them to zero by
+    // OUTDATED: using AND ~0xFF
+    // OUTDATED: see bottom of file to see how it works using an example
+
+    if (((uint64_t)ptr & 0xFFF) == 0)
+    {
+	kmalloc_metadata_t *metadata = ptr - PAGE_SIZE;
+
+	pmm_free(metadata, (metadata->size / 4096) + 1);
+
+
+	debug("free size: %d\n", metadata->size);
+	debug("(big free) freed memory at: 0x%.16llx\n", ptr);
+	
+	return;
+    }
+
+    // OUTDATED: ptr = (void *)((uint64_t)ptr & ~(0xFFF));
+
+    kmalloc_metadata_t *metadata = ptr - sizeof(kmalloc_metadata_t);
+
+    slab_free(metadata); // we don't need metadata->size, automatically found by slab_free
+
+    debug("free size: %d\n", metadata->size);
+    debug("(small free) freed memory at: 0x%.16llx\n", ptr);
 }
 
+// get the next power of two
 size_t next_pow_of_two(size_t num)
 {
     // TODO: might want to make this more efficient
     // x <<= 1 is at least better than x *= 2
-    // note the result for 0 and 1 is
+    // note the result for 0 and 1 is 2
     // note after this size will be page aligned
     size_t result = 2;
     while (result < num)
@@ -83,3 +122,34 @@ size_t next_pow_of_two(size_t num)
 
     return result;
 }
+
+/* Example for bitwise manipulation used to determine whether big alloc or small alloc has been used */
+
+/* main.c
+#include <stdio.h>
+#include <stdint.h>
+
+int main() {
+    uint64_t ptr = 0xffff80000169f000;
+
+    printf("first:\t%lx\n", ptr);
+
+    if (((uint64_t)ptr & 0xfff) == 0)
+      printf("true\n");
+  
+    printf("second:\t%lx\n", ptr);
+
+    ptr = (uint64_t)ptr & ~(0xfff); 
+    
+    printf("third:\t%lx\n", ptr);
+    
+    return 0;
+}
+*/ 
+
+/* output
+first:  ffff80000169f000
+true
+second: ffff80000169f000
+third:  ffff80000169f000
+*/
