@@ -42,4 +42,49 @@ void madt_init(void)
         for (;;)
             asm ("hlt");
     }
+
+    // iterate through ACPI table pointers
+
+    size_t madt_table_length = (size_t)&madt->header + madt->header.length;
+
+    uint8_t *table_ptr = (uint8_t *)&madt->table;
+
+    while ((size_t)table_ptr < madt_table_length)
+    {
+	switch (*table_ptr)
+	{
+	    case PROCESSOR_LOCAL_APIC:
+		serial_log(INFO, "MADT INIT: Found local APIC\n");
+		kernel_log(INFO, "MADT INIT: Found local APIC\n");
+
+		break;
+	    case IO_APIC:
+		serial_log(INFO, "MADT INIT: Found IO APIC\n");
+		kernel_log(INFO, "MADT INIT: Found IO APIC\n");
+
+		break;
+	    case INTERRUPT_SOURCE_OVERRIDE:
+		serial_log(INFO, "MADT INIT: Found interrupt source override\n");
+		kernel_log(INFO, "MADT INIT: Found interrupt source override\n");
+
+		break;
+	    case LAPIC_NMI:
+		serial_log(INFO, "MADT INIT: Found local APIC non maskable interrupt\n");
+		kernel_log(INFO, "MADT INIT: Found local APIC non maskable interrupt\n");
+
+		break;
+	    case LAPIC_ADDRESS_OVERRIDE:
+		serial_log(INFO, "MADT INIT: Found local APIC address override\n");
+		kernel_log(INFO, "MADT INIT: Found local APIC address override\n");
+
+		break;
+	    case PROCESSOR_LOCAL_x2APIC:
+		serial_log(INFO, "MADT INIT: Found processor local x2APIC\n");
+		kernel_log(INFO, "MADT INIT: Found processor local x2APIC\n");
+
+		break;
+	}
+
+	table_ptr += *(table_ptr + 1);
+    }
 }
