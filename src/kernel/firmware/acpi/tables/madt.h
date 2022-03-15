@@ -98,5 +98,9 @@ typedef struct __attribute__((__packed__))
 } madt_structure_t;
 
 void madt_init(void);
+madt_lapic_t *madt_get_lapics(void);
+madt_io_apic_t *madt_get_io_apics(void);
+madt_iso_t *madt_get_isos(void);
+madt_lapic_nmi_t *madt_get_lapic_nmis(void);
 
 #endif
