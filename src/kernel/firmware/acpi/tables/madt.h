@@ -37,11 +37,11 @@ typedef enum
     INTERRUPT_SOURCE_OVERRIDE = 0x2,
     // NMI_SOURCE = 0x3,
     LAPIC_NMI = 0x4,
-    LAPIC_ADDRESS_OVERRIDE = 0x5,
+    // LAPIC_ADDRESS_OVERRIDE = 0x5,
     // IO_SAPIC = 0x6,
     // LOCAL_SAPIC = 0x7,
     // PLATFORM_INTERRUPT_SOURCES = 0x8,
-    PROCESSOR_LOCAL_x2APIC = 0x9
+    // PROCESSOR_LOCAL_x2APIC = 0x9
     // LOCAL_x2APIC_NMI = 0xA,
     // GIC_CPU_INTERFACE = 0xB,
     // GIC_DISTRIBUTOR = 0xC,
@@ -51,16 +51,16 @@ typedef enum
     // MULTIPROCESSOR_WAKEUP = 0x10
 } madt_entry_type_t;
 
-// entry type 0x0
+// entry type 0x0 - processor local apic
 typedef struct __attribute__((__packed__))
 {
     madt_record_table_entry_t record;
     uint8_t acpi_processor_id;
     uint8_t acpi_id;
     uint32_t flags;
-} madt_processor_local_apic_t;
+} madt_lapic_t;
 
-// entry type 0x1
+// entry type 0x1 - IO apic
 typedef struct __attribute__((__packed__))
 {
     madt_record_table_entry_t record;
@@ -68,9 +68,9 @@ typedef struct __attribute__((__packed__))
     uint8_t reserved;
     uint8_t io_apic_address;
     uint8_t global_system_interrupt_base;
-} madt_io_apic;
+} madt_io_apic_t;
 
-// entry type 0x2
+// entry type 0x2 - interrupt source override
 typedef struct __attribute__((__packed__))
 {
     madt_record_table_entry_t record;
@@ -78,34 +78,16 @@ typedef struct __attribute__((__packed__))
     uint8_t irq_source;
     uint32_t global_system_interrupt;
     uint16_t flags;
-} madt_interrupt_source_override;
+} madt_iso_t;
 
-// entry type 0x4
+// entry type 0x4 - non maskable interrupts
 typedef struct __attribute__((__packed__))
 {
     madt_record_table_entry_t record;
     uint8_t acpi_processor_id;
     uint16_t flags;
     uint8_t lint;
-} madt_lapic_nmi;
-
-// entry type 0x5
-typedef struct __attribute__((__packed__))
-{
-    madt_record_table_entry_t record;
-    uint16_t reserved;
-    uint32_t local_apic_address;
-} madt_lapic_address_override;
-
-// entry type 0x9
-typedef struct __attribute__((__packed__))
-{
-    madt_record_table_entry_t record;
-    uint16_t reserved;
-    uint32_t local_x2apic_id;
-    uint32_t flags;
-    uint32_t acpi_id;
-} madt_local_x2apic;
+} madt_lapic_nmi_t;
 
 typedef struct __attribute__((__packed__))
 {
