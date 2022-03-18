@@ -27,15 +27,13 @@
 madt_structure_t *madt;
 
 madt_lapic_t		    **madt_lapics;
-size_t madt_lapics_i	    = 0;
-
 madt_io_apic_t		    **madt_io_apics;
-size_t madt_io_apics_i	    = 0;
-
 madt_iso_t		    **madt_isos;
-size_t madt_isos_i	    = 0;
-
 madt_lapic_nmi_t	    **madt_lapic_nmis;
+
+size_t madt_lapics_i	    = 0;
+size_t madt_io_apics_i	    = 0;
+size_t madt_isos_i	    = 0;
 size_t madt_lapic_nmis_i    = 0;
 
 void madt_init(void)
@@ -102,24 +100,4 @@ void madt_init(void)
 
 	table_ptr += *(table_ptr + 1);
     }
-}
-
-madt_lapic_t *madt_get_lapics(void)
-{
-    return *madt_lapics;
-}
-
-madt_io_apic_t *madt_get_io_apics(void)
-{
-    return *madt_io_apics;
-}
-
-madt_iso_t *madt_get_isos(void)
-{
-    return *madt_isos;
-}
-
-madt_lapic_nmi_t *madt_get_lapic_nmis(void)
-{
-    return *madt_lapic_nmis;
 }
