@@ -97,10 +97,18 @@ typedef struct __attribute__((__packed__))
     madt_record_table_entry_t table[];
 } madt_structure_t;
 
+extern madt_structure_t *madt;
+
+extern madt_lapic_t		    **madt_lapics;
+extern madt_io_apic_t		    **madt_io_apics;
+extern madt_iso_t		    **madt_isos;
+extern madt_lapic_nmi_t	    **madt_lapic_nmis;
+
+extern size_t madt_lapics_i;
+extern size_t madt_io_apics_i;
+extern size_t madt_isos_i;
+extern size_t madt_lapic_nmis_i;
+
 void madt_init(void);
-madt_lapic_t *madt_get_lapics(void);
-madt_io_apic_t *madt_get_io_apics(void);
-madt_iso_t *madt_get_isos(void);
-madt_lapic_nmi_t *madt_get_lapic_nmis(void);
 
 #endif
