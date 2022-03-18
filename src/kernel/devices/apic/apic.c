@@ -20,6 +20,8 @@
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
 
+/* General APIC functions */
+
 void apic_init(void)
 {
     if (!apic_is_available())
@@ -35,9 +37,13 @@ void apic_init(void)
             asm ("hlt");
     }
 
+    madt
+
     // remap pic 8259
     // mask all (maybe this could be a pic function)
     // -> maybe even combine both into one function, mhmm
+    
+    // lapic_enable
 }
 
 bool apic_is_available(void)
@@ -61,13 +67,42 @@ bool apic_is_available(void)
     return false;
 }
 
-void apic_enable(void)
+/* LAPIC functions */
+
+void lapic_read(void)
 {
     //
 }
 
-void apic_signal_EOI(void)
+void lapic_write(void)
+{
+    //
+}
+
+void lapic_enable(void)
+{
+    //
+}
+
+void lapic_signal_EOI(void)
 {
     // write to register with offset 0xB0 with the value 0
     // for that i am probably going to need a write function
+}
+
+void lapic_send_ipi(void)
+{
+    // send a raw inter processor interrupt to a specific APIC ID
+}
+
+/* IO APIC functions */
+
+void io_apic_read(void)
+{
+    //
+}
+
+void io_apic_write(void)
+{
+    //
 }
