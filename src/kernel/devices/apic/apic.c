@@ -17,6 +17,7 @@
 
 #include <devices/apic/apic.h>
 #include <devices/cpu/cpu.h>
+#include <firmware/acpi/tables/madt.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
 
@@ -36,8 +37,6 @@ void apic_init(void)
         for (;;)
             asm ("hlt");
     }
-
-    madt
 
     // remap pic 8259
     // mask all (maybe this could be a pic function)
