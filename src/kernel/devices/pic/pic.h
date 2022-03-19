@@ -26,6 +26,7 @@
 #define PIC2_DATA	(PIC2+1)    // slave PIC data port
 #define ICW4_8086	0x01	    // 8086/88 (MCS-80/85) mode
 
+void pic_disable(void);
 void pic_remap(void);
 void pic_set_mask(unsigned char irq_line);
 void pic_clear_mask(unsigned char irq_line);
