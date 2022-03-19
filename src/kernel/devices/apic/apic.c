@@ -68,12 +68,12 @@ bool apic_is_available(void)
 
 /* LAPIC functions */
 
-void lapic_read(void)
+void lapic_read_register(void)
 {
     //
 }
 
-void lapic_write(void)
+void lapic_write_register(void)
 {
     //
 }
@@ -83,7 +83,7 @@ void lapic_enable(void)
     //
 }
 
-void lapic_signal_EOI(void)
+void lapic_signal_eoi(void)
 {
     // write to register with offset 0xB0 with the value 0
     // for that i am probably going to need a write function
