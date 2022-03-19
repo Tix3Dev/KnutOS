@@ -17,9 +17,14 @@
 
 #include <devices/apic/apic.h>
 #include <devices/cpu/cpu.h>
+#include <devices/pic/pic.h>
 #include <firmware/acpi/tables/madt.h>
+#include <interrupts/interrupts.h>
+#include <memory/mem.h>
 #include <libk/debug/debug.h>
 #include <libk/log/log.h>
+
+uintptr_t lapic_base;
 
 /* General APIC functions */
 
@@ -38,11 +43,12 @@ void apic_init(void)
             asm ("hlt");
     }
 
-    // remap pic 8259
-    // mask all (maybe this could be a pic function)
-    // -> maybe even combine both into one function, mhmm
+    lapic_base = phys_to_higher_half_data((uintptr_t)madt->lapic_address);
+
+    pic_remap();
+    pic_disable();
     
-    // lapic_enable
+    lapic_enable();
 }
 
 bool apic_is_available(void)
@@ -68,25 +74,24 @@ bool apic_is_available(void)
 
 /* LAPIC functions */
 
-void lapic_read_register(void)
+uint32_t lapic_read_register(uint32_t reg)
 {
-    //
+    return *((volatile uint32_t *)lapic_base + reg);
 }
 
-void lapic_write_register(void)
+void lapic_write_register(uint32_t reg, uint32_t data)
 {
-    //
+    *((volatile uint32_t *)(lapic_base + reg)) = data;
 }
 
 void lapic_enable(void)
 {
-    //
+    lapic_write_register(APIC_SPURIOUS_VECTOR_REGISTER, APIC_SOFTWARE_ENABLE | SPURIOUS_INTERRUPT);
 }
 
 void lapic_signal_eoi(void)
 {
-    // write to register with offset 0xB0 with the value 0
-    // for that i am probably going to need a write function
+    lapic_write_register(APIC_EOI_REGISTER, 0);
 }
 
 void lapic_send_ipi(void)

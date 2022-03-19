@@ -16,11 +16,23 @@
 */
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifndef APIC_H
 #define APIC_H
 
+#define APIC_SPURIOUS_VECTOR_REGISTER	0xF
+#define APIC_EOI_REGISTER		0xB0
+#define APIC_SOFTWARE_ENABLE		(1 << 8)
+
 void apic_init(void);
 bool apic_is_available(void);
+uint32_t lapic_read_register(uint32_t reg);
+void lapic_write_register(uint32_t reg, uint32_t data);
+void lapic_enable(void);
+void lapic_signal_eoi(void);
+void lapic_send_ipi(void);
+void io_apic_read(void);
+void io_apic_write(void);
 
 #endif
