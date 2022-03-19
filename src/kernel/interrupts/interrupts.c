@@ -108,6 +108,13 @@ uint64_t isr_handler(uint64_t rsp)
         while (1)
             asm volatile("cli; hlt");
     }
+    
+
+
+    // TODO: clear structure and support apic spurious interrutps etc.
+
+
+
     // handle IRQ's / hardware interrupts
     else if (cpu->isr_number >= 32 && cpu->isr_number <= 47)
     {
