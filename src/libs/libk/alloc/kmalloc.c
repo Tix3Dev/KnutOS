@@ -40,31 +40,31 @@ void *kmalloc(size_t size)
 
     if (new_size >= PAGE_SIZE)
     {
-	debug("kmalloc(%d) rounded to %d (+ metadata %d) - big alloc\n", size, new_size, PAGE_SIZE);
+        debug("kmalloc(%d) rounded to %d (+ metadata %d) - big alloc\n", size, new_size, PAGE_SIZE);
 
-	ptr = pmm_alloc((new_size / PAGE_SIZE) + 1);
+        ptr = pmm_alloc((new_size / PAGE_SIZE) + 1);
 
-	kmalloc_metadata_t *metadata = ptr;
-	metadata->size = new_size;
+        kmalloc_metadata_t *metadata = ptr;
+        metadata->size = new_size;
 
-	ptr += PAGE_SIZE;
+        ptr += PAGE_SIZE;
 
-	debug("(big alloc) alloc size: %d\n", metadata->size);
+        debug("(big alloc) alloc size: %d\n", metadata->size);
     }
     else
     {
-	debug("kmalloc(%d) rounded to %d (+ metadata %d) - small alloc\n", size, new_size, sizeof(kmalloc_metadata_t));
+        debug("kmalloc(%d) rounded to %d (+ metadata %d) - small alloc\n", size, new_size, sizeof(kmalloc_metadata_t));
 
-	new_size = next_pow_of_two(size + sizeof(kmalloc_metadata_t));
+        new_size = next_pow_of_two(size + sizeof(kmalloc_metadata_t));
 
-	ptr = slab_alloc(new_size);
+        ptr = slab_alloc(new_size);
 
-	kmalloc_metadata_t *metadata = ptr;
-	metadata->size = new_size;
+        kmalloc_metadata_t *metadata = ptr;
+        metadata->size = new_size;
 
-	ptr += sizeof(kmalloc_metadata_t);
+        ptr += sizeof(kmalloc_metadata_t);
 
-	debug("(small alloc) alloc size: %d\n", metadata->size);
+        debug("(small alloc) alloc size: %d\n", metadata->size);
     }
 
     debug("allocated memory at: 0x%.16llx\n", ptr);
@@ -78,7 +78,7 @@ void *kmalloc(size_t size)
 void kfree(void *ptr)
 {
     if (!ptr)
-	return;
+        return;
 
     // using AND 0xFFF will return whether the last three digits (in hex) are zero
     // if yes big alloc has been used
@@ -88,15 +88,15 @@ void kfree(void *ptr)
 
     if (((uint64_t)ptr & 0xFFF) == 0)
     {
-	kmalloc_metadata_t *metadata = ptr - PAGE_SIZE;
+        kmalloc_metadata_t *metadata = ptr - PAGE_SIZE;
 
-	pmm_free(metadata, (metadata->size / 4096) + 1);
+        pmm_free(metadata, (metadata->size / 4096) + 1);
 
 
-	debug("free size: %d\n", metadata->size);
-	debug("(big free) freed memory at: 0x%.16llx\n", ptr);
-	
-	return;
+        debug("free size: %d\n", metadata->size);
+        debug("(big free) freed memory at: 0x%.16llx\n", ptr);
+
+        return;
     }
 
     // OUTDATED: ptr = (void *)((uint64_t)ptr & ~(0xFFF));
@@ -117,39 +117,40 @@ size_t next_pow_of_two(size_t num)
     // note the result for 0 and 1 is 2
     // note after this size will be page aligned
     size_t result = 2;
+
     while (result < num)
-	result <<= 1;
+        result <<= 1;
 
     return result;
 }
 
 /* Example for bitwise manipulation used to determine whether big alloc or small alloc has been used */
 
-/* main.c
-#include <stdio.h>
-#include <stdint.h>
+/*  main.c
+    #include <stdio.h>
+    #include <stdint.h>
 
-int main() {
+    int main() {
     uint64_t ptr = 0xffff80000169f000;
 
     printf("first:\t%lx\n", ptr);
 
     if (((uint64_t)ptr & 0xfff) == 0)
       printf("true\n");
-  
+
     printf("second:\t%lx\n", ptr);
 
-    ptr = (uint64_t)ptr & ~(0xfff); 
-    
-    printf("third:\t%lx\n", ptr);
-    
-    return 0;
-}
-*/ 
+    ptr = (uint64_t)ptr & ~(0xfff);
 
-/* output
-first:  ffff80000169f000
-true
-second: ffff80000169f000
-third:  ffff80000169f000
+    printf("third:\t%lx\n", ptr);
+
+    return 0;
+    }
+*/
+
+/*  output
+    first:  ffff80000169f000
+    true
+    second: ffff80000169f000
+    third:  ffff80000169f000
 */

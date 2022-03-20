@@ -66,38 +66,41 @@ void madt_init(void)
 
     while ((size_t)table_ptr < madt_table_length)
     {
-	switch (*table_ptr)
-	{
-	    case PROCESSOR_LOCAL_APIC:
-		serial_log(INFO, "MADT Initialization: Found local APIC\n");
-		kernel_log(INFO, "MADT Initialization: Found local APIC\n");
+        switch (*table_ptr)
+        {
+            case PROCESSOR_LOCAL_APIC:
+                serial_log(INFO, "MADT Initialization: Found local APIC\n");
+                kernel_log(INFO, "MADT Initialization: Found local APIC\n");
 
-		madt_lapics[madt_lapics_i++] = (madt_lapic_t *)table_ptr;
+                madt_lapics[madt_lapics_i++] = (madt_lapic_t *)table_ptr;
 
-		break;
-	    case IO_APIC:
-		serial_log(INFO, "MADT Initialization: Found IO APIC\n");
-		kernel_log(INFO, "MADT Initialization: Found IO APIC\n");
+                break;
 
-		madt_io_apics[madt_io_apics_i++] = (madt_io_apic_t *)table_ptr;
+            case IO_APIC:
+                serial_log(INFO, "MADT Initialization: Found IO APIC\n");
+                kernel_log(INFO, "MADT Initialization: Found IO APIC\n");
 
-		break;
-	    case INTERRUPT_SOURCE_OVERRIDE:
-		serial_log(INFO, "MADT Initialization: Found interrupt source override\n");
-		kernel_log(INFO, "MADT Initialization: Found interrupt source override\n");
+                madt_io_apics[madt_io_apics_i++] = (madt_io_apic_t *)table_ptr;
 
-		madt_isos[madt_isos_i++] = (madt_iso_t *)table_ptr;
+                break;
 
-		break;
-	    case LAPIC_NMI:
-		serial_log(INFO, "MADT Initialization: Found local APIC non maskable interrupt\n");
-		kernel_log(INFO, "MADT Initialization: Found local APIC non maskable interrupt\n");
+            case INTERRUPT_SOURCE_OVERRIDE:
+                serial_log(INFO, "MADT Initialization: Found interrupt source override\n");
+                kernel_log(INFO, "MADT Initialization: Found interrupt source override\n");
 
-		madt_lapic_nmis[madt_lapic_nmis_i++] = (madt_lapic_nmi_t *)table_ptr;
+                madt_isos[madt_isos_i++] = (madt_iso_t *)table_ptr;
 
-		break;
-	}
+                break;
 
-	table_ptr += *(table_ptr + 1);
+            case LAPIC_NMI:
+                serial_log(INFO, "MADT Initialization: Found local APIC non maskable interrupt\n");
+                kernel_log(INFO, "MADT Initialization: Found local APIC non maskable interrupt\n");
+
+                madt_lapic_nmis[madt_lapic_nmis_i++] = (madt_lapic_nmi_t *)table_ptr;
+
+                break;
+        }
+
+        table_ptr += *(table_ptr + 1);
     }
 }
