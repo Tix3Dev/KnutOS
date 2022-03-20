@@ -15,6 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <stddef.h>
+
 #include <devices/apic/apic.h>
 #include <devices/cpu/cpu.h>
 #include <devices/pic/pic.h>
@@ -74,21 +76,29 @@ bool apic_is_available(void)
 
 /* LAPIC functions */
 
+// returns the value of a local apic register
+// currently not laid out for x2apic, otherwise would check
+// if supported and then use msr
 uint32_t lapic_read_register(uint32_t reg)
 {
     return *((volatile uint32_t *)lapic_base + reg);
 }
 
+// write to a local apic manager
+// currently not laid out for x2apic, otherwise would check
+// if supported and then use msr
 void lapic_write_register(uint32_t reg, uint32_t data)
 {
     *((volatile uint32_t *)(lapic_base + reg)) = data;
 }
 
+// enable lapic to make it receive interrupts
 void lapic_enable(void)
 {
     lapic_write_register(APIC_SPURIOUS_VECTOR_REGISTER, APIC_SOFTWARE_ENABLE | SPURIOUS_INTERRUPT);
 }
 
+// signal an end of interrupt to continue execution
 void lapic_signal_eoi(void)
 {
     lapic_write_register(APIC_EOI_REGISTER, 0);
@@ -101,12 +111,22 @@ void lapic_send_ipi(void)
 
 /* IO APIC functions */
 
-void io_apic_read(void)
+// returns the value of a ioapic register
+uint32_t io_apic_read(size_t io_apic_i, uint32_t reg)
 {
-    //
+    uint32_t volatile *current_io_apic_base = (uint32_t volatile *)
+	(phys_to_higher_half_data((uintptr_t)madt_io_apics[io_apic_i]));
+
+    *current_io_apic_base = reg;
+
+    return *(current_io_apic_base + 4);
 }
 
-void io_apic_write(void)
+void io_apic_write(size_t io_apic_i, uint32_t reg, uint32_t data)
 {
-    //
+    uint32_t volatile *current_io_apic_base = (uint32_t volatile *)
+	(phys_to_higher_half_data((uintptr_t)madt_io_apics[io_apic_i]));
+
+    *current_io_apic_base = reg;
+    *(current_io_apic_base + 4) = data;
 }

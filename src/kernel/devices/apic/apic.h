@@ -16,6 +16,7 @@
 */
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #ifndef APIC_H
@@ -32,7 +33,7 @@ void lapic_write_register(uint32_t reg, uint32_t data);
 void lapic_enable(void);
 void lapic_signal_eoi(void);
 void lapic_send_ipi(void);
-void io_apic_read(void);
-void io_apic_write(void);
+uint32_t io_apic_read(size_t io_apic_i, uint32_t reg);
+void io_apic_write(size_t io_apic_i, uint32_t reg, uint32_t data);
 
 #endif
