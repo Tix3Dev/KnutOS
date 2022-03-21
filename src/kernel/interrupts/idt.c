@@ -100,6 +100,9 @@ void idt_init(void)
     create_descriptor(46, 0x8E);
     create_descriptor(47, 0x8E);
 
+    // apic spurious interrupt
+    create_descriptor(255, 0x8E);
+
     // mask keyboard IRQ
     pic_set_mask(1);
 

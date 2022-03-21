@@ -112,7 +112,7 @@ void lapic_send_ipi(void)
 /* IO APIC functions */
 
 // returns the value of a ioapic register
-uint32_t io_apic_read(size_t io_apic_i, uint32_t reg)
+uint32_t io_apic_read_register(size_t io_apic_i, uint32_t reg)
 {
     uint32_t volatile *current_io_apic_base = (uint32_t volatile *)
             (phys_to_higher_half_data((uintptr_t)madt_io_apics[io_apic_i]));
@@ -122,7 +122,7 @@ uint32_t io_apic_read(size_t io_apic_i, uint32_t reg)
     return *(current_io_apic_base + 4);
 }
 
-void io_apic_write(size_t io_apic_i, uint32_t reg, uint32_t data)
+void io_apic_write_register(size_t io_apic_i, uint32_t reg, uint32_t data)
 {
     uint32_t volatile *current_io_apic_base = (uint32_t volatile *)
             (phys_to_higher_half_data((uintptr_t)madt_io_apics[io_apic_i]));
