@@ -36,13 +36,6 @@
 #include <libk/log/log.h>
 #include <libk/stdio/stdio.h>
 
-
-
-
-#include <libk/alloc/kmalloc.h>
-
-
-
 void kmain(struct stivale2_struct *stivale2_struct)
 {
     framebuffer_init(stivale2_struct, GFX_BLACK);
