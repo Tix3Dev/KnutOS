@@ -99,10 +99,10 @@ typedef struct __attribute__((__packed__))
 
 extern madt_structure_t *madt;
 
-extern madt_lapic_t		    **madt_lapics;
-extern madt_io_apic_t		    **madt_io_apics;
-extern madt_iso_t		    **madt_isos;
-extern madt_lapic_nmi_t	    **madt_lapic_nmis;
+extern madt_lapic_t	**madt_lapics;
+extern madt_io_apic_t	**madt_io_apics;
+extern madt_iso_t	**madt_isos;
+extern madt_lapic_nmi_t	**madt_lapic_nmis;
 
 extern size_t madt_lapics_i;
 extern size_t madt_io_apics_i;
