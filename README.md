@@ -34,6 +34,7 @@
 - Virtual memory manager -> 4- & 5-level paging
 - Slab allocator
 - ACPI table parsing
+- Local APIC
 - Serial communication
 - Basic framebuffer
 - Basic keyboard driver with a small shell
