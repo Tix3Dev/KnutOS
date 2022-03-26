@@ -112,19 +112,24 @@ void lapic_send_ipi(void)
 /* IO APIC functions */
 
 // returns the value of a ioapic register
-uint32_t io_apic_read_register(size_t io_apic_i, uint32_t reg)
+uint32_t io_apic_read_register(size_t io_apic_i, uint8_t reg_offset)
 {
     uint32_t volatile *current_io_apic_base = (uint32_t volatile *)madt_io_apics[io_apic_i];
 
-    *current_io_apic_base = reg;
+    // IOREGSEL
+    *current_io_apic_base = reg_offset;
 
-    return *(current_io_apic_base + 4);
+    // IOWIN
+    return *(current_io_apic_base + 0x10);
 }
 
-void io_apic_write_register(size_t io_apic_i, uint32_t reg, uint32_t data)
+void io_apic_write_register(size_t io_apic_i, uint8_t reg_offset, uint32_t data)
 {
     uint32_t volatile *current_io_apic_base = (uint32_t volatile *)madt_io_apics[io_apic_i];
 
-    *current_io_apic_base = reg;
-    *(current_io_apic_base + 4) = data;
+    // IOREGSEL
+    *current_io_apic_base = reg_offset;
+
+    // IOWIN
+    *(current_io_apic_base + 0x10) = data;
 }

@@ -33,7 +33,7 @@ void lapic_write_register(uint32_t reg, uint32_t data);
 void lapic_enable(void);
 void lapic_signal_eoi(void);
 void lapic_send_ipi(void);
-uint32_t io_apic_read_register(size_t io_apic_i, uint32_t reg);
-void io_apic_write_register(size_t io_apic_i, uint32_t reg, uint32_t data);
+uint32_t io_apic_read_register(size_t io_apic_i, uint8_t reg_offset);
+void io_apic_write_register(size_t io_apic_i, uint8_t reg_offset, uint32_t data);
 
 #endif
