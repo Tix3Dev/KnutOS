@@ -103,6 +103,9 @@ void idt_init(void)
     // apic spurious interrupt
     create_descriptor(255, 0x8E);
 
+    // mask PIT
+    pic_set_mask(0);
+
     // mask keyboard IRQ
     pic_set_mask(1);
 

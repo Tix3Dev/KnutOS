@@ -23,6 +23,7 @@
 #include <boot/stivale2_boot.h>
 #include <devices/apic/apic.h>
 #include <devices/cpu/cpu.h>
+#include <devices/pit/pit.h>
 #include <devices/ps2/keyboard/keyboard.h>
 #include <firmware/acpi/acpi.h>
 #include <gdt/gdt.h>
@@ -57,23 +58,23 @@ void kmain(struct stivale2_struct *stivale2_struct)
     gdt_init();
     idt_init();
 
-    slab_init();
+    pit_init();
 
-    char *vendor_string = cpu_get_vendor_string();
-    serial_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
-    kernel_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
+    //slab_init();
 
-    acpi_init(stivale2_struct);
+    //char *vendor_string = cpu_get_vendor_string();
+    //serial_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
+    //kernel_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
 
-    apic_init();
+    //acpi_init(stivale2_struct);
 
-    // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
+    //apic_init();
 
-    // TODO: proper timer
-    // for (long i = 0; i < 5500000000; i++)	// ~10 seconds
-    // 	asm ("nop");
+    keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
-    // shell_screen_init();
+    pit_sleep_ms(10000);
+
+    shell_screen_init();
 
     for (;;)
         asm ("hlt");
