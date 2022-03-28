@@ -117,14 +117,14 @@ uint64_t isr_handler(uint64_t rsp)
             pit_irq_handler();
 
         // keyboard IRQ check -> call handler
-	else if (cpu->isr_number == 33)
+        else if (cpu->isr_number == 33)
             keyboard_irq_handler();
 
         pic_signal_EOI(cpu->isr_number);
     }
     else if (cpu->isr_number == 255)
     {
-	// apic spurious interrupt
+        // apic spurious interrupt
     }
 
     return rsp;

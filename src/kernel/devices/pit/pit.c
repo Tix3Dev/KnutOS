@@ -62,5 +62,5 @@ void pit_sleep_ms(uint16_t ms)
     uint64_t end_tick_time = pit_ticks + ms;
 
     while (pit_ticks < end_tick_time)
-	asm volatile("sti; hlt");
+        asm volatile("sti; hlt");
 }
