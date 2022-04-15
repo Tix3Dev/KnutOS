@@ -60,19 +60,19 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     pit_init();
 
-    // slab_init();
+    slab_init();
 
-    // char *vendor_string = cpu_get_vendor_string();
-    // serial_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
-    // kernel_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
+    char *vendor_string = cpu_get_vendor_string();
+    serial_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
+    kernel_log(INFO, "CPU Vendor ID String: %s\n", vendor_string);
 
-    // acpi_init(stivale2_struct);
+    acpi_init(stivale2_struct);
 
     // apic_init();
 
     keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
-    pit_sleep_ms(10000);
+    pit_sleep_ms(1000);
 
     shell_screen_init();
 

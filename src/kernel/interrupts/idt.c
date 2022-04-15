@@ -109,6 +109,9 @@ void idt_init(void)
     // mask keyboard IRQ
     pic_set_mask(1);
 
+    // rempad the PIC
+    // pic_remap();
+
     // load IDT into idtr register
     idt_pointer.limit = sizeof(idt) - 1;
     idt_pointer.base = (uint64_t)&idt;
