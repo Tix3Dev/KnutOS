@@ -23,6 +23,7 @@
 #include <boot/stivale2_boot.h>
 #include <devices/apic/apic.h>
 #include <devices/cpu/cpu.h>
+#include <devices/hpet/hpet.h>
 #include <devices/ps2/keyboard/keyboard.h>
 #include <firmware/acpi/acpi.h>
 #include <gdt/gdt.h>
@@ -66,6 +67,12 @@ void kmain(struct stivale2_struct *stivale2_struct)
     acpi_init(stivale2_struct);
 
     apic_init();
+
+    hpet_init();
+
+    serial_log(WARNING, "LOL\n");
+    hpet_usleep(1000 * 1000 * 10);
+    serial_log(WARNING, "LOL\n");
 
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
