@@ -46,6 +46,7 @@ void rsdp_init(uint64_t rsdp_address)
     }
     else // if revision is 0, then acpi version is 1.0
     {
+	debug(INFO, "meooow\n");
         serial_log(INFO, "ACPI Version 1.0 is used\n");
         kernel_log(INFO, "ACPI Version 1.0 is used\n");
     }

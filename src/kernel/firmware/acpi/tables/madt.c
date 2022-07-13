@@ -60,6 +60,7 @@ void madt_init(void)
     madt_lapic_nmis = kmalloc(256);
 
 
+    // TODO: bro what naming is that, it's not length but end ptr
     size_t madt_table_length = (size_t)&madt->header + madt->header.length;
 
     uint8_t *table_ptr = (uint8_t *)&madt->table;

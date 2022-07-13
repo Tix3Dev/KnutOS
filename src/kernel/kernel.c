@@ -70,9 +70,12 @@ void kmain(struct stivale2_struct *stivale2_struct)
 
     hpet_init();
 
-    serial_log(WARNING, "LOL\n");
-    hpet_usleep(1000 * 1000 * 10);
-    serial_log(WARNING, "LOL\n");
+    if (!timer_installed())
+	debug("Timer not installed!!!");
+
+    serial_log(WARNING, "timer begin\n");
+    timer_sleep(10000);
+    serial_log(WARNING, "timer end\n");
 
     // keyboard_init(); // NOTE: is_keyboard_active is still false so no processing
 
